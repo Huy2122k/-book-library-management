@@ -6,7 +6,6 @@ import { authContext } from './use-auth';
 
 function useProvideAuth() {
     const [user, setUser] = useState(AuthService.getLocalUser());
-    const [rememberLogin, setRememberLogin] = useState(true);
     // Wrap any Firebase methods we want to use making sure ...
     // ... to save the user to state.
 
@@ -18,7 +17,6 @@ function useProvideAuth() {
             });
             if (response.data.accessToken) {
                 AuthService.setLocalUser(response.data, form.remember);
-                setRememberLogin(form.remember);
                 setUser(response.data);
                 return response;
             }

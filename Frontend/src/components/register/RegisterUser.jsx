@@ -27,11 +27,21 @@ const RegistrationForm = () => {
     };
     const handleRegister = async (form) => {
         const res = await auth.register(form);
+        console.log(res);
         if (res && res.data && res.data.accessToken) {
             navigate('/', { replace: true });
             return;
         }
-        message.error(res.response.data.message);
+        try {
+            message.error(res.response.data.message);
+            return;
+        } catch (err) {
+            try {
+                message.error(res.message);
+            } catch (err) {
+                message.error('Something went wrong');
+            }
+        }
     };
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>

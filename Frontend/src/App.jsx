@@ -23,11 +23,13 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<RegistrationForm />} />
                     <Route element={<RequireAuth role={['USER']} />}>
-                        <Route path="/profile" element={<Profile />} />
                         <Route path="/user" element={<BoardUser />} />
                     </Route>
                     <Route element={<RequireAuth role={['ADMIN']} />}>
                         <Route path="/admin" element={<BoardAdmin />} />
+                    </Route>
+                    <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
+                        <Route path="/profile" element={<Profile />} />
                     </Route>
                 </Route>
                 <Route path="*" element={<h3>NotFound</h3>} />

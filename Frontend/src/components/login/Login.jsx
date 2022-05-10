@@ -18,7 +18,16 @@ const Login = () => {
             navigate(from, { replace: true });
             return;
         }
-        message.error(res.response.data.message);
+        try {
+            message.error(res.response.data.message);
+            return;
+        } catch (err) {
+            try {
+                message.error(res.message);
+            } catch (err) {
+                message.error('Something went wrong');
+            }
+        }
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
