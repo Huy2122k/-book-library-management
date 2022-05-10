@@ -1,0 +1,46 @@
+.ant-form {
+    padding: 15px 20px;
+}
+
+.ant-row {
+    height: 100%;
+}
+
+.ant-form-item {
+    margin-bottom: 10px;
+}
+
+.title {
+    text-align: center;
+    font-size: 28px;
+}
+
+.login {
+    height: 77vh;
+    background: white;
+    border-radius: 12px;
+    margin: 25px 20vw;
+    overflow: hidden;
+}
+
+.login img {
+    width: 100%;
+    height: auto;
+}
+
+.left {
+    padding: 20px;
+}
+
+.center-cropped {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url(https://i.pinimg.com/736x/ad/7c/d1/ad7cd17117e53bac04d3bf9f6e1ef158.jpg);
+}
+
+.submitDiv {
+    text-align: center;
+    display: block;
+}

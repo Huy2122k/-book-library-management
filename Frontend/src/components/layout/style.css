@@ -1,0 +1,15 @@
+.ant-layout-header {
+    padding: 0px 50px;
+}
+
+.classLogin {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.classProfile {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    height: 100%;
+}
