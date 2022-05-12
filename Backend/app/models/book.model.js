@@ -24,6 +24,9 @@ module.exports = (sequelize, Sequelize) => {
         ImageURL: {
             type: Sequelize.STRING,
         },
+        Price: {
+            type: Sequelize.INTEGER,
+        },
     });
 
     return Book;
