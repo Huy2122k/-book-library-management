@@ -47,6 +47,22 @@ const checkDuplicatePhoneNumber = (req, res, next) => {
         next();
     });
 };
+const checkDuplicateIdentify = (req, res, next) => {
+    // Username
+    Account.findOne({
+        where: {
+            IdentityNum: req.body.IdentityNum,
+        },
+    }).then((user) => {
+        if (user) {
+            res.status(400).send({
+                message: "Failed! Identity Number is already in use!",
+            });
+            return;
+        }
+        next();
+    });
+};
 const checkRolesExisted = (req, res, next) => {
     if (req.body.Role) {
         if (!(req.body.Role in roles)) {
@@ -63,6 +79,7 @@ const verifySignUp = {
     checkDuplicateUsernameOrEmail: checkDuplicateUsernameOrEmail,
     checkRolesExisted: checkRolesExisted,
     checkDuplicatePhoneNumber: checkDuplicatePhoneNumber,
+    checkDuplicateIdentify: checkDuplicateIdentify,
 };
 
 module.exports = verifySignUp;

@@ -1,5 +1,6 @@
 import { Layout } from 'antd';
-
+import Footer from 'rc-footer';
+import 'rc-footer/assets/index.css';
 import { Outlet } from 'react-router-dom';
 import HeaderCustom from './Header';
 const { Content } = Layout;
@@ -12,7 +13,20 @@ const LayoutCustom = () => {
                 <Content style={{ margin: '20px 16px' }}>
                     <Outlet />
                 </Content>
-                <Layout.Footer style={{ textAlign: 'center' }}>Cod3a ©2020</Layout.Footer>
+                <Footer
+                    columns={[
+                        {
+                            icon: (
+                                <img src="https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg" />
+                            ),
+                            title: '语雀',
+                            url: 'https://yuque.com',
+                            description: '知识创作与分享工具',
+                            openExternal: true
+                        }
+                    ]}
+                    bottom="Made with ❤️ by AFX"
+                />
             </Layout>
         </Layout>
     );

@@ -120,7 +120,7 @@ const RegistrationForm = () => {
                             />
                         </Form.Item>
                         <Form.Item
-                            name="CMND"
+                            name="IdentityNum"
                             label="CMND"
                             tooltip="Your Identify Number"
                             rules={[
@@ -146,8 +146,8 @@ const RegistrationForm = () => {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="BirthDay"
-                            name="BirthDay"
+                            label="Birth Day"
+                            name="Birthday"
                             rules={[
                                 {
                                     required: true,

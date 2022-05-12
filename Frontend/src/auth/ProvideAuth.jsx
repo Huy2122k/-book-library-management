@@ -29,8 +29,7 @@ function useProvideAuth() {
         try {
             const response = await AuthService.register(form);
             if (response.data.accessToken) {
-                AuthService.setLocalUser(response.data, form.remember);
-                setRememberLogin(form.remember);
+                AuthService.setLocalUser(response.data, true);
                 setUser(response.data);
                 return response;
             }
