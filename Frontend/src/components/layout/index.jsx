@@ -10,7 +10,7 @@ const LayoutCustom = () => {
         <Layout style={{ minHeight: '100vh' }}>
             <HeaderCustom />
             <Layout>
-                <Content style={{ margin: '20px 16px' }}>
+                <Content>
                     <Outlet />
                 </Content>
                 <Footer

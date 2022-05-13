@@ -19,6 +19,10 @@ const HeaderCustom = () => {
         {
             label: 'User',
             key: 'user'
+        },
+        {
+            label: 'Books',
+            key: 'books'
         }
     ];
     const handleProfileClick = (item, key) => {

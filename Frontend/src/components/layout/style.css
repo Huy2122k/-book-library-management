@@ -13,3 +13,7 @@
     justify-content: end;
     height: 100%;
 }
+
+.ant-layout-content {
+    padding: 20px 50px;
+}
