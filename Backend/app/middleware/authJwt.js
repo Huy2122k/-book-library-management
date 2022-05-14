@@ -18,7 +18,6 @@ const verifyToken = (req, res, next) => {
                 message: "Unauthorized!",
             });
         }
-        console.log(decoded);
         req.userId = decoded.id;
         next();
     });
@@ -33,7 +32,6 @@ const isAdmin = (req, res, next) => {
                     return;
                 }
             }
-
             res.status(403).send({
                 message: "Require Admin Role!",
             });

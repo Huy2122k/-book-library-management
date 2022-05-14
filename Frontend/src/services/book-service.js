@@ -1,15 +1,15 @@
-import axios from 'axios';
+import axios_instance from './custom-axios';
 
 const API_URL = 'http://localhost:8080/api/books/';
 
 const getBooks = (params) => {
-    return axios.get(API_URL + '', { params });
+    return axios_instance.get(API_URL + '', { params });
 };
 const getCategories = (params) => {
-    return axios.get(API_URL + 'categories', { params });
+    return axios_instance.get(API_URL + 'categories', { params });
 };
 const getTopAuthor = (params) => {
-    return axios.get(API_URL + 'top-authors', { params });
+    return axios_instance.get(API_URL + 'top-authors', { params });
 };
 
 const BookService = {

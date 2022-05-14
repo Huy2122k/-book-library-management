@@ -1,13 +1,11 @@
-import axios from 'axios';
-
 const API_URL = 'http://localhost:8080/api/auth/';
 
 const register = (form) => {
-    return axios.post(API_URL + 'signup', form);
+    return axios_instance.post(API_URL + 'signup', form);
 };
 
 const login = (form) => {
-    return axios.post(API_URL + 'signin', form);
+    return axios_instance.post(API_URL + 'signin', form);
 };
 
 const logout = () => {
