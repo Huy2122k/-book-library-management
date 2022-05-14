@@ -8,7 +8,10 @@ module.exports = (app) => {
 
     // Retrieve all books_controller
     router.get("/", books_controller.findAll);
+    // Retrieve top author
 
+    router.get("/top-authors", books_controller.findTopAuthor);
+    router.get("/categories", books_controller.findAllCategories);
     // Retrieve all published books_controller
     router.get("/published", books_controller.findAllPublished);
 

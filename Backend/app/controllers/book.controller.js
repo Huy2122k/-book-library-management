@@ -1,6 +1,8 @@
 const db = require("../models");
 const Book = db.book;
+const Category = db.category;
 const Op = db.Sequelize.Op;
+const seq = db.sequelize;
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
     // Validate request
@@ -31,27 +33,108 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
-    const title = req.query.title;
-
-    var condition = title ? {
-            BookName: {
-                [Op.like]: `%${title}%`,
+exports.findAll = async(req, res) => {
+    console.log(req.query);
+    const {
+        page,
+        pageSize,
+        search,
+        ratingFilter,
+        categoryFilter,
+        authorFilter,
+        sortName,
+        sortAuthor,
+        sortCategory,
+        sortYear,
+    } = req.query;
+    const sortConfig = [
+        sortName && ["BookName", sortName],
+        sortAuthor && ["Author", sortAuthor],
+        sortCategory && [Category, "CategoryName", sortCategory],
+    ];
+    console.log(categoryFilter);
+    try {
+        const { count, rows } = await Book.findAndCountAll({
+            limit: parseInt(pageSize),
+            offset: parseInt(page) - 1,
+            where: {
+                ...(search && {
+                    [Op.or]: [{
+                            BookName: {
+                                [Op.like]: `%${search}%`,
+                            },
+                        },
+                        {
+                            Author: {
+                                [Op.like]: `%${search}%`,
+                            },
+                        },
+                        {
+                            "$category.CategoryName$": {
+                                [Op.like]: `%${search}%`,
+                            },
+                        },
+                    ],
+                }),
+                ...(authorFilter && {
+                    Author: {
+                        [Op.in]: authorFilter,
+                    },
+                }),
+                ...(categoryFilter && {
+                    CategoryID: {
+                        [Op.in]: categoryFilter,
+                    },
+                }),
             },
-        } :
-        null;
-    console.log(condition);
-
-    Book.findAll({ where: condition, limit: 10 })
-        .then((data) => {
-            console.log(data);
-            res.send(data);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving tutorials.",
-            });
+            include: [{
+                model: Category,
+                as: "category",
+                attributes: ["CategoryName"],
+                required: false,
+            }, ],
+            order: sortConfig.filter((val) => val),
         });
+        res.send({ total: count, docs: rows });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+};
+exports.findTopAuthor = async(req, res) => {
+    const size = req.query.size ? req.query.size : "10";
+    const query = `
+        SELECT Author FROM book
+        GROUP BY Author
+        ORDER BY COUNT(BookID) DESC
+        LIMIT ${size}
+        `;
+    try {
+        const [results, metadata] = await seq.query(query);
+        res.send(results.map((val) => val.Author).filter((val) => val));
+    } catch (error) {
+        res.status(500).send({
+            message: error.message || "Some error occurred while retrieving Author.",
+        });
+    }
+};
+exports.findAllCategories = async(req, res) => {
+    try {
+        const [results, metadata] = await seq.query(`
+        SELECT * FROM category `);
+        const obj = results.reduce(function(accumulator, currentValue) {
+            accumulator[currentValue.CategoryID] =
+                currentValue.CategoryName.replaceAll("\t", "").split(" & ");
+            return accumulator;
+        }, {});
+        res.send(obj);
+    } catch (error) {
+        res.status(500).send({
+            message: error.message || "Some error occurred while retrieving Category.",
+        });
+    }
 };
 
 // Find a single Tutorial with an id
@@ -83,7 +166,8 @@ exports.update = (req, res) => {
                 });
             } else {
                 res.send({
-                    message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`,
+                    message: `
+        Cannot update Tutorial with id = $ { id }.Maybe Tutorial was not found or req.body is empty!`,
                 });
             }
         })
@@ -108,7 +192,8 @@ exports.delete = (req, res) => {
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`,
+                    message: `
+        Cannot delete Tutorial with id = $ { id }.Maybe Tutorial was not found!`,
                 });
             }
         })
@@ -126,7 +211,11 @@ exports.deleteAll = (req, res) => {
             truncate: false,
         })
         .then((nums) => {
-            res.send({ message: `${nums} Tutorials were deleted successfully!` });
+            res.send({
+                message: `
+        $ { nums }
+        Tutorials were deleted successfully!`,
+            });
         })
         .catch((err) => {
             res.status(500).send({
