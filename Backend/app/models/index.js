@@ -35,7 +35,11 @@ db.comment = require("./comment.model.js")(sequelize, Sequelize);
 db.wishlist = require("./wishlist.model.js")(sequelize, Sequelize);
 
 db.book.hasMany(db.bookItem, {foreignKey: 'BookID'});
+db.bookItem.belongsTo(db.book, {foreignKey: 'BookID'});
+
 db.category.hasMany(db.book, {foreignKey: 'CategoryID'});
+db.book.belongsTo(db.category, {foreignKey: 'CategoryID'});
+
 db.account.hasMany(db.lendingList, {foreignKey: 'AccountID'});
 db.lendingList.hasMany(db.lendingBookList, {foreignKey: 'LendingID'});
 db.bookItem.hasMany(db.lendingBookList, {foreignKey: 'BookID'});
