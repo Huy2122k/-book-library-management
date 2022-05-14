@@ -1,8 +1,11 @@
 const db = require("../models");
 const Book = db.book;
 const Category = db.category;
+const Rating = db.rating;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
+const jwt = require("jsonwebtoken");
+const config = require("../config/auth.config.js");
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
     // Validate request
@@ -236,3 +239,45 @@ exports.findAllPublished = (req, res) => {
             });
         });
 };
+
+// get book information by ID
+exports.getInfo = async (req, res) => {
+    const bookid = req.params.id
+    // const userid = req.params.userId
+    const token = req.headers["x-access-token"];
+    if (token) {
+        jwt.verify(token, config.secret, (err, decoded) => {
+            if (err) {
+                return
+            }
+            req.userId = decoded.id;
+        });
+    }
+    try {
+        const info = await Book.findByPk(bookid);
+        const category = await Category.findByPk(info.CategoryID);
+        const avgrating = await Rating.findOne({
+            where: {BookID: bookid},
+            attributes: [[seq.fn('avg', seq.col('rating')), 'average']],
+          });
+        const userRating = req.userId?await Rating.findOne({
+            where: {BookID: bookid, AccountID: req.userId},
+            attributes: ['rating']
+        }):null
+        const countRating = await Rating.findAll({
+            attributes: ['rating', [seq.fn('COUNT', seq.col('Rating')), 'count']],
+            where: {BookID: bookid},
+            group: ['Rating']
+        })
+        const totalRating = await Rating.findOne({
+            where: {BookID: bookid},
+            attributes: [[seq.fn('count', seq.col('rating')), 'total']],
+          });
+        res.send({bookInfo: info, category: category.CategoryName, avgRating: avgrating, countRating: countRating, totalRating: totalRating, userRating: userRating});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+}
