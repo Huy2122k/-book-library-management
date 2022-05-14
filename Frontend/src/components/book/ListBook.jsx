@@ -50,7 +50,7 @@ const ListBook = () => {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const pageSize = 10;
+    const pageSize = 12;
     const [formFilter] = Form.useForm();
     const navigate = useNavigate();
     const [loadingData, setLoadingData] = useState(false);
@@ -70,10 +70,9 @@ const ListBook = () => {
         const options = [];
         Object.keys(category).forEach((key, ind) => {
             category[key].forEach((val, ind) => {
-                options.push({ value: val, label: val });
+                options.push({ value: val + 'id :' + key, label: val });
             });
         });
-        console.log(options);
         return options;
     };
     const fetchTopAuthor = async () => {
@@ -84,24 +83,32 @@ const ListBook = () => {
             }
         } catch (error) {
             console.log(error);
-            message.error('Cannot get categories!');
+            message.error('Cannot get Top Authors!');
         }
     };
-    const fetchBookData = async () => {
+    const fetchBookData = async (current = 1) => {
         try {
+            const field = formFilter.getFieldsValue('categoryFilter').categoryFilter;
+            const convertCategoryFilter =
+                field && field.length > 0
+                    ? Array.from(new Set(field.map((val) => val.split(':').pop())))
+                    : undefined;
+            console.log(convertCategoryFilter);
             setLoadingData(true);
             const params = {
-                page: page,
+                ...formFilter.getFieldsValue(),
+                page: current,
                 pageSize: pageSize,
                 search: searchTitle,
-                ...formFilter.getFieldsValue()
+                categoryFilter: convertCategoryFilter
             };
             console.log(params);
             const res = await BookService.getBooks(params);
             setLoadingData(false);
             console.log(res);
             if (res && res.data) {
-                setBookList(res.data);
+                setBookList(res.data.docs);
+                setTotal(res.data.total);
             }
         } catch (error) {
             console.log(error);
@@ -111,6 +118,9 @@ const ListBook = () => {
     };
     const handleFilterChange = (changedValues, allValues) => {
         fetchBookData();
+    };
+    const handelChangePage = (page) => {
+        setPage(page);
     };
     const handleSearch = (event) => {
         setSearchTitle(event.target.value);
@@ -122,6 +132,9 @@ const ListBook = () => {
     useEffect(() => {
         fetchBookData();
     }, [searchTitle]);
+    useEffect(() => {
+        fetchBookData(page);
+    }, [page]);
 
     return (
         <div className="container book-list">
@@ -267,7 +280,9 @@ const ListBook = () => {
                             <Col span={24}>
                                 <Pagination
                                     className="customPagination"
+                                    onChange={handelChangePage}
                                     pageSize={pageSize}
+                                    showSizeChanger={false}
                                     current={page}
                                     total={total}
                                 />
