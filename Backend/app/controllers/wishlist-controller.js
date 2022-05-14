@@ -29,7 +29,7 @@ exports.create = (req, res) => {
             // Save wishlist in the database
             WishList.create(wishList)
                 .then((data) => {
-                    res.send(data);
+                    res.status(200).send(data);
                 })
                 .catch((err) => {
                     res.status(500).send({
@@ -71,14 +71,14 @@ exports.findAllByUser = async(req, res) => {
 };
 // Delete a wishlist with the specified id in the request
 exports.delete = (req, res) => {
-    if (!req.userId || !req.body.BookID) {
+    if (!req.userId || !req.params.id) {
         res.status(400).send({
             message: "Cannot modify wishlist now!",
         });
         return;
     }
     WishList.destroy({
-            where: { BookID: req.body.BookID, AccountID: req.userId },
+            where: { BookID: req.params.id, AccountID: req.userId },
         })
         .then((num) => {
             if (num == 1) {

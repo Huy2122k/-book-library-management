@@ -1,13 +1,15 @@
-import { BookOutlined, HeartOutlined } from '@ant-design/icons';
+import { BookOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Avatar, Card, Tag, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useWishList } from '../contexts/use-wishlist';
 import { getRandomColor } from './category-color';
 const CardItem = ({ book, loading, category } = props) => {
+    const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
+    const liked = checkExistedInWishList(book.BookID);
     const navigate = useNavigate();
     const handleClickDetail = (bookID) => {
         navigate('/books/' + bookID, { replace: true });
     };
-
     return (
         <Card
             hoverable
@@ -26,8 +28,11 @@ const CardItem = ({ book, loading, category } = props) => {
                 />
             }
             actions={[
-                <HeartOutlined key="like" />,
-                // <HeartFilled/>,
+                liked ? (
+                    <HeartFilled onClick={() => deleteFromWishList(book.BookID)} />
+                ) : (
+                    <HeartOutlined onClick={() => addToWishList(book)} />
+                ),
                 <BookOutlined key="lending" />
             ]}>
             <div className="book-info">

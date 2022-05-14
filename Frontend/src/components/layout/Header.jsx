@@ -1,12 +1,15 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, Row } from 'antd';
+import { HeartFilled, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/use-auth';
+import { ellipseByLength } from '../../auth/utils/string';
+import { useWishList } from '../contexts/use-wishlist';
 import './style.css';
 const HeaderCustom = () => {
     const navigate = useNavigate();
     const auth = useAuth();
+    const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
     const nav = [
         {
             label: 'Home',
@@ -60,6 +63,39 @@ const HeaderCustom = () => {
         console.log(item.key);
         navigate('/' + item.key);
     };
+    const handleRemoveWishList = (bookId) => (e) => {
+        e.stopPropagation();
+        deleteFromWishList(bookId);
+    };
+    const genItemWishList = (book) => {
+        return (
+            <Row gutter={[20, 25]}>
+                <Col span={8}>
+                    <img className="thumbnail" src={book.ImageURL} alt="" />
+                </Col>
+                <Col span={16} className="wish-list-content-item">
+                    <h4>{ellipseByLength(book.BookName, 60)}</h4>
+                    <p>{ellipseByLength(book.Author, 60)}</p>
+                    <Button
+                        shape="round"
+                        type="primary"
+                        onClick={handleRemoveWishList(book.BookID)}
+                        danger>
+                        Remove
+                    </Button>
+                </Col>
+            </Row>
+        );
+    };
+    const genderWishList = () => {
+        const list = wishList.map((book) => {
+            return {
+                label: genItemWishList(book),
+                key: book.BookID
+            };
+        });
+        return <Menu className="wish-list-content" items={list} />;
+    };
     return (
         <Header>
             <Row>
@@ -76,6 +112,12 @@ const HeaderCustom = () => {
                 <Col span={4}>
                     {auth.user ? (
                         <div className="classProfile">
+                            <Dropdown
+                                placement="bottomLeft"
+                                overlay={genderWishList()}
+                                trigger={['click']}>
+                                <HeartFilled className="wish-list-btn" />
+                            </Dropdown>
                             <Dropdown.Button
                                 overlay={profile}
                                 placement="bottom"

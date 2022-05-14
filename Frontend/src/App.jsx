@@ -11,31 +11,34 @@ import RequireAuth from './auth/RequireAuth';
 import BoardAdmin from './components/BoardAdmin';
 import BoardUser from './components/BoardUser';
 import ListBook from './components/book/ListBook';
+import ProvideWishList from './components/contexts/WishListProvider';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
 import Profile from './components/Profile';
 const App = () => {
     return (
         <ProvideAuth>
-            <Routes>
-                <Route element={<LayoutCustom />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<RegistrationForm />} />
-                    <Route path="/books" element={<ListBook />} />
-                    <Route element={<RequireAuth role={['USER']} />}>
-                        <Route path="/user" element={<BoardUser />} />
+            <ProvideWishList>
+                <Routes>
+                    <Route element={<LayoutCustom />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<RegistrationForm />} />
+                        <Route path="/books" element={<ListBook />} />
+                        <Route element={<RequireAuth role={['USER']} />}>
+                            <Route path="/user" element={<BoardUser />} />
+                        </Route>
+                        <Route element={<RequireAuth role={['ADMIN']} />}>
+                            <Route path="/admin" element={<BoardAdmin />} />
+                        </Route>
+                        <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
+                            <Route path="/profile" element={<Profile />} />
+                        </Route>
                     </Route>
-                    <Route element={<RequireAuth role={['ADMIN']} />}>
-                        <Route path="/admin" element={<BoardAdmin />} />
-                    </Route>
-                    <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
-                        <Route path="/profile" element={<Profile />} />
-                    </Route>
-                </Route>
-                <Route path="*" element={<h3>NotFound</h3>} />
-            </Routes>
+                    <Route path="*" element={<h3>NotFound</h3>} />
+                </Routes>
+            </ProvideWishList>
         </ProvideAuth>
     );
 };

@@ -11,8 +11,8 @@ module.exports = (app) => {
     router.get("/", [authJwt.verifyToken], wishlistController.findAllByUser);
     // Retrieve top author
 
-    // Delete a Tutorial with id
-    router.delete("/", [authJwt.verifyToken], wishlistController.delete);
+    // Delete a book in wishlist with id
+    router.delete("/:id", [authJwt.verifyToken], wishlistController.delete);
 
     app.use("/api/wishlist", router);
 };
