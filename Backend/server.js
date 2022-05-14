@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/book.routes")(app);
+require("./app/routes/wishlist.routes")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
