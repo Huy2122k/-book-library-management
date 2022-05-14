@@ -41,13 +41,30 @@ db.category.hasMany(db.book, {foreignKey: 'CategoryID'});
 db.book.belongsTo(db.category, {foreignKey: 'CategoryID'});
 
 db.account.hasMany(db.lendingList, {foreignKey: 'AccountID'});
+db.lendingList.belongsTo(db.account, {foreignKey: 'AccountID'});
+
 db.lendingList.hasMany(db.lendingBookList, {foreignKey: 'LendingID'});
+db.lendingBookList.belongsTo(db.lendingList, {foreignKey: 'LendingID'});
+
 db.bookItem.hasMany(db.lendingBookList, {foreignKey: 'BookID'});
+db.lendingBookList.belongsTo(db.bookItem, {foreignKey: 'BookID'});
+
 db.account.hasMany(db.wishlist, {foreignKey: 'AccountID'})
+db.wishlist.belongsTo(db.account, {foreignKey: 'AccountID'})
+
 db.book.hasMany(db.wishlist, {foreignKey: 'BookID'})
+db.wishlist.belongsTo(db.book, {foreignKey: 'BookID'})
+
 db.account.hasMany(db.comment, {foreignKey: 'AccountID'})
+db.comment.belongsTo(db.account, {foreignKey: 'AccountID'})
+
 db.book.hasMany(db.comment, {foreignKey: 'BookID'})
+db.comment.belongsTo(db.book, {foreignKey: 'BookID'})
+
 db.book.hasMany(db.rating, {foreignKey: 'BookID'});
+db.rating.belongsTo(db.book, {foreignKey: 'BookID'});
+
 db.account.hasMany(db.rating, {foreignKey: 'AccountID'})
+db.rating.belongsTo(db.account, {foreignKey: 'AccountID'})
 
 module.exports = db;
