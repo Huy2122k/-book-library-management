@@ -242,8 +242,7 @@ exports.findAllPublished = (req, res) => {
 
 // get book information by ID
 exports.getInfo = async (req, res) => {
-    const bookid = req.params.id
-    // const userid = req.params.userId
+    const bookid = req.params.id;
     const token = req.headers["x-access-token"];
     if (token) {
         jwt.verify(token, config.secret, (err, decoded) => {
@@ -278,6 +277,40 @@ exports.getInfo = async (req, res) => {
         console.log(err);
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+}
+
+// Update book info
+exports.updateInfo = async (req, res) => {
+    const bookid = req.params.id
+    try {
+        const beforeChange = await Book.findOne({
+            where: {BookID: bookid},
+            attributes: ['BookName', 'Author', 'Description', 'CategoryID', 'ImageURL', 'Price']
+        })
+        const result = await Book.update(
+            {BookName: req.body.BookName , Author: req.body.Author, Description: req.body.Description, CategoryID: req.body.Categoryid, ImageURL: req.body.Imageurl, Price: req.body.Price},
+            { where: { BookID: bookid } }
+          )
+        if (result == 1) {
+            res.send({
+                message: "Update successfully."});
+        } else {
+            if (JSON.stringify(req.body)===JSON.stringify(beforeChange.dataValues)){
+                res.send({
+                    message: `Update successfully.`,
+                });
+            } else {
+                res.send({
+                    message: `Cannot update Book with id = $ { bookid }. Maybe Book was not found or req.body is empty!`,
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while retrieving tutorials.",
         });
     }
 }
