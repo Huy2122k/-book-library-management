@@ -34,6 +34,7 @@ db.rating = require("./rating.model.js")(sequelize, Sequelize);
 db.comment = require("./comment.model.js")(sequelize, Sequelize);
 db.wishlist = require("./wishlist.model.js")(sequelize, Sequelize);
 
+// relation that exist in the EER Diagram
 db.book.hasMany(db.bookItem, {foreignKey: 'BookID'});
 db.bookItem.belongsTo(db.book, {foreignKey: 'BookID'});
 
@@ -66,5 +67,9 @@ db.rating.belongsTo(db.book, {foreignKey: 'BookID'});
 
 db.account.hasMany(db.rating, {foreignKey: 'AccountID'})
 db.rating.belongsTo(db.account, {foreignKey: 'AccountID'})
+
+// relation that not exist in the EER Diagram
+db.rating.hasMany(db.comment, {foreignKey: ['AccountID', 'BookID']})
+db.comment.belongsTo(db.rating, {foreignKey: ['AccountID', 'BookID']})
 
 module.exports = db;

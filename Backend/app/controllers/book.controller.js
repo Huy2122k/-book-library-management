@@ -2,6 +2,7 @@ const db = require("../models");
 const Book = db.book;
 const Category = db.category;
 const Rating = db.rating;
+const Comment = db.comment;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
 const jwt = require("jsonwebtoken");
@@ -272,7 +273,27 @@ exports.getInfo = async (req, res) => {
             where: {BookID: bookid},
             attributes: [[seq.fn('count', seq.col('rating')), 'total']],
           });
-        res.send({bookInfo: info, category: category.CategoryName, avgRating: avgrating, countRating: countRating, totalRating: totalRating, userRating: userRating});
+        const comment = await Comment.findAll({
+            where: {BookID: bookid},
+            include: [{
+                model: Rating,
+                on:{
+                    col1: seq.where(seq.col("Comment.BookID"), "=", seq.col("Rating.BookID")),
+                    col2: seq.where(seq.col("Comment.AccountID"), "=", seq.col("Rating.AccountID"))
+                },
+                attributes: ['Rating']
+            }],
+            attributes: ['CommentID', 'AccountID', 'Comment'],
+        })
+        res.status(200).send({
+            bookInfo: info, 
+            category: category.CategoryName, 
+            avgRating: avgrating, 
+            countRating: countRating, 
+            totalRating: totalRating, 
+            userRating: userRating,
+            comment: comment
+        });
     } catch (err) {
         console.log(err);
         res.status(500).send({
