@@ -11,14 +11,17 @@ module.exports = (sequelize, Sequelize) => {
         Password: {
             type: Sequelize.STRING,
         },
-        IdentityNum: {
+        Introduction: {
+            type: Sequelize.TEXT,
+        },
+        Gender: {
             type: Sequelize.STRING,
         },
         Birthday: {
             type: Sequelize.DATE,
         },
-        Introduction: {
-            type: Sequelize.TEXT,
+        IdentityNum: {
+            type: Sequelize.STRING,
         },
         Address: {
             type: Sequelize.STRING,
@@ -27,6 +30,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
         },
         Phone: {
+            type: Sequelize.STRING,
+        },
+        ImageURL: {
             type: Sequelize.STRING,
         },
         Role: {

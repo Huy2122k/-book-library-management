@@ -7,6 +7,7 @@ module.exports = (sequelize, Sequelize) => {
                 model: "lendinglist",
                 key: "LendingID",
             },
+            primaryKey: true,
         },
         BookItemID: {
             type: Sequelize.UUID,
@@ -15,6 +16,7 @@ module.exports = (sequelize, Sequelize) => {
                 model: "bookitem",
                 key: "BookItemID",
             },
+            primaryKey: true,
         },
     });
 

@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const BookItem = sequelize.define("bookitem", {
+    const BookCategory = sequelize.define("bookcategory", {
         BookID: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
@@ -7,16 +7,17 @@ module.exports = (sequelize, Sequelize) => {
                 model: "book",
                 key: "BookID",
             },
-        },
-        BookItemID: {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
             primaryKey: true,
         },
-        Status: {
-            type: Sequelize.STRING,
+        CategoryID: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: "category",
+                key: "CategoryID",
+            },
+            primaryKey: true,
         },
     });
 
-    return BookItem;
+    return BookCategory;
 };

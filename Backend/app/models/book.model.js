@@ -11,23 +11,27 @@ module.exports = (sequelize, Sequelize) => {
         Author: {
             type: Sequelize.STRING,
         },
+        Series: {
+            type: Sequelize.STRING,
+        },
+        Chapter: {
+            type: Sequelize.INTEGER,
+        },
         Description: {
             type: Sequelize.TEXT,
         },
-        CategoryID: {
-            type: Sequelize.INTEGER,
-            references: {
-                model: "category",
-                key: "CategoryID",
-            },
+        PublishedDate: {
+            type: Sequelize.DATE
         },
-        ImageURL: {
-            type: Sequelize.STRING,
+        Publisher: {
+            type: Sequelize.STRING
         },
         Price: {
             type: Sequelize.INTEGER,
         },
+        ImageURL: {
+            type: Sequelize.STRING,
+        },
     });
-
     return Book;
 };

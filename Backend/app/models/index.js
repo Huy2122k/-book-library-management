@@ -27,6 +27,7 @@ db.sequelize = sequelize;
 db.book = require("./book.model.js")(sequelize, Sequelize);
 db.bookItem = require("./book-item.model.js")(sequelize, Sequelize);
 db.category = require("./category.model.js")(sequelize, Sequelize);
+db.bookCategory = require("./book-category.model.js")(sequelize, Sequelize);
 db.account = require("./account.model.js")(sequelize, Sequelize);
 db.lendingList = require("./lending-list.model.js")(sequelize, Sequelize);
 db.lendingBookList = require("./lending-book-list.model.js")(sequelize, Sequelize);
@@ -38,8 +39,11 @@ db.wishlist = require("./wishlist.model.js")(sequelize, Sequelize);
 db.book.hasMany(db.bookItem, {foreignKey: 'BookID'});
 db.bookItem.belongsTo(db.book, {foreignKey: 'BookID'});
 
-db.category.hasMany(db.book, {foreignKey: 'CategoryID'});
-db.book.belongsTo(db.category, {foreignKey: 'CategoryID'});
+db.book.hasMany(db.bookCategory, {foreignKey: 'BookID'});
+db.bookCategory.belongsTo(db.book, {foreignKey: 'BookID'});
+
+db.category.hasMany(db.bookCategory, {foreignKey: 'CategoryID'});
+db.bookCategory.belongsTo(db.category, {foreignKey: 'CategoryID'});
 
 db.account.hasMany(db.lendingList, {foreignKey: 'AccountID'});
 db.lendingList.belongsTo(db.account, {foreignKey: 'AccountID'});
