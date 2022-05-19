@@ -1,14 +1,19 @@
-import { BookOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
-import { Avatar, Card, Tag, Tooltip } from 'antd';
+import { BookOutlined, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { Avatar, Card, Tag, Tooltip, Typography } from 'antd';
+import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { useWishList } from '../contexts/use-wishlist';
 import { getRandomColor } from './category-color';
+const { Paragraph } = Typography;
 const CardItem = ({ book, loading, category } = props) => {
     const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
     const liked = checkExistedInWishList(book.BookID);
     const navigate = useNavigate();
     const handleClickDetail = (bookID) => {
         navigate('/books/' + bookID, { replace: true });
+    };
+    const handleClickCategory = (search) => (e) => {
+        navigate('/books?searchTitle=' + search);
     };
     return (
         <Card
@@ -17,6 +22,7 @@ const CardItem = ({ book, loading, category } = props) => {
             key={book.BookID}
             value={book.BookID}
             className="card-list"
+            style={{ overflow: 'hidden' }}
             cover={
                 <img
                     onClick={() => {
@@ -29,7 +35,10 @@ const CardItem = ({ book, loading, category } = props) => {
             }
             actions={[
                 liked ? (
-                    <HeartFilled onClick={() => deleteFromWishList(book.BookID)} />
+                    <HeartTwoTone
+                        twoToneColor="#eb2f96"
+                        onClick={() => deleteFromWishList(book.BookID)}
+                    />
                 ) : (
                     <HeartOutlined onClick={() => addToWishList(book)} />
                 ),
@@ -45,21 +54,33 @@ const CardItem = ({ book, loading, category } = props) => {
                         {book.BookName}
                     </Tooltip>
                 </p>
-                <div className="author-list">
+                <div className="author-list" onClick={handleClickCategory(book.Author)}>
                     <Avatar src={'https://joeschmoe.io/api/v1/random' + '?' + book.BookID} />
-                    <span className="author-name">{book.Author}</span>
+                    <Tooltip placement="topLeft" title={book.Author} color={'black'}>
+                        <Paragraph
+                            className="author-name"
+                            strong
+                            ellipsis={{
+                                rows: 1
+                            }}>
+                            {book.Author}
+                        </Paragraph>
+                    </Tooltip>
                 </div>
                 <div className="description-list">
-                    {category &&
-                        category[book.CategoryID] &&
-                        category[book.CategoryID].map((val, ind) => (
+                    {book &&
+                        book.ListCategoryName.split(',').map((val, ind) => (
                             <Tag
                                 key={'cat-' + book.BookID + ind}
                                 className="category-tag"
-                                color={getRandomColor()}>
+                                color={getRandomColor()}
+                                onClick={handleClickCategory(val)}>
                                 {val}
                             </Tag>
                         ))}
+                </div>
+                <div className="date-publish">
+                    <i>{'Published: ' + moment(book.PublishedDate).format('DD-MM-YYYY')}</i>
                 </div>
             </div>
         </Card>

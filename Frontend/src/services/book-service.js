@@ -11,9 +11,13 @@ const getCategories = (params) => {
 const getTopAuthor = (params) => {
     return axios_instance.get(API_URL + 'top-authors', { params });
 };
+const getBookDetail = (bookId) => {
+    return axios_instance.get(API_URL + bookId);
+};
 
 const BookService = {
     getBooks,
+    getBookDetail,
     getCategories,
     getTopAuthor
 };

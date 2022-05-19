@@ -14,12 +14,12 @@ import {
     Typography
 } from 'antd';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookService from '../../services/book-service';
 import CardItem from './CardItem';
+
 import { getRandomColor } from './category-color';
 import './style.css';
-
 const { Paragraph, Text } = Typography;
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -43,9 +43,13 @@ function tagRender(props) {
 }
 
 const ListBook = () => {
+    const [searchParams] = useSearchParams();
+
     const [bookList, setBookList] = useState([]);
     const [category, setCategory] = useState({});
-    const [searchTitle, setSearchTitle] = useState('');
+    const [searchTitle, setSearchTitle] = useState(searchParams.get('searchTitle'));
+    const [searchInput, setSearchInput] = useState('');
+
     const [topAuthor, setTopAuthor] = useState([]);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -69,9 +73,7 @@ const ListBook = () => {
         if (!category) return [];
         const options = [];
         Object.keys(category).forEach((key, ind) => {
-            category[key].forEach((val, ind) => {
-                options.push({ value: val + 'id :' + key, label: val });
-            });
+            options.push({ value: category[key] + 'id :' + key, label: category[key] });
         });
         return options;
     };
@@ -86,7 +88,7 @@ const ListBook = () => {
             message.error('Cannot get Top Authors!');
         }
     };
-    const fetchBookData = async (current = 1) => {
+    const fetchBookData = async (current = 1, search = searchTitle) => {
         try {
             const field = formFilter.getFieldsValue('categoryFilter').categoryFilter;
             const convertCategoryFilter =
@@ -99,7 +101,7 @@ const ListBook = () => {
                 ...formFilter.getFieldsValue(),
                 page: current,
                 pageSize: pageSize,
-                search: searchTitle,
+                search: search,
                 categoryFilter: convertCategoryFilter
             };
             console.log(params);
@@ -116,22 +118,26 @@ const ListBook = () => {
             message.error('Some things went wrong');
         }
     };
-    const handleFilterChange = (changedValues, allValues) => {
+    const handleFilterChange = (changedValues, values) => {
         fetchBookData();
     };
     const handelChangePage = (page) => {
         setPage(page);
     };
     const handleSearch = (event) => {
+        fetchBookData(1, event.target.value);
         setSearchTitle(event.target.value);
     };
+    useEffect(() => {
+        setSearchTitle(searchParams.get('searchTitle'));
+        setSearchInput(searchParams.get('searchTitle'));
+        fetchBookData(1, searchParams.get('searchTitle'));
+    }, [searchParams]);
     useEffect(() => {
         fetchCategories();
         fetchTopAuthor();
     }, []);
-    useEffect(() => {
-        fetchBookData();
-    }, [searchTitle]);
+
     useEffect(() => {
         fetchBookData(page);
     }, [page]);
@@ -146,7 +152,7 @@ const ListBook = () => {
                 onValuesChange={handleFilterChange}
                 scrollToFirstError>
                 <Row gutter={[20, 20]}>
-                    <Col xs={6} sm={6} md={6} lg={5} xl={5}>
+                    <Col xs={24} sm={6} md={6} lg={5} xl={5}>
                         <h1>Filter</h1>
                         <Form.Item
                             label="Rating"
@@ -184,10 +190,12 @@ const ListBook = () => {
                             </Checkbox.Group>
                         </Form.Item>
                     </Col>
-                    <Col xs={18} sm={18} md={18} lg={19} xl={19}>
+                    <Col xs={24} sm={18} md={18} lg={19} xl={19}>
                         <Row gutter={[8, 8]}>
                             <Col span={24}>
                                 <Input
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
                                     prefix={<SearchOutlined />}
                                     onPressEnter={handleSearch}
                                     label={''}
@@ -230,25 +238,13 @@ const ListBook = () => {
                                             </Col>
                                             <Col xs={12} sm={12} md={12} lg={6} xl={6}>
                                                 <Form.Item
-                                                    label="Category"
-                                                    name="sortCategory"
-                                                    labelCol={{ span: 8 }}
-                                                    wrapperCol={{ span: 16 }}>
-                                                    <Select style={{ width: 120 }}>
-                                                        <Option value="asc">{'A -> Z'}</Option>
-                                                        <Option value="desc">{'Z -> A'}</Option>
-                                                    </Select>
-                                                </Form.Item>
-                                            </Col>
-                                            <Col xs={12} sm={12} md={12} lg={6} xl={6}>
-                                                <Form.Item
                                                     label="Year"
                                                     name="sortYear"
                                                     labelCol={{ span: 8 }}
                                                     wrapperCol={{ span: 16 }}>
                                                     <Select style={{ width: 120 }}>
-                                                        <Option value="asc">{'Latest'}</Option>
-                                                        <Option value="desc">{'Oldest'}</Option>
+                                                        <Option value="desc">{'Latest'}</Option>
+                                                        <Option value="asc">{'Oldest'}</Option>
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
@@ -262,7 +258,7 @@ const ListBook = () => {
                                         return (
                                             <Col
                                                 key={book.BookID}
-                                                xs={12}
+                                                xs={24}
                                                 sm={12}
                                                 md={12}
                                                 lg={6}
