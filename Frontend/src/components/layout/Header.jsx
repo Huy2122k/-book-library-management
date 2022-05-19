@@ -87,14 +87,25 @@ const HeaderCustom = () => {
             </Row>
         );
     };
+    const handleWishListClick = (item, key) => {
+        navigate('/books/' + item.key);
+    };
     const genderWishList = () => {
+        if (wishList.length <= 0) {
+            return (
+                <Menu
+                    className="wish-list-content"
+                    items={[{ label: <p style={{ textAlign: 'center' }}>Empty</p>, key: 'Empty' }]}
+                />
+            );
+        }
         const list = wishList.map((book) => {
             return {
                 label: genItemWishList(book),
                 key: book.BookID
             };
         });
-        return <Menu className="wish-list-content" items={list} />;
+        return <Menu onClick={handleWishListClick} className="wish-list-content" items={list} />;
     };
     return (
         <Header>
@@ -108,8 +119,8 @@ const HeaderCustom = () => {
                         onClick={navigateHeader}
                     />
                 </Col>
-                <Col span={8} />
-                <Col span={4}>
+                <Col xs={2} sm={2} md={6} lg={8} xl={8} />
+                <Col xs={8} sm={10} md={6} lg={4} xl={4}>
                     {auth.user ? (
                         <div className="classProfile">
                             <Dropdown
@@ -120,6 +131,7 @@ const HeaderCustom = () => {
                             </Dropdown>
                             <Dropdown.Button
                                 overlay={profile}
+                                style={{ borderRadius: '6px' }}
                                 placement="bottom"
                                 icon={<UserOutlined />}
                             />

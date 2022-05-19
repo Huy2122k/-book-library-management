@@ -57,10 +57,10 @@ const RegistrationForm = () => {
     return (
         <div className="register-container">
             <Row>
-                <Col span={8}>
+                <Col xs={24} sm={12} md={12} lg={8} xl={8}>
                     <div className="right"></div>
                 </Col>
-                <Col span={16} className="left">
+                <Col xs={24} sm={12} md={12} lg={16} xl={16} className="left">
                     <h1 className="title">Register</h1>
                     <Form
                         // {...formItemLayout}

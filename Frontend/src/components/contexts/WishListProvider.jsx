@@ -23,7 +23,7 @@ function useProvideWishList() {
             try {
                 message.error(error.message);
             } catch (err) {
-                message.error('Something went wrong');
+                message.error('User not Login');
             }
         }
     };
@@ -44,11 +44,7 @@ function useProvideWishList() {
             }
             message.error('Cannot add item!');
         } catch (error) {
-            try {
-                message.error(error.message);
-            } catch (err) {
-                message.error('Something went wrong');
-            }
+            message.error('User not Login');
         }
     };
     const deleteFromWishList = async (bookId) => {
@@ -61,11 +57,7 @@ function useProvideWishList() {
             }
             message.error('Cannot remove item!');
         } catch (error) {
-            try {
-                message.error(error.message);
-            } catch (err) {
-                message.error('Something went wrong');
-            }
+            message.error('User not Login');
         }
     };
     useEffect(() => {

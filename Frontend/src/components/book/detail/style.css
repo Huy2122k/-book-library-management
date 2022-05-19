@@ -1,0 +1,120 @@
+.book-detail {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+@media screen and (max-width: 450px) {
+    /* For mobile phones: */
+    .book-detail {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
+.card-custom {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.book-img img {
+    width: 100%;
+    border-radius: 8px;
+    max-width: 250px;
+}
+
+.book-img {
+    /* padding-left: 20px; */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+.book-info-share {
+    font-size: 35px;
+}
+
+.content-padding {
+    padding: 0 20px;
+}
+
+.slick-slider.custom-carousel.slick-initialized .ant-carousel.slick-prev {
+    left: 0px;
+    z-index: 10;
+    background: white;
+    border: 1px solid #848484;
+    border-radius: 100%;
+    width: 45px;
+    height: 45px;
+}
+
+.custom-card {
+    padding: 20px 10px;
+    max-width: 290px;
+}
+
+.slick-arrow.slick-next {
+    right: -25px;
+}
+
+.slick-arrow.slick-prev {
+    left: -15px;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+}
+
+.col-cus {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rating-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rating-total span {
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.commentDate {
+    margin-top: 10px;
+    color: grey;
+    font-size: small;
+}
+
+
+/* .slick-arrow.slick-next,
+.slick-arrow.slick-next {
+    right: 0px;
+    z-index: 10;
+    background: white;
+    border: 1px solid #848484;
+    border-radius: 100%;
+    width: 45px;
+    height: 45px;
+}
+
+.slick-arrow.slick-prev {
+    left: 0px;
+    z-index: 10;
+    background: white;
+    border: 1px solid #848484;
+    border-radius: 100%;
+    width: 45px;
+    height: 45px;
+}
+
+.slick-arrow.slick-prev :disabled,
+.slick-arrow.slick-next :disabled {
+    background: grey;
+} */

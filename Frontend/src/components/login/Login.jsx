@@ -36,7 +36,10 @@ const Login = () => {
     return (
         <div className="login">
             <Row>
-                <Col span={12} className="left">
+                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <div className="center-cropped" />
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={12} xl={12} className="left">
                     <h1 className="title">Login </h1>
                     <Form
                         name="basic"
@@ -85,9 +88,6 @@ const Login = () => {
                             </Row>
                         </Form.Item>
                     </Form>
-                </Col>
-                <Col span={12}>
-                    <div className="center-cropped" />
                 </Col>
             </Row>
         </div>

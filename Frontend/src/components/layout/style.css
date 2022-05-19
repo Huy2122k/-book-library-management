@@ -18,19 +18,28 @@
     padding: 20px 50px;
 }
 
+@media screen and (max-width: 400px) {
+    /* For mobile phones: */
+    .ant-layout-content {
+        padding: 20px 20px;
+    }
+}
+
 .wish-list-btn {
     font-size: 30px;
     color: aliceblue;
 }
 
 .wish-list-btn:hover {
-    color: rgb(58, 163, 255);
+    color: #2596be;
 }
 
 .wish-list-content {
     max-height: 500px;
     max-width: 375px;
     overflow-y: auto;
+    min-width: 200px;
+    min-height: 200px;
 }
 
 .wish-list-content-item {

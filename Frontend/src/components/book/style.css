@@ -18,7 +18,7 @@ img.bg-list {
 
 .book-info {
     padding: 20px;
-    height: 160px;
+    height: 185px;
 }
 
 .title-list {
@@ -65,4 +65,12 @@ div.ant-typography,
 .customPagination {
     text-align: center;
     margin-top: 35px;
+}
+
+.date-publish {
+    padding-left: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: small;
+    color: grey;
 }
