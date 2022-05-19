@@ -1,12 +1,15 @@
 const db = require("../models");
 const Book = db.book;
 const Category = db.category;
+const BookCategory = db.bookCategory;
 const Rating = db.rating;
+const Account = db.account;
 const Comment = db.comment;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
+const { findBookQuery } = require("./query-raw/book-raw-query");
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
     // Validate request
@@ -39,67 +42,11 @@ exports.create = (req, res) => {
 // Retrieve all Tutorials from the database.
 exports.findAll = async(req, res) => {
     console.log(req.query);
-    const {
-        page,
-        pageSize,
-        search,
-        ratingFilter,
-        categoryFilter,
-        authorFilter,
-        sortName,
-        sortAuthor,
-        sortCategory,
-        sortYear,
-    } = req.query;
-    const sortConfig = [
-        sortName && ["BookName", sortName],
-        sortAuthor && ["Author", sortAuthor],
-        sortCategory && [Category, "CategoryName", sortCategory],
-    ];
-    console.log(categoryFilter);
+
     try {
-        const { count, rows } = await Book.findAndCountAll({
-            limit: parseInt(pageSize),
-            offset: parseInt(page) - 1,
-            where: {
-                ...(search && {
-                    [Op.or]: [{
-                            BookName: {
-                                [Op.like]: `%${search}%`,
-                            },
-                        },
-                        {
-                            Author: {
-                                [Op.like]: `%${search}%`,
-                            },
-                        },
-                        {
-                            "$category.CategoryName$": {
-                                [Op.like]: `%${search}%`,
-                            },
-                        },
-                    ],
-                }),
-                ...(authorFilter && {
-                    Author: {
-                        [Op.in]: authorFilter,
-                    },
-                }),
-                ...(categoryFilter && {
-                    CategoryID: {
-                        [Op.in]: categoryFilter,
-                    },
-                }),
-            },
-            include: [{
-                model: Category,
-                as: "category",
-                attributes: ["CategoryName"],
-                required: false,
-            }, ],
-            order: sortConfig.filter((val) => val),
-        });
-        res.send({ total: count, docs: rows });
+        const [results, metadata] = await seq.query(findBookQuery(req));
+        res.send({ total: 1000, docs: results });
+        // res.send({ total: count, docs: rows });
     } catch (err) {
         console.log(err);
         res.status(500).send({
@@ -129,8 +76,7 @@ exports.findAllCategories = async(req, res) => {
         const [results, metadata] = await seq.query(`
         SELECT * FROM category `);
         const obj = results.reduce(function(accumulator, currentValue) {
-            accumulator[currentValue.CategoryID] =
-                currentValue.CategoryName.replaceAll("\t", "").split(" & ");
+            accumulator[currentValue.CategoryID] = currentValue.CategoryName;
             return accumulator;
         }, {});
         res.send(obj);
@@ -242,57 +188,91 @@ exports.findAllPublished = (req, res) => {
 };
 
 // get book information by ID
-exports.getInfo = async (req, res) => {
+exports.getInfo = async(req, res) => {
     const bookid = req.params.id;
     const token = req.headers["x-access-token"];
     if (token) {
         jwt.verify(token, config.secret, (err, decoded) => {
             if (err) {
-                return
+                return;
             }
             req.userId = decoded.id;
         });
     }
     try {
         const info = await Book.findByPk(bookid);
-        const category = await Category.findByPk(info.CategoryID);
-        const avgrating = await Rating.findOne({
-            where: {BookID: bookid},
-            attributes: [[seq.fn('avg', seq.col('rating')), 'average']],
-          });
-        const userRating = req.userId?await Rating.findOne({
-            where: {BookID: bookid, AccountID: req.userId},
-            attributes: ['rating']
-        }):null
-        const countRating = await Rating.findAll({
-            attributes: ['rating', [seq.fn('COUNT', seq.col('Rating')), 'count']],
-            where: {BookID: bookid},
-            group: ['Rating']
-        })
-        const totalRating = await Rating.findOne({
-            where: {BookID: bookid},
-            attributes: [[seq.fn('count', seq.col('rating')), 'total']],
-          });
-        const comment = await Comment.findAll({
-            where: {BookID: bookid},
+        const category = await BookCategory.findAll({
+            where: {
+                BookID: info.BookID,
+            },
             include: [{
-                model: Rating,
-                on:{
-                    col1: seq.where(seq.col("Comment.BookID"), "=", seq.col("Rating.BookID")),
-                    col2: seq.where(seq.col("Comment.AccountID"), "=", seq.col("Rating.AccountID"))
+                model: Category,
+                attributes: ["CategoryName"],
+            }, ],
+        });
+        const userRating = req.userId ?
+            await Rating.findOne({
+                where: { BookID: bookid, AccountID: req.userId },
+                attributes: ["rating"],
+            }) :
+            null;
+        const ratingCountResult = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+        };
+        const countRating = await Rating.findAll({
+            attributes: ["rating", [seq.fn("COUNT", seq.col("Rating")), "count"]],
+            where: { BookID: bookid },
+            group: ["Rating"],
+        });
+        countRating.forEach((rating) => {
+            if (rating.dataValues["rating"] in ratingCountResult) {
+                ratingCountResult[rating.dataValues["rating"]] =
+                    rating.dataValues["count"];
+            }
+        });
+
+        const comment = await Comment.findAll({
+            where: { BookID: bookid },
+            include: [{
+                    model: Rating,
+                    on: {
+                        col1: seq.where(
+                            seq.col("Comment.BookID"),
+                            "=",
+                            seq.col("Rating.BookID")
+                        ),
+                        col2: seq.where(
+                            seq.col("Comment.AccountID"),
+                            "=",
+                            seq.col("Rating.AccountID")
+                        ),
+                    },
+                    attributes: ["Rating"],
                 },
-                attributes: ['Rating']
-            }],
-            attributes: ['CommentID', 'AccountID', 'Comment'],
-        })
+                {
+                    model: Account,
+                    on: {
+                        col1: seq.where(
+                            seq.col("Comment.AccountID"),
+                            "=",
+                            seq.col("Account.AccountID")
+                        ),
+                    },
+                    attributes: ["UserName"],
+                },
+            ],
+            attributes: ["CommentID", "AccountID", "Comment", "CreateDate"],
+        });
         res.status(200).send({
-            bookInfo: info, 
-            category: category.CategoryName, 
-            avgRating: avgrating, 
-            countRating: countRating, 
-            totalRating: totalRating, 
+            bookInfo: info,
+            category: category.map((val) => val.category.CategoryName),
+            countRating: ratingCountResult,
             userRating: userRating,
-            comment: comment
+            comment: comment,
         });
     } catch (err) {
         console.log(err);
@@ -300,25 +280,39 @@ exports.getInfo = async (req, res) => {
             message: err.message || "Some error occurred while retrieving tutorials.",
         });
     }
-}
+};
 
 // Update book info
-exports.updateInfo = async (req, res) => {
-    const bookid = req.params.id
+exports.updateInfo = async(req, res) => {
+    const bookid = req.params.id;
     try {
         const beforeChange = await Book.findOne({
-            where: {BookID: bookid},
-            attributes: ['BookName', 'Author', 'Description', 'CategoryID', 'ImageURL', 'Price']
-        })
-        const result = await Book.update(
-            {BookName: req.body.BookName , Author: req.body.Author, Description: req.body.Description, CategoryID: req.body.Categoryid, ImageURL: req.body.Imageurl, Price: req.body.Price},
-            { where: { BookID: bookid } }
-          )
+            where: { BookID: bookid },
+            attributes: [
+                "BookName",
+                "Author",
+                "Description",
+                "CategoryID",
+                "ImageURL",
+                "Price",
+            ],
+        });
+        const result = await Book.update({
+            BookName: req.body.BookName,
+            Author: req.body.Author,
+            Description: req.body.Description,
+            CategoryID: req.body.Categoryid,
+            ImageURL: req.body.Imageurl,
+            Price: req.body.Price,
+        }, { where: { BookID: bookid } });
         if (result == 1) {
             res.send({
-                message: "Update successfully."});
+                message: "Update successfully.",
+            });
         } else {
-            if (JSON.stringify(req.body)===JSON.stringify(beforeChange.dataValues)){
+            if (
+                JSON.stringify(req.body) === JSON.stringify(beforeChange.dataValues)
+            ) {
                 res.send({
                     message: `Update successfully.`,
                 });
@@ -334,4 +328,4 @@ exports.updateInfo = async (req, res) => {
             message: error.message || "Some error occurred while retrieving tutorials.",
         });
     }
-}
+};
