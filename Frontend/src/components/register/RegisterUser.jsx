@@ -166,13 +166,13 @@ const RegistrationForm = () => {
                                 }
                             ]}>
                             <Select placeholder="select your gender">
-                                <Option key="male" value="male">
+                                <Option key="M" value="M">
                                     Male
                                 </Option>
-                                <Option key="female" value="female">
+                                <Option key="F" value="F">
                                     Female
                                 </Option>
-                                <Option key="other" value="other">
+                                <Option key="O" value="O">
                                     Other
                                 </Option>
                             </Select>

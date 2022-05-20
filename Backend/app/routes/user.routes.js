@@ -1,6 +1,6 @@
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/user.controller");
-
+const uploadCloud = require("../config/cloudinary.config");
 module.exports = function(app) {
     app.use(function(req, res, next) {
         res.header(
@@ -9,6 +9,11 @@ module.exports = function(app) {
         );
         next();
     });
+    app.post(
+        "/api/upload-avatar", [authJwt.verifyToken],
+        uploadCloud.userImg.single("avatar"),
+        controller.uploadAvatar
+    );
 
     app.get("/api/test/all", controller.allAccess);
 

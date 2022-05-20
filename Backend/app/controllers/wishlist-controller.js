@@ -60,7 +60,6 @@ exports.findAllByUser = async(req, res) => {
             }, ],
             // order: sortConfig.filter((val) => val),
         });
-        console.log(rows);
         res.send(rows);
     } catch (err) {
         console.log(err);

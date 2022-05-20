@@ -1,3 +1,5 @@
+const uploadCloud = require("../config/cloudinary.config");
+
 module.exports = (app) => {
     const books_controller = require("../controllers/book.controller.js");
 
@@ -5,7 +7,11 @@ module.exports = (app) => {
 
     // Create a new Tutorial
     router.post("/", books_controller.create);
-
+    router.post(
+        "/images",
+        uploadCloud.bookImg.single("bookImg"),
+        books_controller.uploadBookImage
+    ); // books_controller.create);
     // Retrieve all books_controller
     router.get("/", books_controller.findAll);
     // Retrieve top author

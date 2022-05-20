@@ -64,7 +64,7 @@ const BookDetail = () => {
         }
         try {
             const params = {
-                page: 0,
+                page: 1,
                 pageSize: 10,
                 search: category[Math.floor(Math.random() * category.length)]
             };
@@ -386,7 +386,7 @@ const BookDetail = () => {
                                                 }
                                                 content={
                                                     <div>
-                                                        <Rate display value={com.rating.Rating} />
+                                                        <Rate disabled value={com.rating.Rating} />
                                                         <p>{com.Comment}</p>
                                                         <p className="commentDate">
                                                             {moment(com.CreateDate).format(

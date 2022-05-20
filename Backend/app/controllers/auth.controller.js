@@ -3,9 +3,9 @@ const config = require("../config/auth.config");
 const Account = db.account;
 const { v4: uuidv4 } = require("uuid");
 const Op = db.Sequelize.Op;
-var sendToEmail = require("../ultis/mail");
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const sendToEmail = require("../ultis/mail");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const roles = require("../config/roles.config");
 
 exports.signup = (req, res) => {
@@ -44,9 +44,9 @@ exports.signin = (req, res) => {
             if (!user) {
                 return res.status(404).send({ message: "User Not found." });
             }
-            var passwordIsValid = bcrypt.compareSync(
+            const passwordIsValid = bcrypt.compareSync(
                 req.body.Password,
-                user.Password
+                user.dataValues.Password
             );
             if (!passwordIsValid) {
                 return res.status(401).send({

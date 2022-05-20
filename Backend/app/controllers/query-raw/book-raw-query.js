@@ -78,6 +78,9 @@ exports.findBookQuery = (request) => {
                     OR 'bookfind'.'ListCategoryName' LIKE "%${searchTitle}%")
                     ${authorFilerQuery}
                     ${sort}
-                    LIMIT 0,12`.replaceAll(`'`, "`");
+                    LIMIT ${parseInt(page) - 1},${pageSize}`.replaceAll(
+    `'`,
+    "`"
+  );
   return query;
 };

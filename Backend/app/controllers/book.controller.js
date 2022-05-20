@@ -10,6 +10,15 @@ const seq = db.sequelize;
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const { findBookQuery } = require("./query-raw/book-raw-query");
+
+exports.uploadBookImage = (req, res) => {
+    if (!req.file) {
+        res.status(400).send(new Error("Cannot uploaded book image!"));
+        return;
+    }
+    res.send(req.file);
+};
+
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
     // Validate request
