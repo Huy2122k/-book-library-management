@@ -1,4 +1,5 @@
 import {
+    BookFilled,
     BookOutlined,
     FacebookFilled,
     GooglePlusSquareFilled,
@@ -29,6 +30,7 @@ import moment from 'moment';
 import { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BookService from '../../../services/book-service';
+import { useBorrowList } from '../../contexts/use-borrow';
 import { useWishList } from '../../contexts/use-wishlist';
 import CardItem from '../CardItem';
 import { getRandomColor } from '../category-color';
@@ -41,8 +43,8 @@ const { Option } = Select;
 
 const colorRate = { 1: '#ff6f31', 2: '#ff9f02', 3: '#ffcf02', 4: '#9ace6a', 5: '#57bb8a' };
 const BookDetail = () => {
-    const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
-
+    const { addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
+    const { addToBorrowList, deleteFromBorrowList, checkExistedInBorrowList } = useBorrowList();
     const [bookDetail, setBookDetail] = useState();
     const [countRating, setCountRating] = useState({});
     const [category, setCategory] = useState();
@@ -246,39 +248,53 @@ const BookDetail = () => {
                                                 )}
                                             </div>
                                             <div className="book-info-action">
-                                                {checkExistedInWishList(bookDetail.BookID) ? (
+                                                <Button
+                                                    onClick={
+                                                        checkExistedInWishList(bookDetail.BookID)
+                                                            ? () =>
+                                                                  deleteFromWishList(
+                                                                      bookDetail.BookID
+                                                                  )
+                                                            : () => addToWishList(bookDetail)
+                                                    }
+                                                    icon={
+                                                        checkExistedInWishList(
+                                                            bookDetail.BookID
+                                                        ) ? (
+                                                            <HeartFilled size="large" />
+                                                        ) : (
+                                                            <HeartOutlined size="large" />
+                                                        )
+                                                    }
+                                                    type="default"
+                                                    size="large"
+                                                    style={{
+                                                        marginRight: '15px',
+                                                        marginBottom: '15px'
+                                                    }}>
+                                                    {checkExistedInWishList(bookDetail.BookID)
+                                                        ? 'Remove from Wishlist'
+                                                        : 'Add to Wishlist'}
+                                                </Button>
+                                                {checkExistedInBorrowList(bookDetail.BookID) ? (
                                                     <Button
-                                                        onClick={() =>
-                                                            deleteFromWishList(bookDetail.BookID)
-                                                        }
-                                                        icon={<HeartFilled size="large" />}
-                                                        type="default"
+                                                        icon={<BookFilled size="large" />}
+                                                        type="primary"
                                                         size="large"
-                                                        style={{
-                                                            marginRight: '15px',
-                                                            marginBottom: '15px'
-                                                        }}>
-                                                        Remove from Wishlist
+                                                        onClick={() =>
+                                                            deleteFromBorrowList(bookDetail.BookID)
+                                                        }>
+                                                        Remove from Borrow List
                                                     </Button>
                                                 ) : (
                                                     <Button
-                                                        onClick={() => addToWishList(bookDetail)}
-                                                        icon={<HeartOutlined size="large" />}
-                                                        type="default"
+                                                        icon={<BookOutlined size="large" />}
+                                                        type="primary"
                                                         size="large"
-                                                        style={{
-                                                            marginRight: '15px',
-                                                            marginBottom: '15px'
-                                                        }}>
-                                                        Add to Wishlist
+                                                        onClick={() => addToBorrowList(bookDetail)}>
+                                                        Add to Borrow
                                                     </Button>
                                                 )}
-                                                <Button
-                                                    icon={<BookOutlined size="large" />}
-                                                    type="primary"
-                                                    size="large">
-                                                    Add to Borrow
-                                                </Button>
                                             </div>
                                             <div className="book-info-share">
                                                 <Space direction="horizontal" size={16}>

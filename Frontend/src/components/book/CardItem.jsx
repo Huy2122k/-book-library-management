@@ -1,13 +1,16 @@
-import { BookOutlined, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { BookOutlined, BookTwoTone, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
 import { Avatar, Card, Tag, Tooltip, Typography } from 'antd';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import { useBorrowList } from '../contexts/use-borrow';
 import { useWishList } from '../contexts/use-wishlist';
 import { getRandomColor } from './category-color';
 const { Paragraph } = Typography;
 const CardItem = ({ book, loading, category } = props) => {
     const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
+    const { addToBorrowList, deleteFromBorrowList, checkExistedInBorrowList } = useBorrowList();
     const liked = checkExistedInWishList(book.BookID);
+    const borrowed = checkExistedInBorrowList(book.BookID);
     const navigate = useNavigate();
     const handleClickDetail = (bookID) => {
         navigate('/books/' + bookID, { replace: true });
@@ -42,7 +45,14 @@ const CardItem = ({ book, loading, category } = props) => {
                 ) : (
                     <HeartOutlined onClick={() => addToWishList(book)} />
                 ),
-                <BookOutlined key="lending" />
+                borrowed ? (
+                    <BookTwoTone
+                        twoToneColor="#52c41a"
+                        onClick={() => deleteFromBorrowList(book.BookID)}
+                    />
+                ) : (
+                    <BookOutlined onClick={() => addToBorrowList(book)} />
+                )
             ]}>
             <div className="book-info">
                 <p

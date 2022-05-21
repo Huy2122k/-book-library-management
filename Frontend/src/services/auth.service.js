@@ -13,6 +13,7 @@ const login = (form) => {
 const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('remember');
+    localStorage.removeItem('borrowList');
 };
 
 const getLocalUser = () => {

@@ -26,6 +26,25 @@ const addToWishList = (bookId) => {
 const removeFromWishList = (bookId) => {
     return axios_instance.delete(API_WISH_LIST + bookId);
 };
+
+const getBorrowList = () => {
+    const borrowList = JSON.parse(localStorage.getItem('borrowList'));
+    if (borrowList && borrowList.length > 0) {
+        return borrowList;
+    }
+    return [];
+};
+const addToBorrowList = (borrowList, book) => {
+    const newBorrowList = [...borrowList, book];
+    localStorage.setItem('borrowList', JSON.stringify(newBorrowList));
+    return newBorrowList;
+};
+const removeFromBorrowList = (borrowList, bookId) => {
+    const newBorrowList = borrowList.filter((value) => value.BookID !== bookId);
+    localStorage.setItem('borrowList', JSON.stringify(newBorrowList));
+    return newBorrowList;
+};
+
 const UserService = {
     removeFromWishList,
     addToWishList,
@@ -33,7 +52,10 @@ const UserService = {
     getUserBoard,
     getModeratorBoard,
     getAdminBoard,
-    getWishList
+    getWishList,
+    getBorrowList,
+    removeFromBorrowList,
+    addToBorrowList
 };
 
 export default UserService;

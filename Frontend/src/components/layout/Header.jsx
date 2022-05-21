@@ -1,15 +1,19 @@
-import { HeartFilled, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { HeartFilled, LogoutOutlined, ReadFilled, UserOutlined } from '@ant-design/icons';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/use-auth';
 import { ellipseByLength } from '../../auth/utils/string';
+import { useBorrowList } from '../contexts/use-borrow';
 import { useWishList } from '../contexts/use-wishlist';
+
 import './style.css';
 const HeaderCustom = () => {
     const navigate = useNavigate();
     const auth = useAuth();
     const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
+    const { borrowList, deleteFromBorrowList } = useBorrowList();
+
     const nav = [
         {
             label: 'Home',
@@ -67,6 +71,10 @@ const HeaderCustom = () => {
         e.stopPropagation();
         deleteFromWishList(bookId);
     };
+    const handleRemoveBorrowList = (bookId) => (e) => {
+        e.stopPropagation();
+        deleteFromBorrowList(bookId);
+    };
     const genItemWishList = (book) => {
         return (
             <Row gutter={[20, 25]}>
@@ -87,7 +95,31 @@ const HeaderCustom = () => {
             </Row>
         );
     };
+    const genItemBorrowList = (book) => {
+        return (
+            <Row gutter={[20, 25]}>
+                <Col span={8}>
+                    <img className="thumbnail" src={book.ImageURL} alt="" />
+                </Col>
+                <Col span={16} className="wish-list-content-item">
+                    <h4>{ellipseByLength(book.BookName, 60)}</h4>
+                    <p>{ellipseByLength(book.Author, 60)}</p>
+                    <Button
+                        shape="round"
+                        type="primary"
+                        onClick={handleRemoveBorrowList(book.BookID)}
+                        danger>
+                        Remove
+                    </Button>
+                </Col>
+            </Row>
+        );
+    };
     const handleWishListClick = (item, key) => {
+        if (item.key === 'borrow') {
+            navigate('/borrow/');
+            return;
+        }
         navigate('/books/' + item.key);
     };
     const genderWishList = () => {
@@ -104,6 +136,32 @@ const HeaderCustom = () => {
                 label: genItemWishList(book),
                 key: book.BookID
             };
+        });
+        return <Menu onClick={handleWishListClick} className="wish-list-content" items={list} />;
+    };
+    const genderBorrowList = () => {
+        if (borrowList.length <= 0) {
+            return (
+                <Menu
+                    className="wish-list-content"
+                    items={[{ label: <p style={{ textAlign: 'center' }}>Empty</p>, key: 'Empty' }]}
+                />
+            );
+        }
+        const list = borrowList.map((book) => {
+            return {
+                label: genItemBorrowList(book),
+                key: book.BookID
+            };
+        });
+        list.push({
+            label: (
+                <Button style={{ width: '100%', marginTop: '8px' }} type="primary" shape="round">
+                    {' '}
+                    Borrow Books{' '}
+                </Button>
+            ),
+            key: 'borrow'
         });
         return <Menu onClick={handleWishListClick} className="wish-list-content" items={list} />;
     };
@@ -127,14 +185,21 @@ const HeaderCustom = () => {
                                 placement="bottomLeft"
                                 overlay={genderWishList()}
                                 trigger={['click']}>
-                                <HeartFilled className="wish-list-btn" />
+                                <HeartFilled className="wish-list-btn btn-user-group" />
                             </Dropdown>
-                            <Dropdown.Button
-                                overlay={profile}
-                                style={{ borderRadius: '6px' }}
-                                placement="bottom"
-                                icon={<UserOutlined />}
-                            />
+                            <Dropdown
+                                placement="bottomLeft"
+                                overlay={genderBorrowList()}
+                                trigger={['click']}>
+                                <ReadFilled className="wish-list-btn btn-user-group" />
+                            </Dropdown>
+                            <Dropdown overlay={profile} placement="bottom">
+                                <Button
+                                    className="btn-user-group"
+                                    shape="circle"
+                                    icon={<UserOutlined />}
+                                />
+                            </Dropdown>
                         </div>
                     ) : (
                         <div className="classLogin">

@@ -11,7 +11,9 @@ import BoardAdmin from './components/BoardAdmin';
 import BoardUser from './components/BoardUser';
 import BookDetail from './components/book/detail/BookDetail';
 import ListBook from './components/book/ListBook';
+import ProvideBorrowList from './components/contexts/BorrowListProvider';
 import ProvideWishList from './components/contexts/WishListProvider';
+
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
 import Profile from './components/Profile';
@@ -20,40 +22,42 @@ const App = () => {
     return (
         <ProvideAuth>
             <ProvideWishList>
-                <Routes>
-                    <Route element={<LayoutCustom />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<RegistrationForm />} />
-                        <Route path="/books" element={<ListBook />} />
-                        <Route path="/books/:id" element={<BookDetail />} />
-                        <Route element={<RequireAuth role={['USER']} />}>
-                            <Route path="/user" element={<BoardUser />} />
+                <ProvideBorrowList>
+                    <Routes>
+                        <Route element={<LayoutCustom />}>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/home" element={<Home />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<RegistrationForm />} />
+                            <Route path="/books" element={<ListBook />} />
+                            <Route path="/books/:id" element={<BookDetail />} />
+                            <Route element={<RequireAuth role={['USER']} />}>
+                                <Route path="/user" element={<BoardUser />} />
+                            </Route>
+                            <Route element={<RequireAuth role={['ADMIN']} />}>
+                                <Route path="/admin" element={<BoardAdmin />} />
+                            </Route>
+                            <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
+                                <Route path="/profile" element={<Profile />} />
+                            </Route>
+                            <Route
+                                path="*"
+                                element={
+                                    <Result
+                                        status="404"
+                                        title="404"
+                                        subTitle="Sorry, the page you visited does not exist."
+                                        extra={
+                                            <Button type="primary" onClick={() => navigate('/')}>
+                                                Back Home
+                                            </Button>
+                                        }
+                                    />
+                                }
+                            />
                         </Route>
-                        <Route element={<RequireAuth role={['ADMIN']} />}>
-                            <Route path="/admin" element={<BoardAdmin />} />
-                        </Route>
-                        <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
-                            <Route path="/profile" element={<Profile />} />
-                        </Route>
-                        <Route
-                            path="*"
-                            element={
-                                <Result
-                                    status="404"
-                                    title="404"
-                                    subTitle="Sorry, the page you visited does not exist."
-                                    extra={
-                                        <Button type="primary" onClick={() => navigate('/')}>
-                                            Back Home
-                                        </Button>
-                                    }
-                                />
-                            }
-                        />
-                    </Route>
-                </Routes>
+                    </Routes>
+                </ProvideBorrowList>
             </ProvideWishList>
         </ProvideAuth>
     );
