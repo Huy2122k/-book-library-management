@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const LendingBookList = sequelize.define("bookitem", {
+    const LendingBookList = sequelize.define("lendingbooklist", {
         LendingID: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,

@@ -18,7 +18,7 @@ exports.signup = (req, res) => {
             Role: req.body.Role ? req.body.Role : roles.USER,
         })
         .then((user) => {
-            const token = jwt.sign({ id: user.AccountID }, config.secret, {
+            const token = jwt.sign({ id: user.AccountID , role: user.Role}, config.secret, {
                 expiresIn: 86400, // 24 hours
             });
             res.status(200).send({ info: user, accessToken: token });

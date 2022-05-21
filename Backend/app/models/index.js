@@ -51,8 +51,8 @@ db.lendingList.belongsTo(db.account, {foreignKey: 'AccountID'});
 db.lendingList.hasMany(db.lendingBookList, {foreignKey: 'LendingID'});
 db.lendingBookList.belongsTo(db.lendingList, {foreignKey: 'LendingID'});
 
-db.bookItem.hasMany(db.lendingBookList, {foreignKey: 'BookID'});
-db.lendingBookList.belongsTo(db.bookItem, {foreignKey: 'BookID'});
+db.bookItem.hasMany(db.lendingBookList, {foreignKey: 'BookItemID'});
+db.lendingBookList.belongsTo(db.bookItem, {foreignKey: 'BookItemID'});
 
 db.account.hasMany(db.wishlist, {foreignKey: 'AccountID'})
 db.wishlist.belongsTo(db.account, {foreignKey: 'AccountID'})
