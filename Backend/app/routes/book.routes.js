@@ -1,4 +1,5 @@
 const uploadCloud = require("../config/cloudinary.config");
+const { authJwt } = require("../middleware");
 
 module.exports = (app) => {
     const books_controller = require("../controllers/book.controller.js");
@@ -34,6 +35,12 @@ module.exports = (app) => {
 
     // Delete all books_controller
     router.delete("/", books_controller.deleteAll);
+
+    router.post("/rating/:id", [authJwt.verifyToken], books_controller.addRating);
+    router.post(
+        "/comment/:id", [authJwt.verifyToken],
+        books_controller.addComment
+    );
 
     app.use("/api/books", router);
 };

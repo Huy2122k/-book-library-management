@@ -7,6 +7,7 @@ const Account = db.account;
 const Comment = db.comment;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
+const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const { findBookQuery } = require("./query-raw/book-raw-query");
@@ -335,6 +336,63 @@ exports.updateInfo = async(req, res) => {
         console.log(error);
         res.status(500).send({
             message: error.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+};
+
+// add rating
+
+exports.addRating = async(req, res) => {
+    const bookid = req.params.id;
+    const rating = req.body.rate;
+    try {
+        const find = await Rating.findOne({
+            where: { BookID: bookid, AccountID: req.userId },
+        });
+        const result = find ?
+            await Rating.update({
+                BookID: bookid,
+                AccountID: req.userId,
+                Rating: rating,
+                where: { BookID: bookid, AccountID: req.userId },
+            }) :
+            await Rating.create({
+                BookID: bookid,
+                AccountID: req.userId,
+                Rating: rating,
+            });
+        res.send({
+            message: "Rate successfully.",
+            rating: { rating: rating },
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while add rating",
+        });
+    }
+};
+//add comment
+exports.addComment = async(req, res) => {
+    const bookid = req.params.id;
+    const comment = req.body.comment;
+    try {
+        const result = await Comment.create({
+            CommentID: uuidv4(),
+            BookID: bookid,
+            AccountID: req.userId,
+            Comment: comment,
+            CreateDate: new Date(),
+            Status: "waiting",
+        });
+        res.send({
+            comment: result,
+            message: "Comment successfully, waiting for admin approval",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while add Comment",
         });
     }
 };

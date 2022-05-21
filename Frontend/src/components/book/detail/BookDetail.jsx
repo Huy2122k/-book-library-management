@@ -15,6 +15,8 @@ import {
     Col,
     Collapse,
     Comment,
+    Form,
+    Input,
     message,
     Progress,
     Rate,
@@ -29,6 +31,7 @@ import {
 import moment from 'moment';
 import { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../../auth/use-auth';
 import BookService from '../../../services/book-service';
 import { useBorrowList } from '../../contexts/use-borrow';
 import { useWishList } from '../../contexts/use-wishlist';
@@ -36,6 +39,8 @@ import CardItem from '../CardItem';
 import { getRandomColor } from '../category-color';
 import { CreatorArrowNext, CreatorArrowPrev } from './Arrow';
 import './style.css';
+
+const { TextArea } = Input;
 
 const { Paragraph, Text } = Typography;
 const { Panel } = Collapse;
@@ -49,11 +54,11 @@ const BookDetail = () => {
     const [countRating, setCountRating] = useState({});
     const [category, setCategory] = useState();
     const [recommendBooks, setRecommendBooks] = useState();
-
     const [comment, setComment] = useState([]);
     const [userRated, setUserRated] = useState(null);
-
-    const [searchTitle, setSearchTitle] = useState('');
+    const auth = useAuth();
+    const user = auth.user;
+    const [commentInput] = Form.useForm();
     const [notFound, setNotFound] = useState(false);
     const [fetching, setFetching] = useState(false);
 
@@ -105,7 +110,39 @@ const BookDetail = () => {
             message.error('Some things went wrong');
         }
     };
-    const handleRating = (value) => {};
+    const handleRating = async (value) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        try {
+            const res = await BookService.postRating(params.id, { rate: value });
+            if (res && res.data) {
+                message.success(res.data.message);
+                setUserRated(res.data.rating);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error('something went wrong');
+        }
+    };
+
+    const handleComment = async (value) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        try {
+            const res = await BookService.postComment(params.id, { comment: value.commentContent });
+            if (res && res.data) {
+                message.success(res.data.message);
+                commentInput.resetFields();
+            }
+        } catch (error) {
+            console.log(error);
+            message.error('something went wrong');
+        }
+    };
     const renderRating = () => {
         const totalRateCount = Object.values(countRating).reduce(
             (partialSum, a) => partialSum + a,
@@ -242,7 +279,7 @@ const BookDetail = () => {
                                             <div className="book-info-rate">
                                                 <span>Rating: </span>{' '}
                                                 {userRated ? (
-                                                    <span>Thanks to rating</span>
+                                                    <Rate disabled value={userRated.rating} />
                                                 ) : (
                                                     <Rate onChange={handleRating} />
                                                 )}
@@ -402,7 +439,12 @@ const BookDetail = () => {
                                                 }
                                                 content={
                                                     <div>
-                                                        <Rate disabled value={com.rating.Rating} />
+                                                        <Rate
+                                                            disabled
+                                                            value={
+                                                                com.rating ? com.rating.Rating : 0
+                                                            }
+                                                        />
                                                         <p>{com.Comment}</p>
                                                         <p className="commentDate">
                                                             {moment(com.CreateDate).format(
@@ -417,6 +459,30 @@ const BookDetail = () => {
                                             />
                                         );
                                     })}
+                                    <Form
+                                        name="comment"
+                                        form={commentInput}
+                                        onFinish={(values) => {
+                                            handleComment(values);
+                                        }}>
+                                        <Form.Item
+                                            name="commentContent"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Please input comment!'
+                                                }
+                                            ]}>
+                                            <TextArea placeholder="Comment..."></TextArea>
+                                        </Form.Item>
+                                        <Button
+                                            style={{ marginTop: '15px' }}
+                                            type="primary"
+                                            htmlType="submit"
+                                            shape="round">
+                                            Comment
+                                        </Button>
+                                    </Form>
                                 </div>
                             </Col>
                         </Row>

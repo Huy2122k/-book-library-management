@@ -15,7 +15,7 @@ function useProvideWishList() {
             return;
         }
         try {
-            const res = await UserService.getWishList();
+            const res = await UserService.getWishList(auth.user.info.AccountID);
             if (res && res.data) {
                 setWishList(res.data);
             }

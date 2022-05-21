@@ -8,7 +8,7 @@ module.exports = (app) => {
     router.post("/", [authJwt.verifyToken], wishlistController.create);
 
     // Retrieve all wishlistController
-    router.get("/", [authJwt.verifyToken], wishlistController.findAllByUser);
+    router.get("/:id", wishlistController.findAllByUser);
     // Retrieve top author
 
     // Delete a book in wishlist with id

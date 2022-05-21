@@ -14,12 +14,20 @@ const getTopAuthor = (params) => {
 const getBookDetail = (bookId) => {
     return axios_instance.get(API_URL + bookId);
 };
+const postComment = (bookId, body) => {
+    return axios_instance.post(API_URL + 'comment/' + bookId, body);
+};
+const postRating = (bookId, body) => {
+    return axios_instance.post(API_URL + 'rating/' + bookId, body);
+};
 
 const BookService = {
     getBooks,
     getBookDetail,
     getCategories,
-    getTopAuthor
+    getTopAuthor,
+    postComment,
+    postRating
 };
 
 export default BookService;

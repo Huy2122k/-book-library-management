@@ -10,16 +10,29 @@ function useProvideBorrowList() {
     const auth = useAuth();
 
     const checkExistedInBorrowList = (bookID) => {
+        if (!auth.user) {
+            return false;
+        }
         if (borrowList.find((value) => value.BookID === bookID)) {
             return true;
         }
         return false;
     };
     const addToBorrowList = (book) => {
+        if (!auth.user) {
+            setBorrowList([]);
+            message.error('Please login to borrow book');
+            return;
+        }
         setBorrowList(UserService.addToBorrowList(borrowList, book));
         message.success('Added to borrow list successfully!');
     };
     const deleteFromBorrowList = (bookId) => {
+        if (!auth.user) {
+            setBorrowList([]);
+            message.error('Please login to borrow book');
+            return;
+        }
         setBorrowList(UserService.removeFromBorrowList(borrowList, bookId));
         message.success('Remove from borrow list successfully!');
     };

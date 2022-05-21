@@ -45,14 +45,10 @@ exports.create = (req, res) => {
 };
 
 exports.findAllByUser = async(req, res) => {
-    if (!req.userId) {
-        res.status(401).send({ message: "Unauthorized!" });
-        return;
-    }
     try {
         const rows = await Book.findAll({
             where: {
-                "$wishlists.AccountID$": req.userId,
+                "$wishlists.AccountID$": req.params.id,
             },
             include: [{
                 model: WishList,
