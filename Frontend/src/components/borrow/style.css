@@ -1,0 +1,46 @@
+.list-book {
+    padding: 20px;
+}
+
+@media screen and (max-width: 400px) {
+    /* For mobile phones: */
+    .list-book {
+        padding: 0px;
+    }
+}
+
+.head-row {
+    text-align: center;
+}
+
+.book-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.img-book {
+    width: 140px;
+    border-radius: 8px;
+}
+
+.info {
+    margin-left: 20px;
+}
+
+.foot-row {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-submit {
+    width: 200px;
+    font-size: 18px;
+    line-height: 18px;
+    height: 50px;
+}
+
+.btn-mobile {
+    width: 140px;
+    margin-top: 10px;
+}

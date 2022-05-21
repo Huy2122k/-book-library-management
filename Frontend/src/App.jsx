@@ -14,6 +14,7 @@ import ListBook from './components/book/ListBook';
 import ProvideBorrowList from './components/contexts/BorrowListProvider';
 import ProvideWishList from './components/contexts/WishListProvider';
 
+import BorrowList from './components/borrow/borrow-list';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
 import Profile from './components/Profile';
@@ -33,6 +34,7 @@ const App = () => {
                             <Route path="/books/:id" element={<BookDetail />} />
                             <Route element={<RequireAuth role={['USER']} />}>
                                 <Route path="/user" element={<BoardUser />} />
+                                <Route path="/borrow" element={<BorrowList />} />
                             </Route>
                             <Route element={<RequireAuth role={['ADMIN']} />}>
                                 <Route path="/admin" element={<BoardAdmin />} />
