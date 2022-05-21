@@ -1,4 +1,4 @@
-import { useAuth } from '../auth/use-auth';
+import { useAuth } from '../../auth/use-auth';
 
 const Profile = () => {
     const auth = useAuth();

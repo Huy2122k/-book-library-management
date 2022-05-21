@@ -1,6 +1,6 @@
 import axios_instance from './custom-axios';
 
-const API_URL = 'http://localhost:8080/api/test/';
+const API_URL = 'http://localhost:8080/api/';
 const API_WISH_LIST = 'http://localhost:8080/api/wishlist/';
 const getPublicContent = () => {
     return axios_instance.get(API_URL + 'all');
@@ -8,6 +8,9 @@ const getPublicContent = () => {
 
 const getUserBoard = () => {
     return axios_instance.get(API_URL + 'user');
+};
+const getAccountInfo = (id) => {
+    return axios_instance.get(API_URL + 'account/' + id);
 };
 
 const getModeratorBoard = () => {
@@ -17,8 +20,8 @@ const getModeratorBoard = () => {
 const getAdminBoard = () => {
     return axios_instance.get(API_URL + 'admin');
 };
-const getWishList = () => {
-    return axios_instance.get(API_WISH_LIST);
+const getWishList = (id) => {
+    return axios_instance.get(API_WISH_LIST + id);
 };
 const addToWishList = (bookId) => {
     return axios_instance.post(API_WISH_LIST, { BookID: bookId });
@@ -48,6 +51,7 @@ const removeFromBorrowList = (borrowList, bookId) => {
 const UserService = {
     removeFromWishList,
     addToWishList,
+    getAccountInfo,
     getPublicContent,
     getUserBoard,
     getModeratorBoard,

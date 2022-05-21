@@ -17,7 +17,8 @@ import ProvideWishList from './components/contexts/WishListProvider';
 import BorrowList from './components/borrow/borrow-list';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
-import Profile from './components/Profile';
+import Account from './components/user/Account';
+import Profile from './components/user/Profile';
 const App = () => {
     const navigate = useNavigate();
     return (
@@ -32,6 +33,7 @@ const App = () => {
                             <Route path="/register" element={<RegistrationForm />} />
                             <Route path="/books" element={<ListBook />} />
                             <Route path="/books/:id" element={<BookDetail />} />
+                            <Route path="/profile/:id" element={<Account />} />
                             <Route element={<RequireAuth role={['USER']} />}>
                                 <Route path="/user" element={<BoardUser />} />
                                 <Route path="/borrow" element={<BorrowList />} />

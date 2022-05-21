@@ -1,0 +1,100 @@
+.avatarHolder {
+    margin-bottom: 24px;
+    text-align: center;
+    margin-top: 16px;
+}
+
+.avatarHolder>img {
+    width: 104px;
+    height: 104px;
+    margin-bottom: 20px;
+}
+
+.avatarHolder .name {
+    margin-bottom: 4px;
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 28px;
+}
+
+@media screen and (max-width: 1000px) {
+    /* For mobile phones: */
+    .detail {
+        padding: 0 30px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    /* For mobile phones: */
+    .detail {
+        padding: 0 15px;
+    }
+}
+
+.detail p {
+    position: relative;
+    margin-bottom: 8px;
+    padding-left: 26px;
+    font-size: 14px;
+}
+
+.detail p:last-child {
+    margin-bottom: 0;
+}
+
+.detail i {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 14px;
+    height: 14px;
+}
+
+.tagsTitle,
+.teamTitle {
+    margin-bottom: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.tags .ant-tag {
+    margin-bottom: 8px;
+}
+
+.team {
+    padding: 12px;
+}
+
+.team .ant-avatar {
+    margin-right: 12px;
+}
+
+.team a {
+    display: block;
+    margin-bottom: 24px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    transition: color 0.3s;
+}
+
+.intro {
+    padding: 0 16px;
+    text-align: center;
+}
+
+.iconInfo {
+    margin-right: 8px;
+}
+
+.tabsCard {
+    min-height: 100%;
+}
+
+.tabs-content {
+    padding: 10px 25px;
+    max-height: 1000px;
+    overflow: auto;
+}
