@@ -1,0 +1,362 @@
+{
+	"info": {
+		"_postman_id": "b992c6e2-3a8b-4fba-b0bd-dec090f51bab",
+		"name": "auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15044798"
+	},
+	"item": [
+		{
+			"name": "SignUp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"UserName\": \"admin2\",\r\n        \"Password\": \"2\",\r\n        \"Address\": \"address test\",\r\n        \"Email\": \"admin2@gmail.com\",\r\n        \"Phone\": \"0324547452\",\r\n        \"Role\" : \"ADMIN\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\": \"wwwhuy@gmail.com\",\r\n    \"Password\": \"huyhihi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\": \"wwwhuy212@gmail.com\",\r\n    \"Password\": \"bhqry38262\",\r\n    \"NewPassword\": \"huyhihi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/change-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\": \"wwwhuy212@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/books?page=1&pageSize=12&search=The Blood&sortName=asc&sortYear=desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "12"
+						},
+						{
+							"key": "search",
+							"value": "The Blood"
+						},
+						{
+							"key": "sortName",
+							"value": "asc"
+						},
+						{
+							"key": "sortYear",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book Detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/books/0e56926a-b830-43f0-823e-2338783d1c79",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books",
+						"0e56926a-b830-43f0-823e-2338783d1c79"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wishlist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZjODQ5OTc4LWVlODktNDhmYi1iMjk2LWE1YTJiMWZmYWMyYiIsImlhdCI6MTY1MjUwNjYyNiwiZXhwIjoxNjUyNTkzMDI2fQ.vljXaOVRq4rGekHcxVFq_O92wcEQaUdOAboMfagHcoM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/wishlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"wishlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wishlist Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImMzNGFmMmM0LTIxYTMtNDNlMy05NjI0LTAzMDdmYzk1MzM1NSIsImlhdCI6MTY1MjQ5Njg5NiwiZXhwIjoxNjUyNTgzMjk2fQ.wDMNVMb_o1a_aKehGEG6GtS0wLdGvmv12BW5bZON260",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"BookID\":\"198bfbc8-3083-4460-9b74-ab3e880bb406\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/wishlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"wishlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wishlist Create Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZjODQ5OTc4LWVlODktNDhmYi1iMjk2LWE1YTJiMWZmYWMyYiIsImlhdCI6MTY1MjUxMDMyMCwiZXhwIjoxNjUyNTk2NzIwfQ.11CieAawwyzygxR1qyAq9x5cbCU78OwW7KfLRZdJ9oI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"BookID\":\"0007a29b-babc-46a1-9b79-c9e763c14ed2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/wishlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"wishlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UploadImageBook",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"ahihi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/books/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UploadUserImage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "avatar",
+							"type": "file",
+							"src": "/D:/BG/lavender-2560x1440-field-sky-mountain-provence-france-europe-4k-16530.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/profile/images",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"profile",
+						"images"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
