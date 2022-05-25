@@ -5,13 +5,15 @@ import {
     MobileOutlined,
     TeamOutlined
 } from '@ant-design/icons';
-import { Avatar, Card, Col, Divider, message, Row } from 'antd';
+import { Avatar, Card, Col, Divider, Row } from 'antd';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import UserService from '../../services/user.service';
 import './style.css';
 import CommentTabs from './tabs/Comment';
-
+import LendingListInfo from './tabs/Lending/LendingListInfo';
+import RatingList from './tabs/RatingList';
 const tabList = [
     {
         key: 'comment',
@@ -22,8 +24,8 @@ const tabList = [
         tab: 'Rating'
     },
     {
-        key: 'borrow',
-        tab: 'Book Borrow'
+        key: 'lending',
+        tab: 'Book Lending'
     }
 ];
 
@@ -31,6 +33,9 @@ const Account = () => {
     const params = useParams();
     const [currentUser, setCurrentUser] = useState();
     const [commentInfo, setCommentInfo] = useState([]);
+    const [ratingInfo, setRatingInfo] = useState([]);
+    const [lendingInfo, setLendingInfo] = useState([]);
+
     const [wishList, setWishList] = useState();
     const [loading, setLoading] = useState(false);
     const [tabKey, setTabKey] = useState('comment');
@@ -41,10 +46,10 @@ const Account = () => {
             tab = <CommentTabs commentInfo={commentInfo} />;
         }
         if (tabValue === 'rating') {
-            tab = 'rating';
+            tab = <RatingList ratingInfo={ratingInfo} />;
         }
-        if (tabValue === 'borrow') {
-            tab = 'borrow';
+        if (tabValue === 'lending') {
+            tab = <LendingListInfo lendingInfo={lendingInfo} />;
         }
         return (
             <div className="tabs-content" key={tabValue}>
@@ -61,6 +66,9 @@ const Account = () => {
             console.log(userData.data.commentInfo);
             setCurrentUser(userData.data.accountInfo);
             setCommentInfo(userData.data.commentInfo);
+            setRatingInfo(userData.data.ratingInfo);
+            setRatingInfo(userData.data.ratingInfo);
+            setLendingInfo(userData.data.lendingInfo);
         } catch (error) {
             console.log(error);
             setLoading(false);
@@ -118,7 +126,7 @@ const Account = () => {
                                 </p>
                                 <p>
                                     <CalendarOutlined className="iconInfo" />
-                                    {currentUser.Birthday}
+                                    {moment(currentUser.Birthday).format('DD-MM-YYYY')}
                                 </p>
                                 <p>
                                     <TeamOutlined className="iconInfo" />
@@ -150,7 +158,7 @@ const Account = () => {
                                     {wishList &&
                                         wishList.map((item) => (
                                             <Col key={item.BookID} lg={24} xl={12}>
-                                                <Link to={'/abc'}>
+                                                <Link to={'/books/' + item.BookID}>
                                                     <Avatar size="large" src={item.ImageURL} />
                                                     {item.BookName}
                                                 </Link>

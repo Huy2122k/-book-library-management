@@ -8,7 +8,7 @@ const CommentTabs = ({ commentInfo }) => {
             commentByBook[comment.BookID] = {
                 name: comment.book.BookName,
                 img: comment.book.ImageURL,
-                rate: comment.rating ? comment.rating : 0,
+                rate: comment.rating ? comment.rating.Rating : 0,
                 listComment: []
             };
         });

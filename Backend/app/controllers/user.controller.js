@@ -46,8 +46,7 @@ exports.getAccountInfo = async(req, res) => {
         });
     }
     const userinfo =
-        req.userId === req.params.id || req.role === "admin" ?
-        [
+        req.userId === req.params.id || req.role === "admin" ? [
             "UserName",
             "Introduction",
             "Birthday",
@@ -57,8 +56,7 @@ exports.getAccountInfo = async(req, res) => {
             "Phone",
             "IdentityNum",
             "Address",
-        ] :
-        ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
+        ] : ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
     try {
         const info = await Account.findOne({
             where: { AccountID: accountid },
@@ -118,7 +116,13 @@ exports.getAccountInfo = async(req, res) => {
                 }, ],
                 attributes: ["LendingID"],
             }, ],
-            attributes: ["LendingID", "CreateDate", "DueDate", "ReturnDate"],
+            attributes: [
+                "LendingID",
+                "CreateDate",
+                "DueDate",
+                "ReturnDate",
+                "Status",
+            ],
         });
         res.status(200).send({
             accountInfo: info,
