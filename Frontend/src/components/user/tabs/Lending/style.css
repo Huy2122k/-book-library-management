@@ -1,0 +1,69 @@
+.lendingHeader {
+    padding: 10px 20px;
+}
+
+.headerInfo {
+    position: relative;
+    text-align: center;
+}
+
+.headerInfo>span {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: grey;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.headerInfo>p {
+    margin: 0;
+    color: black;
+    font-size: 20px;
+    line-height: 35px;
+}
+
+.headerInfo>em {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 56px;
+    background-color: rgb(194, 194, 194);
+}
+
+.headerLendingCollapse {
+    padding: 0px 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.book-info-borrow {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.book-info-borrow-left {
+    text-align: center;
+}
+
+.book-info-borrow-left {
+    width: 40%;
+}
+
+.book-info-borrow-left img {
+    width: 150px;
+    border-radius: 8px;
+}
+
+.group-custom .ant-checkbox+span {
+    width: 100%;
+}
+
+.collapse-borrow {
+    max-height: 600px;
+    overflow: auto;
+}
