@@ -249,6 +249,14 @@ const BookDetail = () => {
                                             <div className="book-info-author">
                                                 <b>Author:</b> {' ' + bookDetail.Author}
                                             </div>
+                                            {bookDetail.Chapter && (
+                                                <div className="book-info-author">
+                                                    {'Series: ' +
+                                                        bookDetail.Series +
+                                                        ', Chapter: ' +
+                                                        bookDetail.Chapter}
+                                                </div>
+                                            )}
                                             <div className="book-info-publisher">
                                                 <i>{'Publisher: ' + bookDetail.Publisher}</i>
                                             </div>
