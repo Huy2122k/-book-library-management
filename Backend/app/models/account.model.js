@@ -41,6 +41,21 @@ module.exports = (sequelize, Sequelize) => {
         Status: {
             type: Sequelize.STRING,
         },
+        EmailStatus: {
+            type: Sequelize.STRING,
+        },
+        IdentityStatus: {
+            type: Sequelize.STRING,
+        },
+        FrontsideURL: {
+            type: Sequelize.STRING,
+        },
+        BacksideURL: {
+            type: Sequelize.STRING,
+        },
+        FaceURL: {
+            type: Sequelize.STRING,
+        },
     });
 
     return Account;

@@ -33,7 +33,49 @@ exports.moderatorBoard = (req, res) => {
     res.status(200).send("Moderator Content.");
 };
 
-exports.getAccountInfo = async(req, res) => {
+// Send Identity Card Info
+exports.addIdentity = async(req, res) => {
+    const accountid = req.params.id;
+    try {
+        const status = await Account.findOne({
+            where: { AccountID: accountid },
+            attributes: [
+                "IdentityStatus"
+            ],
+        });
+        if (status.IdentityStatus=="confirmed" || status.IdentityStatus=="waiting"){
+            res.send({
+                message: "Can't add identity info since IdentityStatus is confirmed or waiting",
+            });
+        }
+        else{
+            const result = await Account.update({
+                IdentityNum: req.body.IdentityNum,
+                FrontsideURL: req.body.FrontsideURL,
+                BacksideURL: req.body.BacksideURL,
+                FaceURL: req.body.FaceURL,
+                IdentityStatus: "waiting"
+            }, { where: { AccountID: accountid } });
+            if (result == 1) {
+                res.send({
+                    message: "Add complete.",
+                });
+            } else {
+                res.send({
+                    message: `Cannot add Identity Images with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+};
+
+// Get User Info
+exports.getInfo = async(req, res) => {
     const accountid = req.params.id;
     const token = req.headers["x-access-token"];
     if (token) {
@@ -46,7 +88,8 @@ exports.getAccountInfo = async(req, res) => {
         });
     }
     const userinfo =
-        req.userId === req.params.id || req.role === "admin" ? [
+        req.userId === req.params.id || req.role === "ADMIN" ?
+        [
             "UserName",
             "Introduction",
             "Birthday",
@@ -54,9 +97,13 @@ exports.getAccountInfo = async(req, res) => {
             "ImageURL",
             "Email",
             "Phone",
-            "IdentityNum",
             "Address",
-        ] : ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
+            "IdentityNum",
+            "FrontsideURL",
+            "BacksideURL",
+            "FaceURL"
+        ] :
+        ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
     try {
         const info = await Account.findOne({
             where: { AccountID: accountid },
@@ -110,19 +157,13 @@ exports.getAccountInfo = async(req, res) => {
                     model: BookItem,
                     include: [{
                         model: Book,
-                        attribute: ["BookID", "BookName", "Author"],
+                        attributes: ["BookID", "BookName", "Author"],
                     }, ],
-                    attribute: ["BookItemID"],
+                    attributes: ["BookItemID"],
                 }, ],
                 attributes: ["LendingID"],
             }, ],
-            attributes: [
-                "LendingID",
-                "CreateDate",
-                "DueDate",
-                "ReturnDate",
-                "Status",
-            ],
+            attributes: ["LendingID", "CreateDate", "DueDate", "ReturnDate", "Status"],
         });
         res.status(200).send({
             accountInfo: info,
@@ -134,6 +175,64 @@ exports.getAccountInfo = async(req, res) => {
         console.log(err);
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving tutorials.",
+        });
+    }
+};
+
+// Update user info
+exports.updateInfo = async(req, res) => {
+    const accountid = req.params.id;
+    try {
+        const beforeChange = await Account.findOne({
+            where: { AccountID: accountid },
+            attributes: [
+                "UserName",
+                "Introduction",
+                "Gender",
+                "Birthday",
+                "Address",
+                "Email",
+                "Phone",
+                "ImageURL"
+            ],
+        });
+        const result = await Account.update({
+            UserName: req.body.UserName,
+            Introduction: req.body.Introduction,
+            Gender: req.body.Gender,
+            Birthday: req.body.Birthday,
+            Address: req.body.Address,
+            Email: req.body.Email,
+            Phone: req.body.Phone,
+            ImageURL: req.body.ImageURL,
+        }, { where: { AccountID: accountid } });
+        if (result == 1) {
+            if (beforeChange.Email != req.body.Email){
+                res.send({
+                    message: "Need email confirmation.",
+                });
+            }else{
+                res.send({
+                    message: "No need confirmation.",
+                });
+            }
+        } else {
+            if (
+                JSON.stringify(req.body) === JSON.stringify(beforeChange.dataValues)
+            ) {
+                res.send({
+                    message: `Update successfully.`,
+                });
+            } else {
+                res.send({
+                    message: `Cannot update Account with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while retrieving tutorials.",
         });
     }
 };

@@ -28,7 +28,7 @@ const isAdmin = (req, res, next) => {
     User.findByPk(req.userId).then((user) => {
         user.getRoles().then((roles) => {
             for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name === "admin") {
+                if (roles[i].name === "ADMIN") {
                     next();
                     return;
                 }
@@ -41,7 +41,19 @@ const isAdmin = (req, res, next) => {
     });
 };
 
+const verifyUserParam = (req, res, next) => {
+    let id = req.params.id;
+
+    if (id!=req.userId) {
+        return res.status(403).send({
+            message: "No permission!",
+        });
+    }
+    next();
+};
+
 const authJwt = {
+    verifyUserParam: verifyUserParam,
     verifyToken: verifyToken,
     isAdmin: isAdmin,
 };

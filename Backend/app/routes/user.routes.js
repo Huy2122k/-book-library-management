@@ -23,5 +23,7 @@ module.exports = function(app) {
         "/api/admin", [authJwt.verifyToken, authJwt.isAdmin],
         controller.adminBoard
     );
-    app.get("/api/account/:id", controller.getAccountInfo);
+    app.get("/api/account/:id", controller.getInfo);
+    app.put("/api/account/:id", [authJwt.verifyToken, authJwt.verifyUserParam], controller.updateInfo);
+    app.put("/api/account/addidentity/:id", [authJwt.verifyToken, authJwt.verifyUserParam], controller.addIdentity);
 };

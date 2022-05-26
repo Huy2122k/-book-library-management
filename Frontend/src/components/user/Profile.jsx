@@ -12,8 +12,8 @@ const Profile = () => {
                 </h3>
             </header>
             <p>
-                <strong>Token:</strong> {user.accessToken.substring(0, 20)} ...{' '}
-                {user.accessToken.substr(user.accessToken.length - 20)}
+                <strong>Token:</strong> {' '}
+                {user.accessToken}
             </p>
             <p>
                 <strong>Id:</strong> {user.info.AccountID}

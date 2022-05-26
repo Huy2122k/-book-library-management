@@ -14,7 +14,9 @@ exports.signup = (req, res) => {
             ...req.body,
             Password: bcrypt.hashSync(req.body.Password, 8),
             AccountID: uuidv4(),
-            Status: "unconfirmed_email",
+            Status: "available",
+            EmailStatus: "unconfirmed",
+            IdentityStatus: "unconfirmed",
             Role: req.body.Role ? req.body.Role : roles.USER,
         })
         .then((user) => {

@@ -33,6 +33,7 @@ require("./app/routes/book.routes")(app);
 require("./app/routes/wishlist.routes")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
+require("./app/routes/admin.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.NODE_DOCKER_PORT || 8080;
