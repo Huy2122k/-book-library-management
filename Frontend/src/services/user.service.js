@@ -2,15 +2,25 @@ import axios_instance from './custom-axios';
 
 const API_URL = 'http://localhost:8080/api/';
 const API_WISH_LIST = 'http://localhost:8080/api/wishlist/';
+const API_AUTH = 'http://localhost:8080/api/auth/';
+
 const getPublicContent = () => {
     return axios_instance.get(API_URL + 'all');
 };
-
+const uploadAvatar = (fileFormData) => {
+    return axios_instance.post(API_URL + 'upload-avatar', fileFormData);
+};
 const getUserBoard = () => {
     return axios_instance.get(API_URL + 'user');
 };
 const getAccountInfo = (id) => {
     return axios_instance.get(API_URL + 'account/' + id);
+};
+const updateAccountInfo = (id, body) => {
+    return axios_instance.put(API_URL + 'account/' + id, body);
+};
+const changePassword = (body) => {
+    return axios_instance.put(API_AUTH + 'change-password', body);
 };
 
 const getModeratorBoard = () => {
@@ -59,7 +69,10 @@ const UserService = {
     getWishList,
     getBorrowList,
     removeFromBorrowList,
-    addToBorrowList
+    addToBorrowList,
+    uploadAvatar,
+    updateAccountInfo,
+    changePassword
 };
 
 export default UserService;

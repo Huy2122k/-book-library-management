@@ -1,14 +1,15 @@
 import {
     CalendarOutlined,
     ContactsOutlined,
+    EditFilled,
     HomeOutlined,
     MobileOutlined,
     TeamOutlined
 } from '@ant-design/icons';
-import { Avatar, Card, Col, Divider, Row } from 'antd';
+import { Avatar, Card, Col, Divider, Image, Row } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import UserService from '../../services/user.service';
 import './style.css';
 import CommentTabs from './tabs/Comment';
@@ -39,6 +40,8 @@ const Account = () => {
     const [wishList, setWishList] = useState();
     const [loading, setLoading] = useState(false);
     const [tabKey, setTabKey] = useState('comment');
+
+    const navigate = useNavigate();
 
     const renderChildrenByTabKey = (tabValue) => {
         let tab;
@@ -87,6 +90,9 @@ const Account = () => {
             message.error('Cannot get wishlist!');
         }
     };
+    const editProfile = () => {
+        navigate('/profile/edit/' + params.id);
+    };
     useEffect(() => {
         fetchWishListData();
         fetchAccountData();
@@ -104,26 +110,42 @@ const Account = () => {
                     {!loading && currentUser && (
                         <div>
                             <div className="avatarHolder">
-                                <img
-                                    alt=""
+                                <Image
+                                    className="avatarHolder-img"
                                     src={
                                         currentUser.ImageURL
                                             ? currentUser.ImageURL
                                             : 'https://joeschmoe.io/api/v1/random'
                                     }
+                                    alt="avatar"
                                 />
-                                <div className="name">{currentUser.UserName}</div>
-                                <div>{currentUser.IdentityNum}</div>
+
+                                <div className="name">
+                                    {currentUser.UserName}{' '}
+                                    <span>
+                                        {currentUser.Email && (
+                                            <EditFilled
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={editProfile}
+                                            />
+                                        )}
+                                    </span>
+                                </div>
+                                {currentUser.IdentityNum && <div>{currentUser.IdentityNum}</div>}
                             </div>
                             <div className="detail">
-                                <p>
-                                    <ContactsOutlined className="iconInfo" />
-                                    {currentUser.Email}
-                                </p>
-                                <p>
-                                    <MobileOutlined className="iconInfo" />
-                                    {currentUser.Phone}
-                                </p>
+                                {currentUser.Email && (
+                                    <p>
+                                        <ContactsOutlined className="iconInfo" />
+                                        {currentUser.Email}
+                                    </p>
+                                )}
+                                {currentUser.Phone && (
+                                    <p>
+                                        <MobileOutlined className="iconInfo" />
+                                        {currentUser.Phone}
+                                    </p>
+                                )}
                                 <p>
                                     <CalendarOutlined className="iconInfo" />
                                     {moment(currentUser.Birthday).format('DD-MM-YYYY')}
@@ -137,10 +159,12 @@ const Account = () => {
                                             ? 'Male'
                                             : 'Other')}
                                 </p>
-                                <p>
-                                    <HomeOutlined className="iconInfo" />
-                                    {currentUser.Address}
-                                </p>
+                                {currentUser.Address && (
+                                    <p>
+                                        <HomeOutlined className="iconInfo" />
+                                        {currentUser.Address}
+                                    </p>
+                                )}
                             </div>
                             <Divider dashed />
                             <div className="intro">

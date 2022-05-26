@@ -2,7 +2,7 @@ import axios from 'axios';
 import AuthService from './auth.service';
 
 const axios_instance = axios.create({
-    timeout: 3000
+    // timeout: 3000
 });
 
 const responseSuccessHandler = (response) => {
@@ -10,7 +10,8 @@ const responseSuccessHandler = (response) => {
 };
 
 const responseErrorHandler = (error) => {
-    if (error.response.status === 401 || error.response.status === 403) {
+    console.log(error);
+    if ((error.response && error.response.status === 401) || error.response.status === 403) {
         AuthService.logout();
         window.location.href = '/login';
     }

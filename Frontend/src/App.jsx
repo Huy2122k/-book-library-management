@@ -18,6 +18,7 @@ import BorrowList from './components/borrow/borrow-list';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
 import Account from './components/user/Account';
+import ProfileEdit from './components/user/edit/ProfileEdit';
 import Profile from './components/user/Profile';
 const App = () => {
     const navigate = useNavigate();
@@ -37,6 +38,7 @@ const App = () => {
                             <Route element={<RequireAuth role={['USER']} />}>
                                 <Route path="/user" element={<BoardUser />} />
                                 <Route path="/borrow" element={<BorrowList />} />
+                                <Route path="/profile/edit/:id" element={<ProfileEdit />} />
                             </Route>
                             <Route element={<RequireAuth role={['ADMIN']} />}>
                                 <Route path="/admin" element={<BoardAdmin />} />
