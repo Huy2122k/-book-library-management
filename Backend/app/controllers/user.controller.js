@@ -18,6 +18,7 @@ exports.userBoard = (req, res) => {
     res.status(200).send("User Content.");
 };
 exports.uploadAvatar = (req, res) => {
+    console.log(req.file.path);
     if (!req.file) {
         res.status(400).send(new Error("Cannot uploaded book image!"));
         return;
@@ -39,22 +40,22 @@ exports.addIdentity = async(req, res) => {
     try {
         const status = await Account.findOne({
             where: { AccountID: accountid },
-            attributes: [
-                "IdentityStatus"
-            ],
+            attributes: ["IdentityStatus"],
         });
-        if (status.IdentityStatus=="confirmed" || status.IdentityStatus=="waiting"){
+        if (
+            status.IdentityStatus == "confirmed" ||
+            status.IdentityStatus == "waiting"
+        ) {
             res.send({
                 message: "Can't add identity info since IdentityStatus is confirmed or waiting",
             });
-        }
-        else{
+        } else {
             const result = await Account.update({
                 IdentityNum: req.body.IdentityNum,
                 FrontsideURL: req.body.FrontsideURL,
                 BacksideURL: req.body.BacksideURL,
                 FaceURL: req.body.FaceURL,
-                IdentityStatus: "waiting"
+                IdentityStatus: "waiting",
             }, { where: { AccountID: accountid } });
             if (result == 1) {
                 res.send({
@@ -101,7 +102,7 @@ exports.getInfo = async(req, res) => {
             "IdentityNum",
             "FrontsideURL",
             "BacksideURL",
-            "FaceURL"
+            "FaceURL",
         ] :
         ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
     try {
@@ -157,13 +158,27 @@ exports.getInfo = async(req, res) => {
                     model: BookItem,
                     include: [{
                         model: Book,
-                        attributes: ["BookID", "BookName", "Author"],
+                        attributes: [
+                            "BookID",
+                            "BookName",
+                            "Author",
+                            "Series",
+                            "Chapter",
+                            "PublishedDate",
+                            "ImageURL",
+                        ],
                     }, ],
                     attributes: ["BookItemID"],
                 }, ],
                 attributes: ["LendingID"],
             }, ],
-            attributes: ["LendingID", "CreateDate", "DueDate", "ReturnDate", "Status"],
+            attributes: [
+                "LendingID",
+                "CreateDate",
+                "DueDate",
+                "ReturnDate",
+                "Status",
+            ],
         });
         res.status(200).send({
             accountInfo: info,
@@ -193,7 +208,7 @@ exports.updateInfo = async(req, res) => {
                 "Address",
                 "Email",
                 "Phone",
-                "ImageURL"
+                "ImageURL",
             ],
         });
         const result = await Account.update({
@@ -207,11 +222,11 @@ exports.updateInfo = async(req, res) => {
             ImageURL: req.body.ImageURL,
         }, { where: { AccountID: accountid } });
         if (result == 1) {
-            if (beforeChange.Email != req.body.Email){
+            if (beforeChange.Email != req.body.Email) {
                 res.send({
                     message: "Need email confirmation.",
                 });
-            }else{
+            } else {
                 res.send({
                     message: "No need confirmation.",
                 });

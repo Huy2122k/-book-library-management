@@ -12,6 +12,7 @@ exports.signup = (req, res) => {
     // Save User to Database
     Account.create({
             ...req.body,
+            IdentityNum: undefined,
             Password: bcrypt.hashSync(req.body.Password, 8),
             AccountID: uuidv4(),
             Status: "available",
@@ -20,9 +21,11 @@ exports.signup = (req, res) => {
             Role: req.body.Role ? req.body.Role : roles.USER,
         })
         .then((user) => {
-            const token = jwt.sign({ id: user.AccountID , role: user.Role}, config.secret, {
-                expiresIn: 86400, // 24 hours
-            });
+            const token = jwt.sign({ id: user.AccountID, role: user.Role },
+                config.secret, {
+                    expiresIn: 86400, // 24 hours
+                }
+            );
             res.status(200).send({ info: user, accessToken: token });
         })
         .catch((err) => {
