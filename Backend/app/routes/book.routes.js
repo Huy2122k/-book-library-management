@@ -26,10 +26,6 @@ module.exports = (app) => {
     // router.get("/:id", books_controller.findOne);
     router.get("/:id", books_controller.getInfo);
 
-    // Update a Tutorial with id
-    // router.put("/:id", books_controller.update);
-    router.put("/:id", books_controller.updateInfo);
-
     // Delete a Tutorial with id
     router.delete("/:id", books_controller.delete);
 

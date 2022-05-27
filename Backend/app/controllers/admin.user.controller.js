@@ -6,6 +6,27 @@ const Account = db.account;
 exports.checkIdentity = async(req, res) => {
     const accountid = req.params.id;
     try {
+        const account = await Account.findOne({
+            where: { AccountID: accountid }
+        })
+        if (!account.AccountID){
+            res.status(400).send({
+                message: "Cannot find account",
+            });
+            return;
+        }
+        if (account.IdentityStatus=="confirmed"){
+            res.status(400).send({
+                message: "Identity has already been confirmed",
+            });
+            return;
+        }
+        if (account.IdentityStatus=="unconfirmed"){
+            res.status(400).send({
+                message: "Identity is not exist",
+            });
+            return;
+        }
         if (req.body.confirmed == 0){
             const result = await Account.update({
                 IdentityNum: null,

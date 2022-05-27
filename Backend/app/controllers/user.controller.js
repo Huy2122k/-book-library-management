@@ -38,34 +38,39 @@ exports.moderatorBoard = (req, res) => {
 exports.addIdentity = async(req, res) => {
     const accountid = req.params.id;
     try {
-        const status = await Account.findOne({
-            where: { AccountID: accountid },
-            attributes: ["IdentityStatus"],
+        const account = await Account.findOne({
+            where: { AccountID: accountid }
         });
+        if (!account.AccountID){
+            res.status(400).send({
+                message: "Cannot find account",
+            });
+            return;
+        }
         if (
-            status.IdentityStatus == "confirmed" ||
-            status.IdentityStatus == "waiting"
+            account.IdentityStatus == "confirmed" ||
+            account.IdentityStatus == "waiting"
         ) {
-            res.send({
+            res.status(400).send({
                 message: "Can't add identity info since IdentityStatus is confirmed or waiting",
             });
+            return;
+        }
+        const result = await Account.update({
+            IdentityNum: req.body.IdentityNum,
+            FrontsideURL: req.body.FrontsideURL,
+            BacksideURL: req.body.BacksideURL,
+            FaceURL: req.body.FaceURL,
+            IdentityStatus: "waiting",
+        }, { where: { AccountID: accountid } });
+        if (result == 1) {
+            res.send({
+                message: "Add complete.",
+            });
         } else {
-            const result = await Account.update({
-                IdentityNum: req.body.IdentityNum,
-                FrontsideURL: req.body.FrontsideURL,
-                BacksideURL: req.body.BacksideURL,
-                FaceURL: req.body.FaceURL,
-                IdentityStatus: "waiting",
-            }, { where: { AccountID: accountid } });
-            if (result == 1) {
-                res.send({
-                    message: "Add complete.",
-                });
-            } else {
-                res.send({
-                    message: `Cannot add Identity Images with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
-                });
-            }
+            res.send({
+                message: `Cannot add Identity Images with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
+            });
         }
     } catch (error) {
         console.log(error);
