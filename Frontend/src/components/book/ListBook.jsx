@@ -10,6 +10,7 @@ import {
     Rate,
     Row,
     Select,
+    Spin,
     Tag,
     Typography
 } from 'antd';
@@ -52,7 +53,7 @@ const ListBook = () => {
 
     const [topAuthor, setTopAuthor] = useState([]);
     const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
+    const [total, setTotal] = useState();
 
     const pageSize = 12;
     const [formFilter] = Form.useForm();
@@ -88,7 +89,11 @@ const ListBook = () => {
             message.error('Cannot get Top Authors!');
         }
     };
-    const fetchBookData = async (current = 1, search = searchTitle) => {
+    const fetchBookData = async (
+        current = 1,
+        search = searchTitle,
+        sortYear = formFilter.getFieldValue('sortYear')
+    ) => {
         try {
             const field = formFilter.getFieldsValue('categoryFilter').categoryFilter;
             const convertCategoryFilter =
@@ -102,7 +107,8 @@ const ListBook = () => {
                 page: current,
                 pageSize: pageSize,
                 search: search,
-                categoryFilter: convertCategoryFilter
+                categoryFilter: convertCategoryFilter,
+                sortYear: sortYear
             };
             console.log(params);
             const res = await BookService.getBooks(params);
@@ -132,11 +138,19 @@ const ListBook = () => {
         setSearchTitle(searchParams.get('searchTitle'));
         setSearchInput(searchParams.get('searchTitle'));
         fetchBookData(1, searchParams.get('searchTitle'));
-    }, [searchParams]);
+    }, [searchParams.get('searchTitle')]);
     useEffect(() => {
         fetchCategories();
         fetchTopAuthor();
     }, []);
+    useEffect(() => {
+        // if (!searchParams.get('dateSort')) return;
+        formFilter.setFieldsValue({
+            ...formFilter.getFieldsValue(),
+            sortYear: searchParams.get('dateSort')
+        });
+        fetchBookData(1, searchTitle, searchParams.get('dateSort'));
+    }, [searchParams.get('dateSort')]);
 
     useEffect(() => {
         fetchBookData(page);
@@ -150,6 +164,7 @@ const ListBook = () => {
                 // initialValues={{}}
                 size="large"
                 onValuesChange={handleFilterChange}
+                initialValues={{ sortYear: searchParams.get('dateSort') }}
                 scrollToFirstError>
                 <Row gutter={[20, 20]}>
                     <Col xs={24} sm={6} md={6} lg={5} xl={5}>
@@ -160,6 +175,26 @@ const ListBook = () => {
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}>
                             <Rate />
+                        </Form.Item>
+                        <Form.Item
+                            label="Year"
+                            labelCol={{ span: 24 }}
+                            name="yearFilter"
+                            wrapperCol={{ span: 24 }}>
+                            <Select
+                                mode="multiple"
+                                showArrow
+                                tagRender={tagRender}
+                                style={{ width: '100%' }}
+                                options={[
+                                    { label: '2018', value: 2018 },
+                                    { label: '2017', value: 2017 },
+                                    { label: '2016', value: 2016 },
+                                    { label: '2015', value: 2015 },
+                                    { label: '2014', value: 2014 },
+                                    { label: '2013', value: 2013 }
+                                ]}
+                            />
                         </Form.Item>
                         <Form.Item
                             label="Category"
@@ -204,9 +239,20 @@ const ListBook = () => {
                                     size="large"
                                     style={{ width: '100%', marginBottom: '0px' }}
                                 />
+                                {total || total === 0 ? (
+                                    <div style={{ padding: '15px 15px 0px' }}>
+                                        <b> {'Total: ' + total + ' books find'} </b>
+                                    </div>
+                                ) : (
+                                    <div style={{ padding: '15px 15px 0px' }}>
+                                        <b> {'Total: ' + 0 + ' books find'} </b>
+                                    </div>
+                                )}
                             </Col>
                             <Col span={24}>
-                                <Collapse defaultActiveKey={['0']} ghost={true}>
+                                <Collapse
+                                    defaultActiveKey={searchParams.get('dateSort') ? ['1'] : ['0']}
+                                    ghost={true}>
                                     <Panel header="Sort by" key="1">
                                         <Row>
                                             <Col xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -253,25 +299,27 @@ const ListBook = () => {
                                 </Collapse>
                             </Col>
                             <Col span={24}>
-                                <Row gutter={[16, 16]}>
-                                    {bookList.map((book, index) => {
-                                        return (
-                                            <Col
-                                                key={book.BookID}
-                                                xs={24}
-                                                sm={12}
-                                                md={12}
-                                                lg={6}
-                                                xl={6}>
-                                                <CardItem
-                                                    book={book}
-                                                    loading={loadingData}
-                                                    category={category}
-                                                />
-                                            </Col>
-                                        );
-                                    })}
-                                </Row>
+                                <Spin tip="Loading..." spinning={loadingData}>
+                                    <Row gutter={[16, 16]}>
+                                        {bookList.map((book, index) => {
+                                            return (
+                                                <Col
+                                                    key={book.BookID}
+                                                    xs={24}
+                                                    sm={12}
+                                                    md={12}
+                                                    lg={6}
+                                                    xl={6}>
+                                                    <CardItem
+                                                        book={book}
+                                                        loading={loadingData}
+                                                        category={category}
+                                                    />
+                                                </Col>
+                                            );
+                                        })}
+                                    </Row>
+                                </Spin>
                             </Col>
                             <Col span={24}>
                                 <Pagination
@@ -280,7 +328,7 @@ const ListBook = () => {
                                     pageSize={pageSize}
                                     showSizeChanger={false}
                                     current={page}
-                                    total={total}
+                                    total={total ? total : 0}
                                 />
                             </Col>
                         </Row>

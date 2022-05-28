@@ -54,8 +54,10 @@ exports.findAll = async(req, res) => {
     console.log(req.query);
 
     try {
-        const [results, metadata] = await seq.query(findBookQuery(req));
-        res.send({ total: 1000, docs: results });
+        const queryRaw = findBookQuery(req);
+        const [results, metadata] = await seq.query(queryRaw.query);
+        const [count, meta] = await seq.query(queryRaw.countQuery);
+        res.send({ total: count[0].Total, docs: results });
         // res.send({ total: count, docs: rows });
     } catch (err) {
         console.log(err);
