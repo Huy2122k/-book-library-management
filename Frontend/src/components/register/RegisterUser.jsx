@@ -120,19 +120,6 @@ const RegistrationForm = () => {
                             />
                         </Form.Item>
                         <Form.Item
-                            name="IdentityNum"
-                            label="CMND"
-                            tooltip="Your Identify Number"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your Identify Number!',
-                                    whitespace: true
-                                }
-                            ]}>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
                             name="Address"
                             label="Address"
                             tooltip="Your Address"

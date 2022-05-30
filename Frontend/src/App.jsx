@@ -14,6 +14,7 @@ import ListBook from './components/book/ListBook';
 import ProvideBorrowList from './components/contexts/BorrowListProvider';
 import ProvideWishList from './components/contexts/WishListProvider';
 
+import AboutPage from './components/about/AboutPage';
 import BorrowList from './components/borrow/borrow-list';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
@@ -30,6 +31,7 @@ const App = () => {
                         <Route element={<LayoutCustom />}>
                             <Route path="/" element={<Home />} />
                             <Route path="/home" element={<Home />} />
+                            <Route path="/about" element={<AboutPage />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<RegistrationForm />} />
                             <Route path="/books" element={<ListBook />} />

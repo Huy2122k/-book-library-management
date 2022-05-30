@@ -1,4 +1,10 @@
-import { HeartFilled, LogoutOutlined, ReadFilled, UserOutlined } from '@ant-design/icons';
+import {
+    EditOutlined,
+    HeartFilled,
+    LogoutOutlined,
+    ReadFilled,
+    UserOutlined
+} from '@ant-design/icons';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import { useNavigate } from 'react-router-dom';
@@ -14,32 +20,84 @@ const HeaderCustom = () => {
     const { wishList, addToWishList, deleteFromWishList, checkExistedInWishList } = useWishList();
     const { borrowList, deleteFromBorrowList } = useBorrowList();
 
-    const nav = [
+    const categoryListHeader = [
+        {
+            label: 'Fiction',
+            key: 'fiction'
+        },
+        {
+            label: 'Literature',
+            key: 'literature'
+        },
+        {
+            label: 'History',
+            key: 'history'
+        },
+        {
+            label: 'Romance',
+            key: 'romance'
+        },
+        {
+            label: 'Novel',
+            key: 'novel'
+        },
+        {
+            label: 'Fantasy',
+            key: 'fantasy'
+        }
+    ];
+    const searchCategory = (item, key) => {
+        navigate('/books?searchTitle=' + item.key);
+    };
+    const navUser = [
         {
             label: 'Home',
             key: 'home'
         },
         {
-            label: 'Admin',
-            key: 'admin'
-        },
-        {
-            label: 'User',
-            key: 'user'
-        },
-        {
             label: 'Books',
             key: 'books'
+        },
+        {
+            label: (
+                <Dropdown
+                    placement="bottomLeft"
+                    onClick={(e) => e.stopPropagation()}
+                    overlay={
+                        <Menu
+                            theme="dark"
+                            style={{ backgroundColor: '#2dbbed' }}
+                            className="category-header-content"
+                            items={categoryListHeader}
+                            onClick={searchCategory}
+                        />
+                    }
+                    trigger={['click']}>
+                    <div>Category</div>
+                </Dropdown>
+            ),
+            key: '#'
+        },
+        {
+            label: 'New Book',
+            key: 'books?dateSort=desc'
+        },
+        {
+            label: 'About Us',
+            key: 'about'
         }
     ];
     const handleProfileClick = (item, key) => {
         switch (item.key) {
+            case 'editProfile':
+                navigate('/profile/edit/' + auth.user.info.AccountID);
+                break;
             case 'logout':
                 auth.logout();
                 navigate('/');
                 break;
             case 'profile':
-                navigate('/profile');
+                navigate('/profile/' + auth.user.info.AccountID);
                 break;
             default:
                 navigate('/');
@@ -51,22 +109,40 @@ const HeaderCustom = () => {
             onClick={handleProfileClick}
             items={[
                 {
-                    label: <UserOutlined />,
-                    key: 'profile',
-                    icon: 'Profile '
+                    label: (
+                        <div className="div-info-profile-drop">
+                            <span >Profile</span> <UserOutlined />
+                        </div>
+                    ),
+                    key: 'profile'
                 },
                 {
-                    label: <LogoutOutlined />,
-                    key: 'logout',
-                    icon: 'Logout '
+                    label: (
+                        <div className="div-info-profile-drop">
+                            <span >Edit Profile</span>
+                            <EditOutlined />
+                        </div>
+                    ),
+                    key: 'editProfile'
+                },
+                {
+                    label: (
+                        <div className="div-info-profile-drop">
+                            <span >Logout</span>
+                            <LogoutOutlined />
+                        </div>
+                    ),
+                    key: 'logout'
                 }
             ]}
         />
     );
     const navigateHeader = (item, key) => {
         console.log(item.key);
+        if (item.key == '#') return;
         navigate('/' + item.key);
     };
+
     const handleRemoveWishList = (bookId) => (e) => {
         e.stopPropagation();
         deleteFromWishList(bookId);
@@ -173,7 +249,7 @@ const HeaderCustom = () => {
                         theme="dark"
                         mode="horizontal"
                         defaultSelectedKeys={['home']}
-                        items={nav}
+                        items={navUser}
                         onClick={navigateHeader}
                     />
                 </Col>

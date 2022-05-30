@@ -4,10 +4,11 @@
     margin-top: 16px;
 }
 
-.avatarHolder>img {
-    width: 104px;
-    height: 104px;
+.avatarHolder-img {
+    width: 150px;
+    height: 150px;
     margin-bottom: 20px;
+    border-radius: 50%;
 }
 
 .avatarHolder .name {

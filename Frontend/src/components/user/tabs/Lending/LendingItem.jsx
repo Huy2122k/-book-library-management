@@ -1,6 +1,8 @@
 import { Badge, Button, Checkbox, Col, Collapse, Row } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../../../../auth/use-auth';
 import './style.css';
 const { Panel } = Collapse;
 
@@ -24,7 +26,6 @@ const renderBookInfo = (book, bookItemId) => {
                 <Col xs={24} sm={24} md={12} lg={16} xl={16} className="right-info">
                     <h3>{book.BookName}</h3>
                     <p>{book.Author}</p>
-                    <p>{book.Author}</p>
                     {book.Series && (
                         <p>{'Series: ' + book.Author + ', Chapter: ' + book.Chapter}</p>
                     )}
@@ -35,6 +36,8 @@ const renderBookInfo = (book, bookItemId) => {
     );
 };
 const LendingItem = ({ lendDetail, ind }) => {
+    const params = useParams();
+    const { user } = useAuth();
     const [checkedList, setCheckedList] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
 
@@ -91,14 +94,16 @@ const LendingItem = ({ lendDetail, ind }) => {
                             value={checkedList}
                             onChange={onChange}
                         />
-                        <div style={{ marginTop: '20px', padding: '0px 15px' }}>
-                            <Button
-                                type="primary"
-                                disabled={lendDetail.Status != 'borrow'}
-                                style={{ width: '100%' }}>
-                                Return{`(${checkedList.length})`}
-                            </Button>
-                        </div>
+                        {params.id && user && user.info.AccountID == params.id && (
+                            <div style={{ marginTop: '20px', padding: '0px 15px' }}>
+                                <Button
+                                    type="primary"
+                                    disabled={lendDetail.Status != 'borrow'}
+                                    style={{ width: '100%' }}>
+                                    Return{`(${checkedList.length})`}
+                                </Button>
+                            </div>
+                        )}
                     </Panel>
                 </Collapse>
             </Badge.Ribbon>

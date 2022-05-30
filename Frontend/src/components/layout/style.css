@@ -57,3 +57,18 @@ img.thumbnail {
 .btn-user-group {
     margin-left: 15px;
 }
+
+.category-header-content {
+    min-width: 200px;
+    /* background-color: #7eb1c3; */
+}
+
+.div-info-profile-drop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.div-info-profile-drop span {
+    margin-right: 5px;
+}
