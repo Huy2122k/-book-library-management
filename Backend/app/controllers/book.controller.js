@@ -274,7 +274,7 @@ exports.getInfo = async(req, res) => {
                             seq.col("Account.AccountID")
                         ),
                     },
-                    attributes: ["UserName"],
+                    attributes: ["UserName", "ImageURL"],
                 },
             ],
             attributes: ["CommentID", "AccountID", "Comment", "CreateDate"],

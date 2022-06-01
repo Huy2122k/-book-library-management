@@ -9,6 +9,7 @@ const LendingList = db.lendingList;
 const LendingBookList = db.lendingBookList;
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
+const sendToEmail = require("../ultis/mail");
 
 exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
@@ -33,15 +34,58 @@ exports.adminBoard = (req, res) => {
 exports.moderatorBoard = (req, res) => {
     res.status(200).send("Moderator Content.");
 };
-
+exports.verifyEmail = async(req, res) => {
+    try {
+        jwt.verify(req.body.token, config.secret, async(err, decoded) => {
+            if (err) {
+                return res.status(404).send({
+                    message: "Wrong code",
+                });
+            }
+            if (req.userId === decoded.id) {
+                const result = await Account.update({
+                    EmailStatus: "confirmed",
+                }, { where: { AccountID: req.userId } });
+                res.status(200).send({ message: "verify successfully" });
+            }
+        });
+    } catch (error) {
+        res.status(500).send({ message: "verify email error" });
+    }
+};
+// Send email verify
+exports.sendVerifyEmail = async(req, res) => {
+    const email = req.query.email;
+    try {
+        const token = jwt.sign({ id: req.userId }, config.secret, {
+            expiresIn: 1800, // 30 minutes
+        });
+        await sendToEmail(
+            email,
+            "Book Library Verification Email",
+            `<h1>Welcome</h1><p> Your Verification Code:${token} </p>`,
+            async(error, info) => {
+                if (!error) {
+                    res.send({ message: "Verification sent" });
+                } else {
+                    console.log(error);
+                    res.status(404).send({ message: "Can not send to your email!" });
+                    return false;
+                }
+            }
+        );
+    } catch (error) {
+        res.status(500).send({ message: "Can not send to your email!" });
+    }
+};
 // Send Identity Card Info
 exports.addIdentity = async(req, res) => {
-    const accountid = req.params.id;
+    const accountid = req.userId;
     try {
         const account = await Account.findOne({
-            where: { AccountID: accountid }
+            where: { AccountID: accountid },
         });
-        if (!account.AccountID){
+        if (!account.AccountID) {
             res.status(400).send({
                 message: "Cannot find account",
             });
@@ -57,10 +101,10 @@ exports.addIdentity = async(req, res) => {
             return;
         }
         const result = await Account.update({
-            IdentityNum: req.body.IdentityNum,
-            FrontsideURL: req.body.FrontsideURL,
-            BacksideURL: req.body.BacksideURL,
-            FaceURL: req.body.FaceURL,
+            IdentityNum: req.query.num,
+            FrontsideURL: req.files.front[0].path,
+            BacksideURL: req.files.back[0].path,
+            FaceURL: req.files.face[0].path,
             IdentityStatus: "waiting",
         }, { where: { AccountID: accountid } });
         if (result == 1) {
@@ -113,7 +157,8 @@ exports.getInfo = async(req, res) => {
     try {
         const info = await Account.findOne({
             where: { AccountID: accountid },
-            attributes: userinfo,
+            ...(req.userId !== req.params.id &&
+                req.role !== "ADMIN" && { attributes: userinfo }),
         });
         const bookRating = await Rating.findAll({
             where: { AccountID: accountid },

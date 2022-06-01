@@ -21,6 +21,17 @@ const storageBook = new CloudinaryStorage({
         cb(null, file.originalname);
     },
 });
+const storageIdentify = new CloudinaryStorage({
+    cloudinary,
+    allowedFormats: ["jpg", "png"],
+    params: {
+        folder: "CMND",
+        public_id: (req, file) => req.userId + "-" + file.fieldname,
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    },
+});
 const storageUser = new CloudinaryStorage({
     cloudinary,
     allowedFormats: ["jpg", "png"],
@@ -34,6 +45,7 @@ const storageUser = new CloudinaryStorage({
 });
 const bookImg = multer({ storage: storageBook });
 const userImg = multer({ storage: storageUser });
+const userIdentifyImg = multer({ storage: storageIdentify });
 
-const uploadCloud = { bookImg, userImg };
+const uploadCloud = { bookImg, userImg, userIdentifyImg };
 module.exports = uploadCloud;

@@ -5,8 +5,10 @@ import { isMobile } from 'react-device-detect';
 import { useParams } from 'react-router-dom';
 import UserService from '../../../services/user.service';
 import ChangePassword from './ChangePassword';
+import EmailVerify from './EmailVerify';
 import InfoEdit from './InfoEdit';
 import './style.css';
+import VerifyIdentify from './VerifyIdentify';
 const items = [
     {
         key: 'editInfo',
@@ -46,13 +48,25 @@ const ProfileEdit = () => {
             case 'editInfo':
                 return <InfoEdit user={currentUser} onUpdateInfo={handleUpdateInfoRequest} />;
             case 'verify':
-                break;
+                return (
+                    <VerifyIdentify
+                        userInfo={currentUser}
+                        setUserStatus={(status) => {
+                            setCurrentUser({ ...currentUser, IdentityStatus: status });
+                        }}
+                    />
+                );
             case 'password':
                 return <ChangePassword handleChangePassword={handleChangePassword} />;
-            case 'editInfo':
-                break;
             case 'email':
-                break;
+                return (
+                    <EmailVerify
+                        user={currentUser}
+                        setEmailStatus={(sta) => {
+                            setCurrentUser({ ...currentUser, EmailStatus: sta });
+                        }}
+                    />
+                );
             default:
                 return <InfoEdit user={currentUser} onUpdateInfo={handleUpdateInfoRequest} />;
         }

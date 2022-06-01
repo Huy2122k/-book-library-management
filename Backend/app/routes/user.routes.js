@@ -14,6 +14,20 @@ module.exports = function(app) {
         uploadCloud.userImg.single("avatar"),
         controller.uploadAvatar
     );
+    app.post(
+        "/api/verifyIdentify", [authJwt.verifyToken],
+        uploadCloud.userIdentifyImg.fields([
+            { name: "front" },
+            { name: "back" },
+            { name: "face" },
+        ]),
+        controller.addIdentity
+    );
+    app.post(
+        "/api/sendVerifyEmail", [authJwt.verifyToken],
+        controller.sendVerifyEmail
+    );
+    app.post("/api/verifyEmail", [authJwt.verifyToken], controller.verifyEmail);
 
     app.get("/api/all", controller.allAccess);
 
@@ -24,6 +38,12 @@ module.exports = function(app) {
         controller.adminBoard
     );
     app.get("/api/account/:id", controller.getInfo);
-    app.put("/api/account/:id", [authJwt.verifyToken, authJwt.verifyUserParam], controller.updateInfo);
-    app.put("/api/account/addidentity/:id", [authJwt.verifyToken, authJwt.verifyUserParam], controller.addIdentity);
+    app.put(
+        "/api/account/:id", [authJwt.verifyToken, authJwt.verifyUserParam],
+        controller.updateInfo
+    );
+    // app.put(
+    //     "/api/account/addidentity/:id", [authJwt.verifyToken, authJwt.verifyUserParam],
+    //     controller.addIdentity
+    // );
 };
