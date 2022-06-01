@@ -1,10 +1,14 @@
+const uploadCloud = require("../config/cloudinary.config");
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/admin.book.controller");
+
 module.exports = function(app) {
     // Update book info
-    app.put("/api/books/:id", [authJwt.verifyToken, authJwt.isAdmin], controller.updateInfo);
+    app.put("/api/books/:id", controller.updateInfo);
     // Add new book and bookitems (new book not exist in book table)
-    app.post("/api/books/", controller.addNewBook);
+    app.post("/api/books/", [authJwt.verifyToken, authJwt.isAdmin], controller.addNewBook);
     // Add book items (if book exist in book table)
-    app.post("/api/books/items/:bookid", controller.addBookItems);
+    app.post("/api/books/items/:bookid", [authJwt.verifyToken, authJwt.isAdmin], controller.addBookItems);
+    // Upload Book Cover Image
+    app.post("/api/books/images", [authJwt.verifyToken, authJwt.isAdmin], uploadCloud.bookImg.single("bookImg"), controller.uploadBookImage); 
 };
