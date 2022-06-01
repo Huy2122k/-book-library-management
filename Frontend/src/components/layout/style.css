@@ -72,3 +72,11 @@ img.thumbnail {
 .div-info-profile-drop span {
     margin-right: 5px;
 }
+
+.category-header-content .ant-dropdown-menu-item {
+    color: #fff;
+}
+
+.category-header-content .ant-dropdown-menu-item:hover {
+    color: black;
+}

@@ -137,6 +137,20 @@ const BookDetail = () => {
             if (res && res.data) {
                 message.success(res.data.message);
                 commentInput.resetFields();
+                setComment([
+                    ...comment,
+                    {
+                        AccountID: res.data.comment.AccountID,
+                        Comment: res.data.comment.Comment,
+                        CommentID: res.data.comment.CommentID,
+                        CreateDate: res.data.comment.CreateDate,
+                        account: {
+                            UserName: user.info.UserName,
+                            ImageURL: user.info.ImageURL
+                        },
+                        rating: userRated ? userRated.rating : null
+                    }
+                ]);
             }
         } catch (error) {
             console.log(error);
@@ -432,15 +446,17 @@ const BookDetail = () => {
                                             <Comment
                                                 key={com.CommentID}
                                                 author={
-                                                    <a href={'/' + com.AccountID}>
+                                                    <a href={'/profile/' + com.AccountID}>
                                                         {com.account.UserName}
                                                     </a>
                                                 }
                                                 avatar={
                                                     <Avatar
                                                         src={
-                                                            'https://joeschmoe.io/api/v1/random?' +
-                                                            com.AccountID
+                                                            com.account.ImageURL
+                                                                ? com.account.ImageURL
+                                                                : 'https://joeschmoe.io/api/v1/random?' +
+                                                                  com.AccountID
                                                         }
                                                         alt=""
                                                     />

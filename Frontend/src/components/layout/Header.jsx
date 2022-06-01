@@ -65,8 +65,8 @@ const HeaderCustom = () => {
                     onClick={(e) => e.stopPropagation()}
                     overlay={
                         <Menu
-                            theme="dark"
-                            style={{ backgroundColor: '#2dbbed' }}
+                            // theme="dark"
+                            style={{ backgroundColor: '#001529' }}
                             className="category-header-content"
                             items={categoryListHeader}
                             onClick={searchCategory}
@@ -111,7 +111,7 @@ const HeaderCustom = () => {
                 {
                     label: (
                         <div className="div-info-profile-drop">
-                            <span >Profile</span> <UserOutlined />
+                            <span>Profile</span> <UserOutlined />
                         </div>
                     ),
                     key: 'profile'
@@ -119,7 +119,7 @@ const HeaderCustom = () => {
                 {
                     label: (
                         <div className="div-info-profile-drop">
-                            <span >Edit Profile</span>
+                            <span>Edit Profile</span>
                             <EditOutlined />
                         </div>
                     ),
@@ -128,7 +128,7 @@ const HeaderCustom = () => {
                 {
                     label: (
                         <div className="div-info-profile-drop">
-                            <span >Logout</span>
+                            <span>Logout</span>
                             <LogoutOutlined />
                         </div>
                     ),
