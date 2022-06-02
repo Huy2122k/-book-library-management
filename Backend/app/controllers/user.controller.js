@@ -10,8 +10,6 @@ const LendingBookList = db.lendingBookList;
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const sendToEmail = require("../ultis/mail");
-const { v4: uuidv4 } = require("uuid");
-const moment = require('moment')
 
 exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
@@ -296,36 +294,6 @@ exports.updateInfo = async(req, res) => {
                 });
             }
         }
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({
-            message: error.message || "Some error occurred while retrieving tutorials.",
-        });
-    }
-};
-
-// Create Lending
-exports.createLending = async(req, res) => {
-    const accountid = req.params.id;
-    try {
-        const numOfBook = await LendingList.count({
-            include: [{
-                model: LendingBookList,
-                attributes: ["LendingID"]
-            }],
-            where: {"AccountID": accountid, "Status": "borrow"}
-        })
-        const createLending = await LendingList.create({
-            LendingID: uuidv4(),
-            AccountID: accountid,
-            CreateDate: moment(),
-            DueDate: moment().add(6, 'months'),
-            ReturnDate: null,
-            Status: "pending",
-        });
-        res.status(200).send({
-            message: "Create Success"
-        });
     } catch (error) {
         console.log(error);
         res.status(500).send({

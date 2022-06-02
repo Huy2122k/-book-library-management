@@ -46,7 +46,4 @@ module.exports = function(app) {
     //     "/api/account/addidentity/:id", [authJwt.verifyToken, authJwt.verifyUserParam],
     //     controller.addIdentity
     // );
-    app.post(
-        "/api/account/lending/:id", controller.createLending
-    );
 };
