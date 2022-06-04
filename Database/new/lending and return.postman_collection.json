@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "5d095349-9768-47fa-a0a2-ae1b5beb3e96",
+		"name": "lending and return",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20864538"
+	},
+	"item": [
+		{
+			"name": "lending",
+			"item": [
+				{
+					"name": "CreateLending Error: exist unavailable book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"BorrowBookList\":[\"022c7799-4ae6-4b6e-ab7a-5f3e1021a89d\" ,\"0ccd4bcc-f96c-4e71-875d-4946efa6f255\", \"d007ced6-3850-403f-becc-bf8cb4ccb7ad\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/account/lending/0313d69d-886f-4890-be9e-ed49f3f01849",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"account",
+								"lending",
+								"0313d69d-886f-4890-be9e-ed49f3f01849"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateLending Error: number of borrow book exceed the limit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"BorrowBookList\":[\"022c7799-4ae6-4b6e-ab7a-5f3e1021a89d\" ,\"0ccd4bcc-f96c-4e71-875d-4946efa6f255\", \"d007ced6-3850-403f-becc-bf8cb4ccb7ad\", \"9c4cf96b-b863-4248-ac38-dbdad92edf09\", \"b2e8eba2-9073-4673-98a1-a895b70e118e\", \"97a07259-071f-429a-a0d9-db7bae584364\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/account/lending/0313d69d-886f-4890-be9e-ed49f3f01849",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"account",
+								"lending",
+								"0313d69d-886f-4890-be9e-ed49f3f01849"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateLending Success",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"BorrowBookList\":[\"022c7799-4ae6-4b6e-ab7a-5f3e1021a89d\" ,\"0ccd4bcc-f96c-4e71-875d-4946efa6f255\", \"9c4cf96b-b863-4248-ac38-dbdad92edf09\", \"b2e8eba2-9073-4673-98a1-a895b70e118e\", \"97a07259-071f-429a-a0d9-db7bae584364\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/account/lending/0313d69d-886f-4890-be9e-ed49f3f01849",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"account",
+								"lending",
+								"0313d69d-886f-4890-be9e-ed49f3f01849"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
