@@ -35,7 +35,10 @@ exports.getAmountLending = async(userId) => {
                 "Status",
             ],
         });
-        if (lendingList.length > 0) {
+        if (
+            lendingList.length > 0 &&
+            lendingList[0].dataValues.lendingbooklists.length > 0
+        ) {
             return lendingList[0].dataValues.lendingbooklists["0"].dataValues.bookitem
                 .dataValues.bookItemLendCount;
         }

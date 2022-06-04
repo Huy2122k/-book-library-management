@@ -6,7 +6,7 @@ module.exports = function(app) {
     // Create lending
     app.post("/api/lending/", [authJwt.verifyToken], controller.createLending);
     app.get(
-        "/api/lending/test", [authJwt.verifyToken],
+        "/api/lending/", [authJwt.verifyToken],
         controller.getAmountLendingByUser
     );
 };

@@ -9,7 +9,7 @@ import {
 import { Avatar, Card, Col, Divider, Image, Row } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import UserService from '../../services/user.service';
 import './style.css';
 import CommentTabs from './tabs/Comment';
@@ -32,6 +32,7 @@ const tabList = [
 
 const Account = () => {
     const params = useParams();
+    const [searchParams] = useSearchParams();
     const [currentUser, setCurrentUser] = useState();
     const [commentInfo, setCommentInfo] = useState([]);
     const [ratingInfo, setRatingInfo] = useState([]);
@@ -39,7 +40,9 @@ const Account = () => {
 
     const [wishList, setWishList] = useState();
     const [loading, setLoading] = useState(false);
-    const [tabKey, setTabKey] = useState('comment');
+    const [tabKey, setTabKey] = useState(
+        searchParams.get('tab') ? searchParams.get('tab') : 'comment'
+    );
 
     const navigate = useNavigate();
 

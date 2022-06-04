@@ -1,18 +1,46 @@
-import { Button, Col, Row } from 'antd';
-import { useState } from 'react';
+import { Button, Col, message, Row } from 'antd';
+import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../auth/use-auth';
+import LendingService from '../../services/lending-service';
 import { useBorrowList } from '../contexts/use-borrow';
 import './style.css';
 const BorrowList = () => {
     const { borrowList, deleteFromBorrowList } = useBorrowList();
-    const [amount, setAmount] = useState('--/10');
+    const { user } = useAuth();
+    const [amount, setAmount] = useState();
+    const fetchAmountLend = async () => {
+        try {
+            const amount = await LendingService.getAmountLending();
+            setAmount(amount.data.count);
+        } catch (error) {
+            console.log(error);
+            message.error('Cannot get amount lending');
+        }
+    };
+    const handleBorrowBook = async () => {
+        const listId = borrowList.map((book) => book.BookID);
+        try {
+            const result = await LendingService.createLendingRequest(listId);
+            if (result) {
+                message.success(result.data.message);
+                navigate('/profile/' + user.info.AccountID + '?tab=lending');
+            }
+        } catch (error) {
+            console.log(error);
+            message.error(error.response.data.message);
+        }
+    };
+    useEffect(() => {
+        fetchAmountLend();
+    }, []);
     const navigate = useNavigate();
     return (
         <div className="container">
             <div className="head-row">
                 <h1>Borrow Book</h1>
-                <p>{'You can borrow: ' + amount}</p>
+                <p>{'You had borrow: ' + (amount || amount == 0 ? amount + '/10' : '--/10')}</p>
             </div>
             <Row gutter={[20, 20]} className="list-book">
                 {borrowList.map((book) => {
@@ -64,7 +92,11 @@ const BorrowList = () => {
                 })}
             </Row>
             <div className="foot-row">
-                <Button className="btn-submit" type="primary" shape="round">
+                <Button
+                    className="btn-submit"
+                    type="primary"
+                    shape="round"
+                    onClick={handleBorrowBook}>
                     Borrow
                 </Button>
             </div>

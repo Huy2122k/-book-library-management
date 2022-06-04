@@ -1,6 +1,7 @@
-import { Badge, Button, Checkbox, Col, Collapse, Row } from 'antd';
+import { Badge, Button, Checkbox, Col, Collapse, Modal, Row } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
+import QRCode from 'react-qr-code';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../../auth/use-auth';
 import './style.css';
@@ -35,11 +36,14 @@ const renderBookInfo = (book, bookItemId) => {
         </div>
     );
 };
+
 const LendingItem = ({ lendDetail, ind }) => {
     const params = useParams();
     const { user } = useAuth();
     const [checkedList, setCheckedList] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [lendingQR, setLendingQR] = useState('/lending/');
 
     const plainOptions = lendDetail.lendingbooklists.map((lend, ind) => {
         return {
@@ -49,6 +53,10 @@ const LendingItem = ({ lendDetail, ind }) => {
         };
     });
 
+    const showModal = (lendingId) => () => {
+        setLendingQR('/lending/' + lendingId);
+        setModalVisible(true);
+    };
     const onChange = (list) => {
         setCheckedList(list);
         setCheckAll(list.length === plainOptions.length);
@@ -90,16 +98,30 @@ const LendingItem = ({ lendDetail, ind }) => {
                         key="1">
                         <CheckboxGroup
                             className="group-custom"
+                            style={{ width: '100%' }}
                             options={plainOptions}
                             value={checkedList}
                             onChange={onChange}
                         />
                         {params.id && user && user.info.AccountID == params.id && (
-                            <div style={{ marginTop: '20px', padding: '0px 15px' }}>
+                            <div
+                                style={{
+                                    marginTop: '20px',
+                                    padding: '0px 15px',
+                                    display: 'flex',
+                                    justifyContent: 'space-between'
+                                }}>
+                                <Button
+                                    type="primary"
+                                    style={{ width: '45%' }}
+                                    onClick={showModal(lendDetail.LendingID)}>
+                                    Show QR
+                                </Button>
+
                                 <Button
                                     type="primary"
                                     disabled={lendDetail.Status != 'borrow'}
-                                    style={{ width: '100%' }}>
+                                    style={{ width: '45%' }}>
                                     Return{`(${checkedList.length})`}
                                 </Button>
                             </div>
@@ -107,6 +129,15 @@ const LendingItem = ({ lendDetail, ind }) => {
                     </Panel>
                 </Collapse>
             </Badge.Ribbon>
+            <Modal
+                title=""
+                visible={isModalVisible}
+                onOk={() => setModalVisible(false)}
+                onCancel={() => setModalVisible(false)}>
+                <div style={{ textAlign: 'center' }}>
+                    <QRCode value={lendingQR} />
+                </div>
+            </Modal>
         </>
     );
 };
