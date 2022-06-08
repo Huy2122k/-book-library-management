@@ -9,4 +9,5 @@ module.exports = function(app) {
         "/api/lending/", [authJwt.verifyToken],
         controller.getAmountLendingByUser
     );
+    app.post("/api/lending/:id", controller.confirmLending)
 };

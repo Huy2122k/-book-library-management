@@ -134,3 +134,84 @@ exports.createLending = async(req, res) => {
         await t.rollback();
     }
 };
+
+// Confirm Lending
+exports.confirmLending = async(req, res) => {
+    const lendingid = req.params.id;
+    const t = await seq.transaction();
+    try {
+        // If there is no reject Book Item ID => accept lending list
+        if (req.body.rejectBookItemIDs.length===0){
+            await LendingList.update({
+                Status: "borrow",
+            }, { where: { LendingID: lendingid } }, { transaction: t });
+        }
+        // If there is no accept Book Item ID => reject lending list
+        else if (req.body.acceptBookItemIDs.length===0){
+            await LendingList.update({
+                Status: "reject",
+            }, { where: { LendingID: lendingid } }, { transaction: t });
+            await BookItem.update({
+                Status: "available",
+            }, { where: { BookItemID: req.body.rejectBookItemIDs } ,  transaction: t },);
+        }
+        // If there are A book item accepted, B book item rejected
+        // Split Lending into 2 different Lending
+        // One contain accepted book, and other contain rejected book
+        else{
+            const getLending = await LendingList.findOne({
+                where: {LendingID: lendingid},
+                attributes: [
+                    "AccountID",
+                    "CreateDate",
+                    "DueDate",
+                ],
+            })
+
+            const createRejectLending = await LendingList.create({
+                LendingID: uuidv4(),
+                AccountID: getLending.AccountID,
+                CreateDate: getLending.CreateDate,
+                DueDate: getLending.DueDate,
+                ReturnDate: null,
+                Status: "reject",
+            }, { transaction: t });
+            
+            await LendingBookList.destroy({
+                where:{LendingID: lendingid, BookItemID: req.body.rejectBookItemIDs}
+            }, { transaction: t })
+
+            const rejectBooks = [];
+            for (const item of req.body.rejectBookItemIDs) {
+                rejectBooks.push({
+                    LendingID: createRejectLending.LendingID,
+                    BookItemID: item,
+                });
+            }
+
+            await LendingBookList.bulkCreate(rejectBooks, {transaction: t});
+
+            await BookItem.update({
+                Status: "available",
+            }, { where: { BookItemID: req.body.rejectBookItemIDs } ,  transaction: t },);
+
+            // await BookItem.update({
+            //     Status: "available",
+            // }, { where: { BookItemID: req.body.rejectBookItemIDs } }, { transaction: t });
+
+            await LendingList.update({
+                Status: "borrow",
+            }, { where: { LendingID: lendingid } , transaction: t }, );
+        }
+        await t.commit();
+        res.status(200).send({
+            message: "Successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while lendingbook",
+        });
+        await t.rollback();
+    }
+};
