@@ -36,6 +36,14 @@ function useProvideBorrowList() {
         setBorrowList(UserService.removeFromBorrowList(borrowList, bookId));
         message.success('Remove from borrow list successfully!');
     };
+    const clearBorrowList = () => {
+        if (!auth.user) {
+            setBorrowList([]);
+            message.error('Please login to borrow book');
+            return;
+        }
+        setBorrowList([]);
+    };
     useEffect(() => {
         if (!auth.user) {
             setBorrowList([]);
@@ -49,7 +57,8 @@ function useProvideBorrowList() {
         borrowList,
         addToBorrowList,
         deleteFromBorrowList,
-        checkExistedInBorrowList
+        checkExistedInBorrowList,
+        clearBorrowList
     };
 }
 

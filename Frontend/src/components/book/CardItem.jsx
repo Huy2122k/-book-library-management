@@ -23,12 +23,43 @@ const CardItem = ({ book, loading, category } = props) => {
     const handleClickDetail = (bookID) => {
         if (user && user.info.Role == 'ADMIN') {
             navigate('/edit-books/' + bookID, { replace: true });
-        }else{
+        } else {
             navigate('/books/' + bookID, { replace: true });
         }
-    }
+    };
     const handleClickCategory = (search) => (e) => {
         navigate('/books?searchTitle=' + search);
+    };
+    const renderActions = () => {
+        if (user && user.info.Role === 'ADMIN') {
+            return [
+                <EditOutlined
+                    key="edit"
+                    onClick={() => {
+                        handleClickDetail(book.BookID);
+                    }}
+                />
+            ];
+        }
+        const actions = [
+            liked ? (
+                <HeartTwoTone
+                    twoToneColor="#eb2f96"
+                    onClick={() => deleteFromWishList(book.BookID)}
+                />
+            ) : (
+                <HeartOutlined onClick={() => addToWishList(book)} />
+            ),
+            borrowed ? (
+                <BookTwoTone
+                    twoToneColor="#52c41a"
+                    onClick={() => deleteFromBorrowList(book.BookID)}
+                />
+            ) : (
+                <BookOutlined onClick={() => addToBorrowList(book)} />
+            )
+        ];
+        return actions;
     };
     return (
         <Card
@@ -48,35 +79,7 @@ const CardItem = ({ book, loading, category } = props) => {
                     src={book.ImageURL}
                 />
             }
-            actions={
-                user && user.info.Role == 'ADMIN'
-                    ?[
-                        <EditOutlined
-                            key="edit"
-                            onClick={() => {
-                                handleClickDetail(book.BookID);
-                            }}
-                        />
-                    ]:
-                    [
-                        (liked ? (
-                            <HeartTwoTone
-                                twoToneColor="#eb2f96"
-                                onClick={() => deleteFromWishList(book.BookID)}
-                            />
-                        ) : (
-                            <HeartOutlined onClick={() => addToWishList(book)} />
-                        ),
-                        borrowed ? (
-                            <BookTwoTone
-                                twoToneColor="#52c41a"
-                                onClick={() => deleteFromBorrowList(book.BookID)}
-                            />
-                        ) : (
-                            <BookOutlined onClick={() => addToBorrowList(book)} />
-                        ))
-                    ]
-            }>
+            actions={renderActions()}>
             <div className="book-info">
                 <p
                     className="title-list"

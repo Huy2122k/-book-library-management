@@ -7,9 +7,11 @@ import LendingService from '../../services/lending-service';
 import { useBorrowList } from '../contexts/use-borrow';
 import './style.css';
 const BorrowList = () => {
-    const { borrowList, deleteFromBorrowList } = useBorrowList();
+    const { borrowList, deleteFromBorrowList, clearBorrowList } = useBorrowList();
+
     const { user } = useAuth();
     const [amount, setAmount] = useState();
+    const navigate = useNavigate();
     const fetchAmountLend = async () => {
         try {
             const amount = await LendingService.getAmountLending();
@@ -25,6 +27,7 @@ const BorrowList = () => {
             const result = await LendingService.createLendingRequest(listId);
             if (result) {
                 message.success(result.data.message);
+                clearBorrowList();
                 navigate('/profile/' + user.info.AccountID + '?tab=lending');
             }
         } catch (error) {
@@ -35,7 +38,6 @@ const BorrowList = () => {
     useEffect(() => {
         fetchAmountLend();
     }, []);
-    const navigate = useNavigate();
     return (
         <div className="container">
             <div className="head-row">

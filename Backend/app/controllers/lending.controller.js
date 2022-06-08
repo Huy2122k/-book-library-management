@@ -124,7 +124,7 @@ exports.createLending = async(req, res) => {
         });
         await t.commit();
         res.status(200).send({
-            message: "Create Success",
+            message: "Borrow Successfully, please wait for admin approval!",
         });
     } catch (error) {
         console.log(error);
