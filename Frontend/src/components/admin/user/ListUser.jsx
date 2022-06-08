@@ -127,6 +127,27 @@ const ListUser = () => {
             message.error(error.message);
         }
     };
+    const verifyUser = async (isConfirmed) => {
+        try {
+            const result = await AdminService.updateVerifyIdentity(
+                listUser[userIndexChoose].AccountID,
+                {
+                    confirmed: isConfirmed ? 1 : 0
+                }
+            );
+            message.success(result.data.message);
+            listUser[userIndexChoose].IdentityStatus = isConfirmed ? 'confirmed' : 'rejected';
+            setListUser([...listUser]);
+            setModalVertifyVisible(false);
+        } catch (error) {
+            try {
+                message.error(error.response.data.message);
+                return;
+            } catch (error) {
+                message.error(error.message);
+            }
+        }
+    };
     const lockAccount = async (id) => {
         message.success('lock account ' + id);
     };
@@ -206,10 +227,18 @@ const ListUser = () => {
                             />
                         </Col>
                         <Col span={24} style={{ textAlign: 'center' }}>
-                            <Button style={{ marginRight: '10px' }} size="large" type="primary">
+                            <Button
+                                style={{ marginRight: '10px' }}
+                                size="large"
+                                type="primary"
+                                onClick={() => verifyUser(true)}>
                                 Accept
                             </Button>
-                            <Button size="large" danger type="primary">
+                            <Button
+                                size="large"
+                                danger
+                                type="primary"
+                                onClick={() => verifyUser(false)}>
                                 Reject
                             </Button>
                         </Col>

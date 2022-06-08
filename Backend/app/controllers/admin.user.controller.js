@@ -62,13 +62,13 @@ exports.updateIdentity = async(req, res) => {
             });
             return;
         }
-        if (account.IdentityStatus == "confirmed") {
+        if (account.IdentityStatus === "confirmed") {
             res.status(200).send({
                 message: "Identity has already been confirmed",
             });
             return;
         }
-        if (account.IdentityStatus == "unconfirmed") {
+        if (account.IdentityStatus === "unconfirmed") {
             res.status(400).send({
                 message: "Identity is not exist",
             });
@@ -76,19 +76,15 @@ exports.updateIdentity = async(req, res) => {
         }
         if (req.body.confirmed == 0) {
             const result = await Account.update({
-                IdentityNum: null,
-                FrontsideURL: null,
-                BacksideURL: null,
-                FaceURL: null,
-                IdentityStatus: "unconfirmed",
+                IdentityStatus: "rejected",
             }, { where: { AccountID: accountid } });
             if (result == 1) {
                 res.send({
-                    message: "Unconfirmed",
+                    message: "Rejected Verification!",
                 });
             } else {
-                res.send({
-                    message: `Cannot add Identity Images with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
+                res.status(500).send({
+                    message: `Cannot update verify!`,
                 });
             }
         } else {
@@ -97,18 +93,18 @@ exports.updateIdentity = async(req, res) => {
             }, { where: { AccountID: accountid } });
             if (result == 1) {
                 res.send({
-                    message: "Confirmed.",
+                    message: "Confirmed successfully!",
                 });
             } else {
-                res.send({
-                    message: `Cannot add Identity Images with id = $ { accountid }. Maybe Account was not found or req.body is empty!`,
+                res.status(500).send({
+                    message: `Cannot update verify!`,
                 });
             }
         }
     } catch (error) {
         console.log(error);
         res.status(500).send({
-            message: error.message || "Some error occurred while retrieving tutorials.",
+            message: error.message || "Some error occurred while update Identity.",
         });
     }
 };
