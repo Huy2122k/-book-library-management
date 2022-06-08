@@ -15,6 +15,8 @@ import ProvideBorrowList from './components/contexts/BorrowListProvider';
 import ProvideWishList from './components/contexts/WishListProvider';
 
 import AboutPage from './components/about/AboutPage';
+import CreateBook from './components/admin/book/CreateBook';
+import ListUser from './components/admin/user/ListUser';
 import BorrowList from './components/borrow/borrow-list';
 import LayoutCustom from './components/layout';
 import Login from './components/login/Login';
@@ -40,13 +42,15 @@ const App = () => {
                             <Route element={<RequireAuth role={['USER']} />}>
                                 <Route path="/user" element={<BoardUser />} />
                                 <Route path="/borrow" element={<BorrowList />} />
-                                <Route path="/profile/edit/:id" element={<ProfileEdit />} />
                             </Route>
                             <Route element={<RequireAuth role={['ADMIN']} />}>
                                 <Route path="/admin" element={<BoardAdmin />} />
+                                <Route path="/create-book" element={<CreateBook />} />
+                                <Route path="/users-manage" element={<ListUser />} />
                             </Route>
                             <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
                                 <Route path="/profile" element={<Profile />} />
+                                <Route path="/profile/edit/:id" element={<ProfileEdit />} />
                             </Route>
                             <Route
                                 path="*"

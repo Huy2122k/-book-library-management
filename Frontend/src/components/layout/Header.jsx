@@ -87,6 +87,24 @@ const HeaderCustom = () => {
             key: 'about'
         }
     ];
+    const navAdmin = [
+        {
+            label: 'Dashboard',
+            key: 'dashboard'
+        },
+        {
+            label: 'Manage Books',
+            key: 'books'
+        },
+        {
+            label: 'Create Book',
+            key: 'create-book'
+        },
+        {
+            label: 'User Manage',
+            key: 'users-manage'
+        }
+    ];
     const handleProfileClick = (item, key) => {
         switch (item.key) {
             case 'editProfile':
@@ -249,7 +267,7 @@ const HeaderCustom = () => {
                         theme="dark"
                         mode="horizontal"
                         defaultSelectedKeys={['home']}
-                        items={navUser}
+                        items={auth.user && auth.user.info.Role == 'ADMIN' ? navAdmin : navUser}
                         onClick={navigateHeader}
                     />
                 </Col>
@@ -257,18 +275,22 @@ const HeaderCustom = () => {
                 <Col xs={8} sm={10} md={6} lg={4} xl={4}>
                     {auth.user ? (
                         <div className="classProfile">
-                            <Dropdown
-                                placement="bottomLeft"
-                                overlay={genderWishList()}
-                                trigger={['click']}>
-                                <HeartFilled className="wish-list-btn btn-user-group" />
-                            </Dropdown>
-                            <Dropdown
-                                placement="bottomLeft"
-                                overlay={genderBorrowList()}
-                                trigger={['click']}>
-                                <ReadFilled className="wish-list-btn btn-user-group" />
-                            </Dropdown>
+                            {auth.user.info.Role != 'ADMIN' && (
+                                <>
+                                    <Dropdown
+                                        placement="bottomLeft"
+                                        overlay={genderWishList()}
+                                        trigger={['click']}>
+                                        <HeartFilled className="wish-list-btn btn-user-group" />
+                                    </Dropdown>
+                                    <Dropdown
+                                        placement="bottomLeft"
+                                        overlay={genderBorrowList()}
+                                        trigger={['click']}>
+                                        <ReadFilled className="wish-list-btn btn-user-group" />
+                                    </Dropdown>
+                                </>
+                            )}
                             <Dropdown overlay={profile} placement="bottom">
                                 <Button
                                     className="btn-user-group"
