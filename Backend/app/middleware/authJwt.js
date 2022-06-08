@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models");
-const User = db.user;
+const User = db.account;
+const roles = require("../config/roles.config");
 
 const verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
@@ -25,26 +26,28 @@ const verifyToken = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-    User.findByPk(req.userId).then((user) => {
-        user.getRoles().then((roles) => {
-            for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name === "ADMIN") {
-                    next();
-                    return;
-                }
+    User.findByPk(req.userId)
+        .then((user) => {
+            if (user.dataValues.Role === roles.ADMIN) {
+                next();
+                return;
             }
             res.status(403).send({
                 message: "Require Admin Role!",
             });
             return;
+        })
+        .catch((err) => {
+            res.status(403).send({
+                message: err.message,
+            });
         });
-    });
 };
 
 const verifyUserParam = (req, res, next) => {
     let id = req.params.id;
 
-    if (id!=req.userId) {
+    if (id != req.userId) {
         return res.status(403).send({
             message: "No permission!",
         });
