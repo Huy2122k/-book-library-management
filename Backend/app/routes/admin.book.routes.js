@@ -1,6 +1,7 @@
 const uploadCloud = require("../config/cloudinary.config");
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/admin.book.controller");
+const lendingController = require("../controllers/lending.controller")
 
 module.exports = function(app) {
     // Update book info
@@ -12,5 +13,5 @@ module.exports = function(app) {
     // Upload Book Cover Image
     app.post("/api/books/images", [authJwt.verifyToken, authJwt.isAdmin], uploadCloud.bookImg.single("bookImg"), controller.uploadBookImage);
     // Confirm Lending
-    app.post("/api/admin/lending/:id",[authJwt.verifyToken, authJwt.isAdmin], controller.confirmLending) 
+    app.post("/api/admin/lending/:id",[authJwt.verifyToken, authJwt.isAdmin], lendingController.confirmLending) 
 };
