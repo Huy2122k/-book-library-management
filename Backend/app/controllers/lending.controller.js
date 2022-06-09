@@ -7,6 +7,7 @@ const Op = db.Sequelize.Op;
 const seq = db.sequelize;
 const { v4: uuidv4 } = require("uuid");
 const moment = require("moment");
+const jwt = require("jsonwebtoken");
 
 exports.getAmountLending = async(userId) => {
     try {
@@ -75,11 +76,14 @@ exports.createLending = async(req, res) => {
             res.status(500).send({
                 message: "Cannot get amount lending",
             });
+            await t.rollback();
+            return;
         }
         if (req.body.BorrowBookList.length + numOfBorrowBook > 10) {
             res.status(400).send({
                 message: "Borrow Book exceed the limit",
             });
+            await t.rollback();
             return;
         }
         // Check if exist bookitem in book in the create lending list is available
@@ -93,10 +97,11 @@ exports.createLending = async(req, res) => {
             (x) => !availableBookList.includes(x)
         );
         if (unavailableBookList.length > 0) {
-            res.status(204).send({
+            res.status(404).send({
                 message: "Exist Books are not available",
                 unavailableBookList,
             });
+            await t.rollback();
             return;
         }
         const createLending = await LendingList.create({
@@ -135,7 +140,48 @@ exports.createLending = async(req, res) => {
     }
 };
 
-// Confirm Lending
+// Cancel Lending (for User)
+exports.cancelLending =   async(req, res) =>{
+    const lendingid = req.params.id;
+    // Confirm User
+    try {
+        const lendingInfo = await LendingList.findOne({
+            attributes: ["AccountID"],
+            where: {"LendingID": lendingid}
+        })
+        if (req.userId===lendingInfo.AccountID){
+            res.status(403).send({
+                message: "Unauthorized",
+            });
+            return;
+        }
+    } catch (error) {
+        res.status(500).send({
+            message: error.message || "Some error occurred while lendingbook",
+        });
+    }
+    const t = await seq.transaction();
+    try{
+        await LendingList.update({
+            Status: "reject",
+        }, { where: { LendingID: lendingid }, transaction: t});
+        await BookItem.update({
+            Status: "available",
+        }, { where: { BookItemID: req.body.rejectBookItemIDs },  transaction: t},);
+        await t.commit();
+        res.status(200).send({
+            message: "Cancel Successfully",
+        });
+    }catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while lendingbook",
+        });
+        await t.rollback();
+    }
+}
+
+// Confirm Lending (for Admin)
 exports.confirmLending = async(req, res) => {
     const lendingid = req.params.id;
     const t = await seq.transaction();
@@ -144,16 +190,16 @@ exports.confirmLending = async(req, res) => {
         if (req.body.rejectBookItemIDs.length===0){
             await LendingList.update({
                 Status: "borrow",
-            }, { where: { LendingID: lendingid } }, { transaction: t });
+            }, { where: { LendingID: lendingid } , transaction: t});
         }
         // If there is no accept Book Item ID => reject lending list
         else if (req.body.acceptBookItemIDs.length===0){
             await LendingList.update({
                 Status: "reject",
-            }, { where: { LendingID: lendingid } }, { transaction: t });
+            }, { where: { LendingID: lendingid }, transaction: t});
             await BookItem.update({
                 Status: "available",
-            }, { where: { BookItemID: req.body.rejectBookItemIDs } ,  transaction: t },);
+            }, { where: { BookItemID: req.body.rejectBookItemIDs },  transaction: t},);
         }
         // If there are A book item accepted, B book item rejected
         // Split Lending into 2 different Lending
@@ -193,19 +239,15 @@ exports.confirmLending = async(req, res) => {
 
             await BookItem.update({
                 Status: "available",
-            }, { where: { BookItemID: req.body.rejectBookItemIDs } ,  transaction: t },);
-
-            // await BookItem.update({
-            //     Status: "available",
-            // }, { where: { BookItemID: req.body.rejectBookItemIDs } }, { transaction: t });
+            }, { where: { BookItemID: req.body.rejectBookItemIDs },  transaction: t },);
 
             await LendingList.update({
                 Status: "borrow",
-            }, { where: { LendingID: lendingid } , transaction: t }, );
+            }, { where: { LendingID: lendingid }, transaction: t }, );
         }
         await t.commit();
         res.status(200).send({
-            message: "Successfully",
+            message: "Confirmed Successfully",
         });
     } catch (error) {
         console.log(error);

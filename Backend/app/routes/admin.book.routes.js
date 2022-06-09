@@ -10,5 +10,7 @@ module.exports = function(app) {
     // Add book items (if book exist in book table)
     app.post("/api/books/items/:bookid", [authJwt.verifyToken, authJwt.isAdmin], controller.addBookItems);
     // Upload Book Cover Image
-    app.post("/api/books/images", [authJwt.verifyToken, authJwt.isAdmin], uploadCloud.bookImg.single("bookImg"), controller.uploadBookImage); 
+    app.post("/api/books/images", [authJwt.verifyToken, authJwt.isAdmin], uploadCloud.bookImg.single("bookImg"), controller.uploadBookImage);
+    // Confirm Lending
+    app.post("/api/admin/lending/:id",[authJwt.verifyToken, authJwt.isAdmin], controller.confirmLending) 
 };

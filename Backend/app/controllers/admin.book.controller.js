@@ -106,6 +106,7 @@ exports.addBookItems = async (req, res) => {
             res.status(400).send({
                 message: "Cannot find book",
             });
+            await t.rollback();
             return;
         }
         const insertItem = await insertBookItem(bookid, req.body.NumOfItem, t)
