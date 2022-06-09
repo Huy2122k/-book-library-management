@@ -42,7 +42,7 @@ function useProvideBorrowList() {
             message.error('Please login to borrow book');
             return;
         }
-        setBorrowList([]);
+        setBorrowList(UserService.clearBorrowList());
     };
     useEffect(() => {
         if (!auth.user) {

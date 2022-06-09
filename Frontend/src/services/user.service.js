@@ -66,6 +66,10 @@ const removeFromBorrowList = (borrowList, bookId) => {
     localStorage.setItem('borrowList', JSON.stringify(newBorrowList));
     return newBorrowList;
 };
+const clearBorrowList = () => {
+    localStorage.setItem('borrowList', JSON.stringify([]));
+    return [];
+};
 
 const UserService = {
     removeFromWishList,
@@ -84,7 +88,8 @@ const UserService = {
     changePassword,
     verifyIdentify,
     verifyEmail,
-    sendVerifyEmail
+    sendVerifyEmail,
+    clearBorrowList
 };
 
 export default UserService;

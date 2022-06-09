@@ -2,7 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Card, Col, Divider, Menu, message, Row, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import UserService from '../../../services/user.service';
 import ChangePassword from './ChangePassword';
 import EmailVerify from './EmailVerify';
@@ -38,9 +38,11 @@ const items = [
 
 const ProfileEdit = () => {
     const params = useParams();
-    const [tabId, setTabId] = useState(params.tab);
+    const [searchParams] = useSearchParams();
+    const [tabId, setTabId] = useState(searchParams.get('tab'));
     const [currentUser, setCurrentUser] = useState();
     const renderTab = (tabKey) => {
+        console.log(tabKey);
         if (!currentUser) {
             return <Spin indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />} />;
         }
@@ -105,8 +107,8 @@ const ProfileEdit = () => {
         }
     };
     useEffect(() => {
-        setTabId(params.tab);
-    }, [params.tab]);
+        setTabId(searchParams.get('tab'));
+    }, [searchParams.get('tab')]);
     useEffect(() => {
         fetchAccountData();
     }, [params.id]);
@@ -123,7 +125,7 @@ const ProfileEdit = () => {
                     />
                     <Menu
                         style={{ width: '100%', justifyContent: 'center' }}
-                        defaultSelectedKeys={['editInfo']}
+                        activeKey={tabId}
                         mode={isMobile ? 'horizontal' : 'inline'}
                         items={items}
                         onClick={(e) => setTabId(e.key)}

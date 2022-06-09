@@ -1,14 +1,52 @@
-import { BackTop, Layout } from 'antd';
+import { Alert, BackTop, Layout, Space } from 'antd';
 import Footer from 'rc-footer';
 import 'rc-footer/assets/index.css';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
+import { useAuth } from '../../auth/use-auth';
 import HeaderCustom from './Header';
 const { Content } = Layout;
 
 const LayoutCustom = () => {
+    const { user } = useAuth();
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <HeaderCustom />
+            <Space size={3} direction="vertical">
+                {user && user.info.EmailStatus === 'unconfirmed' && (
+                    <Alert
+                        type="error"
+                        message={
+                            <div>
+                                Your email is not verified
+                                <span>
+                                    <Link
+                                        to={'/profile/edit/' + user.info.AccountID + '?tab=email'}>
+                                        Verify
+                                    </Link>
+                                </span>
+                            </div>
+                        }
+                        banner
+                    />
+                )}
+                {user && user.info.IdentityStatus !== 'confirmed' && (
+                    <Alert
+                        type="error"
+                        message={
+                            <div>
+                                Your Identify is not verified
+                                <span>
+                                    <Link
+                                        to={'/profile/edit/' + user.info.AccountID + '?tab=verify'}>
+                                        Verify
+                                    </Link>
+                                </span>
+                            </div>
+                        }
+                        banner
+                    />
+                )}
+            </Space>
             <Layout>
                 <Content>
                     <Outlet />
