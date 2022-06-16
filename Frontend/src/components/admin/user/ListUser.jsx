@@ -97,14 +97,14 @@ const ListUser = () => {
                     {record.Status === 'available' ? (
                         <Popconfirm
                             title="Are you sure to ban this user?"
-                            onConfirm={() => lockAccount(record.AccountID)}
+                            onConfirm={() => lockAccount(record.AccountID, index)}
                             onCancel={(e) => {}}
                             okText="Yes"
                             cancelText="No">
                             <Button type="link">Lock</Button>
                         </Popconfirm>
                     ) : (
-                        <Button type="link" onClick={() => lockAccount(record.AccountID)}>
+                        <Button type="link" onClick={() => lockAccount(record.AccountID, index)}>
                             Unlock
                         </Button>
                     )}
@@ -150,13 +150,13 @@ const ListUser = () => {
             }
         }
     };
-    const lockAccount = async (id) => {
+    const lockAccount = async (id, index) => {
         // message.success('lock account ' + id);
         try {
             const res = await AdminService.changeUserStatus(id);
             if (res.data) {
                 message.success(res.data.message);
-                listUser[userIndexChoose].Status = res.data.status;
+                listUser[index].Status = res.data.status;
                 setListUser([...listUser]);
             }
         } catch (error) {}
