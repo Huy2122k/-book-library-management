@@ -9,4 +9,8 @@ module.exports = function(app) {
         "/api/admin/users/", [authJwt.verifyToken, authJwt.isAdmin],
         controller.getAllUser
     );
+    app.put(
+        "/api/admin/user-status/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        controller.toggleUserStatus
+    );
 };

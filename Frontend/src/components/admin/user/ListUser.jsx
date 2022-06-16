@@ -104,7 +104,9 @@ const ListUser = () => {
                             <Button type="link">Lock</Button>
                         </Popconfirm>
                     ) : (
-                        <Button type="link">Unlock</Button>
+                        <Button type="link" onClick={() => lockAccount(record.AccountID)}>
+                            Unlock
+                        </Button>
                     )}
                 </Space>
             )
@@ -149,7 +151,15 @@ const ListUser = () => {
         }
     };
     const lockAccount = async (id) => {
-        message.success('lock account ' + id);
+        // message.success('lock account ' + id);
+        try {
+            const res = await AdminService.changeUserStatus(id);
+            if (res.data) {
+                message.success(res.data.message);
+                listUser[userIndexChoose].Status = res.data.status;
+                setListUser([...listUser]);
+            }
+        } catch (error) {}
     };
     const onChangeTable = (pagination) => {
         setPage(pagination.current ? pagination.current : 1);

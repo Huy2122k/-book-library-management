@@ -7,9 +7,13 @@ const getUsers = (params) => {
 const updateVerifyIdentity = (id, body) => {
     return axios_instance.put(API_ADMIN + 'user-identity/' + id, body);
 };
+const changeUserStatus = (userId) => {
+    return axios_instance.put(API_ADMIN + 'user-status/' + userId);
+};
 
 const AdminService = {
     getUsers,
-    updateVerifyIdentity
+    updateVerifyIdentity,
+    changeUserStatus
 };
 export default AdminService;

@@ -50,6 +50,29 @@ exports.getAllUser = async(req, res) => {
     }
 };
 
+exports.toggleUserStatus = async(req, res) => {
+    const accountid = req.params.id;
+    console.log(accountid);
+    try {
+        const account = await Account.findOne({
+            where: { AccountID: accountid },
+        });
+        console.log(account);
+        const result = await Account.update({
+            Status: account.Status === "available" ? "unavailable" : "available",
+        }, { where: { AccountID: accountid } });
+        res.send({
+            message: "successfully",
+            status: account.Status === "available" ? "unavailable" : "available",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while update Status.",
+        });
+    }
+};
+
 exports.updateIdentity = async(req, res) => {
     const accountid = req.params.id;
     try {
