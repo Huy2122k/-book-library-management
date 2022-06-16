@@ -11,13 +11,13 @@ const LayoutCustom = () => {
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <HeaderCustom />
-            <Space size={3} direction="vertical">
+            <Space size={2} direction="vertical" style={{ padding: '0px 50px' }}>
                 {user && user.info.EmailStatus === 'unconfirmed' && (
                     <Alert
                         type="error"
                         message={
-                            <div>
-                                Your email is not verified
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Your email is not verified</span>
                                 <span>
                                     <Link
                                         to={'/profile/edit/' + user.info.AccountID + '?tab=email'}>
@@ -33,8 +33,8 @@ const LayoutCustom = () => {
                     <Alert
                         type="error"
                         message={
-                            <div>
-                                Your Identify is not verified
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Your Identified is not verified</span>
                                 <span>
                                     <Link
                                         to={'/profile/edit/' + user.info.AccountID + '?tab=verify'}>
