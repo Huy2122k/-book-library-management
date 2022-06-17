@@ -30,7 +30,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { Fragment, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../auth/use-auth';
 import BookService from '../../../services/book-service';
 import { useBorrowList } from '../../contexts/use-borrow';
@@ -446,9 +446,9 @@ const BookDetail = () => {
                                             <Comment
                                                 key={com.CommentID}
                                                 author={
-                                                    <a href={'/profile/' + com.AccountID}>
+                                                    <Link to={'/profile/' + com.AccountID}>
                                                         {com.account.UserName}
-                                                    </a>
+                                                    </Link>
                                                 }
                                                 avatar={
                                                     <Avatar

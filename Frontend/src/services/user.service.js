@@ -1,8 +1,8 @@
 import axios_instance from './custom-axios';
 
-const API_URL = 'http://localhost:8080/api/';
-const API_WISH_LIST = 'http://localhost:8080/api/wishlist/';
-const API_AUTH = 'http://localhost:8080/api/auth/';
+const API_URL = '/api/';
+const API_WISH_LIST = '/api/wishlist/';
+const API_AUTH = '/api/auth/';
 
 const getPublicContent = () => {
     return axios_instance.get(API_URL + 'all');

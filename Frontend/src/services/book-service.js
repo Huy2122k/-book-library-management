@@ -1,6 +1,6 @@
 import axios_instance from './custom-axios';
 
-const API_URL = 'http://localhost:8080/api/books/';
+const API_URL = '/api/books/';
 
 const getBooks = (params) => {
     return axios_instance.get(API_URL + '', { params });

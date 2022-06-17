@@ -1,5 +1,5 @@
 import axios_instance from './custom-axios';
-const API_AUTH = 'http://localhost:8080/api/lending/';
+const API_AUTH = '/api/lending/';
 const getAmountLending = () => {
     return axios_instance.get(API_AUTH);
 };

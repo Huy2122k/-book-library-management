@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AdminService from '../../../services/admin-service';
 // import './style.css';
 const tagColor = {
@@ -41,7 +42,7 @@ const ListUser = () => {
         {
             title: 'AccountID',
             dataIndex: 'AccountID',
-            render: (id) => <a href={'/profile/' + id}>{id}</a>
+            render: (id) => <Link to={'/profile/' + id}>{id}</Link>
         },
         {
             title: 'UserName',

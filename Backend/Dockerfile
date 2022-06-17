@@ -1,6 +1,6 @@
-FROM node:14
+FROM node:16.13
 
-WORKDIR /backend
+WORKDIR /Backend
 COPY package.json .
 RUN npm install
 COPY . .

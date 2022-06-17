@@ -1,6 +1,6 @@
 import axios_instance from './custom-axios';
 
-const API_URL = 'http://localhost:8080/api/auth/';
+const API_URL = '/api/auth/';
 
 const register = (form) => {
     return axios_instance.post(API_URL + 'signup', form);

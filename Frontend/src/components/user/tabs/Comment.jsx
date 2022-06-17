@@ -1,6 +1,7 @@
 import { Avatar, Comment, Rate } from 'antd';
 import moment from 'moment';
 import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 const CommentTabs = ({ commentInfo }) => {
     const processComment = () => {
         let commentByBook = {};
@@ -30,7 +31,7 @@ const CommentTabs = ({ commentInfo }) => {
                     return (
                         <Comment
                             key={keyData}
-                            author={<a href={'/books/' + keyData}>{data[keyData].name}</a>}
+                            author={<Link to={'/books/' + keyData}>{data[keyData].name}</Link>}
                             avatar={<Avatar src={data[keyData].img} alt="" />}
                             content={
                                 <Fragment>

@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/use-auth';
 import { ellipseByLength } from '../../auth/utils/string';
 import { useBorrowList } from '../contexts/use-borrow';
@@ -301,8 +301,8 @@ const HeaderCustom = () => {
                         </div>
                     ) : (
                         <div className="classLogin">
-                            <a href="/login">login</a>
-                            <a href="/register">register</a>
+                            <Link to="/login"> Login </Link>
+                            <Link to="/register"> Register </Link>
                         </div>
                     )}
                 </Col>
