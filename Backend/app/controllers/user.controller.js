@@ -138,8 +138,7 @@ exports.getInfo = async(req, res) => {
         });
     }
     const userinfo =
-        req.userId === req.params.id || req.role === "ADMIN" ?
-        [
+        req.userId === req.params.id || req.role === "ADMIN" ? [
             "UserName",
             "Introduction",
             "Birthday",
@@ -152,8 +151,7 @@ exports.getInfo = async(req, res) => {
             "FrontsideURL",
             "BacksideURL",
             "FaceURL",
-        ] :
-        ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
+        ] : ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
     try {
         const info = await Account.findOne({
             where: { AccountID: accountid },
@@ -174,14 +172,14 @@ exports.getInfo = async(req, res) => {
                     model: Rating,
                     on: {
                         col1: seq.where(
-                            seq.col("Comment.BookID"),
+                            seq.col("comment.BookID"),
                             "=",
-                            seq.col("Rating.BookID")
+                            seq.col("rating.BookID")
                         ),
                         col2: seq.where(
-                            seq.col("Comment.AccountID"),
+                            seq.col("comment.AccountID"),
                             "=",
-                            seq.col("Rating.AccountID")
+                            seq.col("rating.AccountID")
                         ),
                     },
                     attributes: ["Rating"],
@@ -190,9 +188,9 @@ exports.getInfo = async(req, res) => {
                     model: Book,
                     on: {
                         col1: seq.where(
-                            seq.col("Comment.BookID"),
+                            seq.col("comment.BookID"),
                             "=",
-                            seq.col("Book.BookID")
+                            seq.col("book.BookID")
                         ),
                     },
                     attributes: ["BookName", "ImageURL"],
@@ -301,4 +299,3 @@ exports.updateInfo = async(req, res) => {
         });
     }
 };
-

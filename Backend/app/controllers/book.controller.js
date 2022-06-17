@@ -91,7 +91,6 @@ exports.findAllCategories = async(req, res) => {
     }
 };
 
-
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
@@ -231,14 +230,14 @@ exports.getInfo = async(req, res) => {
                     model: Rating,
                     on: {
                         col1: seq.where(
-                            seq.col("Comment.BookID"),
+                            seq.col("comment.BookID"),
                             "=",
-                            seq.col("Rating.BookID")
+                            seq.col("rating.BookID")
                         ),
                         col2: seq.where(
-                            seq.col("Comment.AccountID"),
+                            seq.col("comment.AccountID"),
                             "=",
-                            seq.col("Rating.AccountID")
+                            seq.col("rating.AccountID")
                         ),
                     },
                     attributes: ["Rating"],
@@ -247,9 +246,9 @@ exports.getInfo = async(req, res) => {
                     model: Account,
                     on: {
                         col1: seq.where(
-                            seq.col("Comment.AccountID"),
+                            seq.col("comment.AccountID"),
                             "=",
-                            seq.col("Account.AccountID")
+                            seq.col("account.AccountID")
                         ),
                     },
                     attributes: ["UserName", "ImageURL"],
