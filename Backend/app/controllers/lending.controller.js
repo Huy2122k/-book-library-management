@@ -51,6 +51,7 @@ exports.getAmountLending = async(userId) => {
         return null;
     }
 };
+
 exports.sendReturnLateMail = async() => {
     try {
         const lendingList = await LendingList.findAll({
@@ -304,6 +305,78 @@ exports.confirmLending = async(req, res) => {
         console.log(error);
         res.status(500).send({
             message: error.message || "Some error occurred while lendingbook",
+        });
+        await t.rollback();
+    }
+};
+
+// Return Book (User)
+exports.returnLending = async(req, res) => {
+    const lendingid = req.params.id;
+    const t = await seq.transaction();
+    try {
+        const getLending = await LendingList.findOne({
+            where: { LendingID: lendingid },
+            attributes: ["AccountID", "CreateDate", "DueDate"],
+        });
+        let status = "return"
+        if (!(moment(getLending.DueDate).isBefore(moment))){
+            status = "return"
+        }else{
+            status = "late"
+        }
+        // If there is keep Book Item ID => return all book in lending list
+        if (req.body.keepBookItemIDs.length === 0) {
+            await LendingList.update({
+                ReturnDate: moment(),
+                Status: status,
+            }, { where: { LendingID: lendingid }, transaction: t });
+            await BookItem.update({
+                Status: "available",
+            }, { where: { BookItemID: req.body.returnBookItemIDs }, transaction: t });
+        }
+        // If there are A book item keep, B book item return
+        // Split Lending into 2 different Lending
+        // One contain books that still borrowed, and other contain returned books
+        else if (req.body.keepBookItemIDs.length !== 0 && req.body.returnBookItemIDs.length !== 0 ) {
+            const createReturnLending = await LendingList.create({
+                LendingID: uuidv4(),
+                AccountID: getLending.AccountID,
+                CreateDate: getLending.CreateDate,
+                DueDate: getLending.DueDate,
+                ReturnDate: moment(),
+                Status: status,
+            }, { transaction: t });
+
+            await LendingBookList.destroy({
+                where: {
+                    LendingID: lendingid,
+                    BookItemID: req.body.returnBookItemIDs,
+                },
+            }, { transaction: t });
+
+            const returnBooks = [];
+            for (const item of req.body.returnBookItemIDs) {
+                returnBooks.push({
+                    LendingID: createReturnLending.LendingID,
+                    BookItemID: item,
+                });
+            }
+
+            await LendingBookList.bulkCreate(returnBooks, { transaction: t });
+
+            await BookItem.update({
+                Status: "available",
+            }, { where: { BookItemID: req.body.returnBookItemIDs }, transaction: t });
+        }
+        await t.commit();
+        res.status(200).send({
+            message: "Creat Return Lending Success",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred while create return lending",
         });
         await t.rollback();
     }

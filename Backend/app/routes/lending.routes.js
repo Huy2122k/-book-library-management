@@ -10,4 +10,5 @@ module.exports = function(app) {
         controller.getAmountLendingByUser
     );
     app.put("/api/lending/:id",[authJwt.verifyToken], controller.cancelLending);
+    app.post("/api/return_lending/:id",[authJwt.verifyToken], controller.returnLending);
 };
