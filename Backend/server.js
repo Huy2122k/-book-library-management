@@ -12,7 +12,7 @@ var corsOptions = {
     origin: process.env.CLIENT_ORIGIN || "http://localhost:8081",
 };
 var clientRedis = redis.createClient(6379);
-app.use(cors(corsOptions));
+app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());

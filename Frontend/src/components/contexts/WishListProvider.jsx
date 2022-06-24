@@ -7,6 +7,7 @@ import { WishlistContext } from './use-wishlist';
 
 function useProvideWishList() {
     const [wishList, setWishList] = useState([]);
+    const [isUserVerified, setUserVerified] = useState(true);
     const auth = useAuth();
     // Wrap any Firebase methods we want to use making sure ...
     // ... to save the user to state.
@@ -17,7 +18,8 @@ function useProvideWishList() {
         try {
             const res = await UserService.getWishList(auth.user.info.AccountID);
             if (res && res.data) {
-                setWishList(res.data);
+                setWishList(res.data.list);
+                setUserVerified(res.data.verified);
             }
         } catch (error) {
             try {
@@ -67,6 +69,7 @@ function useProvideWishList() {
     // Return the user object and methods
     return {
         wishList,
+        isUserVerified,
         fetchWishList,
         addToWishList,
         deleteFromWishList,

@@ -85,8 +85,8 @@ const Account = () => {
         if (!params.id) return;
         try {
             const wishListData = await UserService.getWishList(params.id);
-            console.log(wishListData.data);
-            setWishList(wishListData.data);
+            console.log(wishListData.data.list);
+            setWishList(wishListData.data.list);
         } catch (error) {
             console.log(error);
             setLoading(false);

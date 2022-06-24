@@ -3,11 +3,13 @@ import Footer from 'rc-footer';
 import 'rc-footer/assets/index.css';
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../../auth/use-auth';
+import { useWishList } from '../contexts/use-wishlist';
 import HeaderCustom from './Header';
 const { Content } = Layout;
 
 const LayoutCustom = () => {
     const { user } = useAuth();
+    const { isUserVerified } = useWishList();
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <HeaderCustom />
@@ -29,7 +31,7 @@ const LayoutCustom = () => {
                         banner
                     />
                 )}
-                {user && user.info.IdentityStatus !== 'confirmed' && (
+                {user && !isUserVerified && (
                     <Alert
                         type="error"
                         message={

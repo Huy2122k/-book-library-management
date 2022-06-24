@@ -50,6 +50,16 @@ function useProvideAuth() {
         //         return true;
         //     });
     };
+    const verifyEmail = () => {
+        AuthService.setLocalUser(
+            { accessToken: user.accessToken, info: { ...user.info, EmailStatus: 'confirmed' } },
+            true
+        );
+        setUser({
+            accessToken: user.accessToken,
+            info: { ...user.info, EmailStatus: 'confirmed' }
+        });
+    };
     const confirmPasswordReset = (code, password) => {
         // return firebase
         //     .auth()
@@ -63,6 +73,7 @@ function useProvideAuth() {
     return {
         user,
         setUser,
+        verifyEmail,
         register,
         login,
         logout,

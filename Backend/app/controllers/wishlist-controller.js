@@ -1,6 +1,7 @@
 const db = require("../models");
 const WishList = db.wishlist;
 const Book = db.book;
+const Account = db.account;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
 // Create and Save a new wishlist
@@ -46,6 +47,9 @@ exports.create = (req, res) => {
 
 exports.findAllByUser = async(req, res) => {
     try {
+        const account = await Account.findOne({
+            where: { AccountID: req.params.id },
+        });
         const rows = await Book.findAll({
             where: {
                 "$wishlists.AccountID$": req.params.id,
@@ -56,7 +60,10 @@ exports.findAllByUser = async(req, res) => {
             }, ],
             // order: sortConfig.filter((val) => val),
         });
-        res.send(rows);
+        res.send({
+            list: rows,
+            verified: account.IdentityStatus === "confirmed",
+        });
     } catch (err) {
         console.log(err);
         res.status(500).send({

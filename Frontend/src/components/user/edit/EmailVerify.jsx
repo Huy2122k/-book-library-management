@@ -1,10 +1,10 @@
 import { Alert, Button, Col, Input, message, Row } from 'antd';
 import { useState } from 'react';
+import { useAuth } from '../../../auth/use-auth';
 import UserService from '../../../services/user.service';
-
 const EmailVerify = ({ user, setEmailStatus }) => {
     const [loading, setLoading] = useState(false);
-
+    const { verifyEmail } = useAuth();
     const [inputToken, setInputToken] = useState('');
 
     const sendEmailVerify = async () => {
@@ -24,6 +24,7 @@ const EmailVerify = ({ user, setEmailStatus }) => {
             const res = await UserService.verifyEmail({ token: inputToken });
             setEmailStatus('confirmed');
             setLoading(false);
+            verifyEmail();
             message.success('Verification success');
         } catch (error) {
             message.error('Error verifying email');

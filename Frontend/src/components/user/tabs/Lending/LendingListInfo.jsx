@@ -32,12 +32,16 @@ const LendingListInfo = ({ lendingInfo }) => {
             switch (lend.Status) {
                 case 'pending':
                     countWaiting += 1;
+                    break;
                 case 'late':
                     countLate += 1;
+                    break;
                 case 'borrow':
                     countLending += 1;
+                    break;
                 case 'return':
                     countReturn += 1;
+                    break;
                 default:
                     break;
             }
