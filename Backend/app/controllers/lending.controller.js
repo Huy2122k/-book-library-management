@@ -193,6 +193,47 @@ exports.createLending = async(req, res) => {
     }
 };
 
+exports.getLending = async(req, res) => {
+    try {
+        const lending = await LendingList.findOne({
+            where: { LendingID: req.params.id },
+            include: [{
+                model: LendingBookList,
+                include: [{
+                    model: BookItem,
+                    include: [{
+                        model: Book,
+                        attributes: [
+                            "BookID",
+                            "BookName",
+                            "Author",
+                            "Series",
+                            "Chapter",
+                            "PublishedDate",
+                            "ImageURL",
+                        ],
+                    }, ],
+                    attributes: ["BookItemID"],
+                }, ],
+                attributes: ["LendingID"],
+            }, ],
+            attributes: [
+                "AccountID",
+                "LendingID",
+                "CreateDate",
+                "DueDate",
+                "ReturnDate",
+                "Status",
+            ],
+        });
+        res.status(200).send(lending);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            message: error.message || "Some error occurred lending",
+        });
+    }
+};
 // Cancel Lending (for User)
 exports.cancelLending = async(req, res) => {
     const lendingid = req.params.id;
@@ -202,7 +243,7 @@ exports.cancelLending = async(req, res) => {
             attributes: ["AccountID"],
             where: { LendingID: lendingid },
         });
-        if (req.userId === lendingInfo.AccountID) {
+        if (req.userId !== lendingInfo.AccountID) {
             res.status(403).send({
                 message: "Unauthorized",
             });
@@ -319,11 +360,11 @@ exports.returnLending = async(req, res) => {
             where: { LendingID: lendingid },
             attributes: ["AccountID", "CreateDate", "DueDate"],
         });
-        let status = "return"
-        if (!(moment(getLending.DueDate).isBefore(moment))){
-            status = "return"
-        }else{
-            status = "late"
+        let status = "return";
+        if (!moment(getLending.DueDate).isBefore(moment)) {
+            status = "return";
+        } else {
+            status = "late";
         }
         // If there is keep Book Item ID => return all book in lending list
         if (req.body.keepBookItemIDs.length === 0) {
@@ -338,7 +379,10 @@ exports.returnLending = async(req, res) => {
         // If there are A book item keep, B book item return
         // Split Lending into 2 different Lending
         // One contain books that still borrowed, and other contain returned books
-        else if (req.body.keepBookItemIDs.length !== 0 && req.body.returnBookItemIDs.length !== 0 ) {
+        else if (
+            req.body.keepBookItemIDs.length !== 0 &&
+            req.body.returnBookItemIDs.length !== 0
+        ) {
             const createReturnLending = await LendingList.create({
                 LendingID: uuidv4(),
                 AccountID: getLending.AccountID,

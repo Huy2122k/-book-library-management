@@ -1,9 +1,10 @@
-import { Badge, Button, Checkbox, Col, Collapse, Modal, Row } from 'antd';
+import { Badge, Button, Checkbox, Col, Collapse, Modal, Popconfirm, Row } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../../auth/use-auth';
+import UserService from '../../../../services/user.service';
 import './style.css';
 const { Panel } = Collapse;
 
@@ -11,7 +12,8 @@ const dictStatus = {
     return: 'green',
     borrow: 'blue',
     late: 'red',
-    pending: 'yellow'
+    pending: 'yellow',
+    reject: 'red'
 };
 
 const CheckboxGroup = Checkbox.Group;
@@ -39,6 +41,7 @@ const renderBookInfo = (book, bookItemId) => {
 
 const LendingItem = ({ lendDetail, ind }) => {
     const params = useParams();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [checkedList, setCheckedList] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
@@ -52,7 +55,16 @@ const LendingItem = ({ lendDetail, ind }) => {
             style: { width: '100%' }
         };
     });
-
+    const cancelLending = async (id) => {
+        try {
+            const listId = lendDetail.lendingbooklists.map((lend, ind) => lend.bookitem.BookItemID);
+            const res = await UserService.cancelBorrow(id, listId);
+            message.success('cancel successfully');
+            navigate('/profile/' + params.id + '?tab=lending');
+        } catch (error) {
+            message.error(error.message);
+        }
+    };
     const showModal = (lendingId) => () => {
         setLendingQR('/lending/' + lendingId);
         setModalVisible(true);
@@ -114,16 +126,28 @@ const LendingItem = ({ lendDetail, ind }) => {
                                 <Button
                                     type="primary"
                                     style={{ width: '45%' }}
+                                    disabled={lendDetail.Status === 'reject'}
                                     onClick={showModal(lendDetail.LendingID)}>
-                                    Show QR
+                                    Show QR {`(${checkedList.length})`}
                                 </Button>
-
-                                <Button
-                                    type="primary"
-                                    disabled={lendDetail.Status != 'borrow'}
-                                    style={{ width: '45%' }}>
-                                    Return{`(${checkedList.length})`}
-                                </Button>
+                                <Popconfirm
+                                    title="Are you sure to cancel this lending?"
+                                    onConfirm={() => cancelLending(lendDetail.LendingID)}
+                                    onCancel={(e) => {}}
+                                    okText="Yes"
+                                    cancelText="No">
+                                    <Button
+                                        type="primary"
+                                        disabled={lendDetail.Status !== 'pending'}
+                                        style={
+                                            lendDetail.Status !== 'pending'
+                                                ? { width: '100%' }
+                                                : { width: '45%' }
+                                        }
+                                        danger>
+                                        Cancel
+                                    </Button>
+                                </Popconfirm>
                             </div>
                         )}
                     </Panel>
