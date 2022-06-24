@@ -68,6 +68,9 @@
     overflow: auto;
 }
 
-.ant-popover-disabled-compatible-wrapper {
-    width: 50%;
+.title-lending-manage {
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

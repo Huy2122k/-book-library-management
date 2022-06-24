@@ -70,9 +70,13 @@ const clearBorrowList = () => {
     localStorage.setItem('borrowList', JSON.stringify([]));
     return [];
 };
+const cancelBorrow = (id, listId) => {
+    return axios_instance.put('/api/lending/' + id, { rejectBookItemIDs: listId });
+};
 
 const UserService = {
     removeFromWishList,
+    cancelBorrow,
     addToWishList,
     getAccountInfo,
     getPublicContent,

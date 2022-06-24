@@ -10,10 +10,13 @@ const updateVerifyIdentity = (id, body) => {
 const changeUserStatus = (userId) => {
     return axios_instance.put(API_ADMIN + 'user-status/' + userId);
 };
-
+const confirmLending = (id, body) => {
+    return axios_instance.post(API_ADMIN + 'lending/' + id, body);
+}
 const AdminService = {
     getUsers,
     updateVerifyIdentity,
-    changeUserStatus
+    changeUserStatus,
+    confirmLending
 };
 export default AdminService;
