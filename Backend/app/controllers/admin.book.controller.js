@@ -6,29 +6,28 @@ const Book = db.book;
 const BookItem = db.bookItem;
 const BookCategory = db.bookCategory;
 
-
-const insertBookCategory =  (bookid, categories, t) =>{
-    const bookCategories = []
-    for (const categoryitem of categories ) { 
+const insertBookCategory = (bookid, categories, t) => {
+    const bookCategories = [];
+    for (const categoryitem of categories) {
         bookCategories.push({
             BookID: bookid,
             CategoryID: categoryitem,
-        })
+        });
     }
-    return BookCategory.bulkCreate(bookCategories, {transaction: t})
-}
+    return BookCategory.bulkCreate(bookCategories, { transaction: t });
+};
 
-const insertBookItem =  (bookid, numOfItem, t) =>{
-    const bookItems = []
+const insertBookItem = (bookid, numOfItem, t) => {
+    const bookItems = [];
     for (let i = 0; i < numOfItem; i++) {
         bookItems.push({
             BookID: bookid,
             BookItemID: uuidv4(),
-            Status: 'available'
-        })
+            Status: "available",
+        });
     }
-    return BookItem.bulkCreate(bookItems, {transaction: t})
-}
+    return BookItem.bulkCreate(bookItems, { transaction: t });
+};
 
 // Update book info
 exports.updateInfo = async(req, res) => {
@@ -49,7 +48,7 @@ exports.updateInfo = async(req, res) => {
         const deleteCat = await BookCategory.destroy({
             where: { BookID: bookid },
         }, { transaction: t });
-        const insertCat = await insertBookCategory(bookid, req.body.CategoryIDs, t)
+        const insertCat = await insertBookCategory(bookid, req.body.CategoryIDs, t);
         await t.commit();
         res.send({
             message: "Update successfully.",
@@ -64,7 +63,7 @@ exports.updateInfo = async(req, res) => {
 };
 
 // Add new book and bookitems (if new book not exist in book table)
-exports.addNewBook = async (req, res) => {
+exports.addNewBook = async(req, res) => {
     const t = await seq.transaction();
     try {
         const insertBook = await Book.create({
@@ -78,12 +77,21 @@ exports.addNewBook = async (req, res) => {
             Publisher: req.body.Publisher,
             ImageURL: req.body.ImageURL,
             BookID: uuidv4(),
-        }, {transaction: t})
-        const insertItem = await insertBookItem(insertBook.BookID, req.body.NumOfItem, t)
-        const insertCat = await insertBookCategory(insertBook.BookID, req.body.CategoryIDs, t)
+        }, { transaction: t });
+        const insertItem = await insertBookItem(
+            insertBook.BookID,
+            req.body.NumOfItem,
+            t
+        );
+        const insertCat = await insertBookCategory(
+            insertBook.BookID,
+            req.body.CategoryIDs,
+            t
+        );
         await t.commit();
         res.send({
             message: "Add book successfully.",
+            bookId: insertBook.BookID,
         });
     } catch (error) {
         console.log(error);
@@ -95,21 +103,21 @@ exports.addNewBook = async (req, res) => {
 };
 
 // Add bookitems (if book already exist in book table)
-exports.addBookItems = async (req, res) => {
+exports.addBookItems = async(req, res) => {
     const t = await seq.transaction();
-    const bookid=req.params.bookid;
+    const bookid = req.params.bookid;
     try {
         const book = await Book.findOne({
-            where: { BookID: bookid }
-        })
-        if (!book.BookID){
+            where: { BookID: bookid },
+        });
+        if (!book.BookID) {
             res.status(400).send({
                 message: "Cannot find book",
             });
             await t.rollback();
             return;
         }
-        const insertItem = await insertBookItem(bookid, req.body.NumOfItem, t)
+        const insertItem = await insertBookItem(bookid, req.body.NumOfItem, t);
         await t.commit();
         res.send({
             message: "Add book successfully.",
