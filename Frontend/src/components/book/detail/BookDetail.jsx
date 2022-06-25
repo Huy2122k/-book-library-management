@@ -306,55 +306,74 @@ const BookDetail = () => {
                                                     <Rate onChange={handleRating} />
                                                 )}
                                             </div>
-                                            <div className="book-info-action">
-                                                <Button
-                                                    onClick={
-                                                        checkExistedInWishList(bookDetail.BookID)
-                                                            ? () =>
-                                                                  deleteFromWishList(
-                                                                      bookDetail.BookID
-                                                                  )
-                                                            : () => addToWishList(bookDetail)
-                                                    }
-                                                    icon={
-                                                        checkExistedInWishList(
-                                                            bookDetail.BookID
-                                                        ) ? (
-                                                            <HeartFilled size="large" />
-                                                        ) : (
-                                                            <HeartOutlined size="large" />
-                                                        )
-                                                    }
-                                                    type="default"
-                                                    size="large"
-                                                    style={{
-                                                        marginRight: '15px',
-                                                        marginBottom: '15px'
-                                                    }}>
-                                                    {checkExistedInWishList(bookDetail.BookID)
-                                                        ? 'Remove from Wishlist'
-                                                        : 'Add to Wishlist'}
-                                                </Button>
-                                                {checkExistedInBorrowList(bookDetail.BookID) ? (
+                                            {user && user.info.Role === 'ADMIN' ? (
+                                                <div className="book-info-action">
                                                     <Button
-                                                        icon={<BookFilled size="large" />}
                                                         type="primary"
                                                         size="large"
-                                                        onClick={() =>
-                                                            deleteFromBorrowList(bookDetail.BookID)
-                                                        }>
-                                                        Remove from Borrow List
+                                                        onClick={() => {
+                                                            navigate('/edit-books/' + params.id);
+                                                        }}>
+                                                        Edit Book
                                                     </Button>
-                                                ) : (
+                                                </div>
+                                            ) : (
+                                                <div className="book-info-action">
                                                     <Button
-                                                        icon={<BookOutlined size="large" />}
-                                                        type="primary"
+                                                        onClick={
+                                                            checkExistedInWishList(
+                                                                bookDetail.BookID
+                                                            )
+                                                                ? () =>
+                                                                      deleteFromWishList(
+                                                                          bookDetail.BookID
+                                                                      )
+                                                                : () => addToWishList(bookDetail)
+                                                        }
+                                                        icon={
+                                                            checkExistedInWishList(
+                                                                bookDetail.BookID
+                                                            ) ? (
+                                                                <HeartFilled size="large" />
+                                                            ) : (
+                                                                <HeartOutlined size="large" />
+                                                            )
+                                                        }
+                                                        type="default"
                                                         size="large"
-                                                        onClick={() => addToBorrowList(bookDetail)}>
-                                                        Add to Borrow
+                                                        style={{
+                                                            marginRight: '15px',
+                                                            marginBottom: '15px'
+                                                        }}>
+                                                        {checkExistedInWishList(bookDetail.BookID)
+                                                            ? 'Remove from Wishlist'
+                                                            : 'Add to Wishlist'}
                                                     </Button>
-                                                )}
-                                            </div>
+                                                    {checkExistedInBorrowList(bookDetail.BookID) ? (
+                                                        <Button
+                                                            icon={<BookFilled size="large" />}
+                                                            type="primary"
+                                                            size="large"
+                                                            onClick={() =>
+                                                                deleteFromBorrowList(
+                                                                    bookDetail.BookID
+                                                                )
+                                                            }>
+                                                            Remove from Borrow List
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            icon={<BookOutlined size="large" />}
+                                                            type="primary"
+                                                            size="large"
+                                                            onClick={() =>
+                                                                addToBorrowList(bookDetail)
+                                                            }>
+                                                            Add to Borrow
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
                                             <div className="book-info-share">
                                                 <Space direction="horizontal" size={16}>
                                                     <FacebookFilled

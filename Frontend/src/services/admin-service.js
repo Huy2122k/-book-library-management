@@ -12,11 +12,23 @@ const changeUserStatus = (userId) => {
 };
 const confirmLending = (id, body) => {
     return axios_instance.post(API_ADMIN + 'lending/' + id, body);
-}
+};
+const uploadBookImage = (fileFormData) => {
+    return axios_instance.post('/api/books/images', fileFormData);
+};
+const createBook = (body) => {
+    return axios_instance.post('/api/books', body);
+};
+const editBook = (id, body) => {
+    return axios_instance.put('/api/books/' + id, body);
+};
 const AdminService = {
     getUsers,
     updateVerifyIdentity,
     changeUserStatus,
-    confirmLending
+    confirmLending,
+    uploadBookImage,
+    createBook,
+    editBook
 };
 export default AdminService;
