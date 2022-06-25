@@ -137,6 +137,15 @@ const Home = () => {
                             ))}
                     </Carousel>
                 </div>
+                <div className="danhngon">
+                    <span>————————————————————📕📖📗📘📙📚📔 —————————————————————</span>
+                    <span>
+                        The awful thing, as a kid reading, was that you came to th edf end of the
+                        story, and that was it. I mean, it would be heartbreaking that there was no
+                        more of it.
+                    </span>
+                    <span>————————————————————📕📖📔📗📘📙📚 —————————————————————</span>
+                </div>
             </Space>
         </div>
     );
