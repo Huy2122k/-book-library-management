@@ -2,7 +2,7 @@
 import { Button, Result } from 'antd';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.less';
-import Home from './components/Home';
+import Home from './components/home/Home';
 import RegistrationForm from './components/register/RegisterUser';
 
 import ProvideAuth from './auth/ProvideAuth';

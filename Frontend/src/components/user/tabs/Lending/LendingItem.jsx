@@ -1,4 +1,4 @@
-import { Badge, Button, Checkbox, Col, Collapse, Modal, Popconfirm, Row } from 'antd';
+import { Badge, Button, Checkbox, Col, Collapse, message, Modal, Popconfirm, Row } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';

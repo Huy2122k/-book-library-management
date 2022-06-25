@@ -1,0 +1,30 @@
+.home-bg {
+    width: 100%;
+}
+
+.home-bg img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.title-split {
+    display: flex;
+    height: 33px;
+}
+
+.pop-panel {
+    background-image: url('polygon.png');
+    width: 20%;
+    color: WHITE;
+    font-size: large;
+    padding: 0px 10px;
+    text-align: center;
+    z-index: 10;
+}
+
+.see-all-panel {
+    background-color: darkgrey;
+    text-align: end;
+    padding: 0px 10px;
+    width: 80%;
+}

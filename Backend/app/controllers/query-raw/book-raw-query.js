@@ -84,10 +84,9 @@ exports.findBookQuery = (request) => {
                     ${yearConfig}
                     ${authorFilerQuery}
                     ${sort}
-                    LIMIT ${parseInt(page) - 1},${pageSize}`.replaceAll(
-    `'`,
-    "`"
-  );
+                    LIMIT ${
+                      (parseInt(page) - 1) * pageSize
+                    },${pageSize}`.replaceAll(`'`, "`");
   const countQuery = `SELECT COUNT('bookfind'.'BookID') as Total from
                     (SELECT 'bookFilter'.*,
                         group_concat('bookcategories'.'CategoryID' separator ",") as 'ListCategoryID',
