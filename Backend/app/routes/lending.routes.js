@@ -9,10 +9,10 @@ module.exports = function(app) {
         "/api/lending/", [authJwt.verifyToken],
         controller.getAmountLendingByUser
     );
-    app.get(
-        "/api/lending/:id", [authJwt.verifyToken],
-        controller.getLending
-    );
+    app.get("/api/lending/:id", [authJwt.verifyToken], controller.getLending);
     app.put("/api/lending/:id", [authJwt.verifyToken], controller.cancelLending);
-    app.post("/api/return_lending/:id", [authJwt.verifyToken], controller.returnLending);
+    app.post(
+        "/api/admin/return_lending/:id", [authJwt.verifyToken, authJwt.isAdmin],
+        controller.returnLending
+    );
 };

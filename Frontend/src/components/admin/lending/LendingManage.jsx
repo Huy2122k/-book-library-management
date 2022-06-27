@@ -1,4 +1,5 @@
-import { Badge, Button, Checkbox, Col, Collapse, message, Row, Spin } from 'antd';
+import { InfoCircleTwoTone } from '@ant-design/icons';
+import { Badge, Button, Checkbox, Col, Collapse, message, Modal, Row, Spin } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { useAuth } from '../../../auth/use-auth';
 import AdminService from '../../../services/admin-service';
 import LendingService from '../../../services/lending-service';
 import './style.css';
+const { confirm } = Modal;
 
 const { Panel } = Collapse;
 const dictStatus = {
@@ -78,6 +80,40 @@ function LendingManage() {
         } catch (error) {
             message.error('Confirm Error');
         }
+    };
+    const sendConfirmReturn = async (keepBookItemIDs, returnBookItemIDs) => {
+        try {
+            const res = await AdminService.returnLending(params.id, {
+                keepBookItemIDs,
+                returnBookItemIDs
+            });
+            message.success(res.data.message);
+            navigate('/profile/' + lendDetail.AccountID + '?tab=lending');
+        } catch (error) {
+            message.error('Confirm Error');
+        }
+    };
+    const showPromiseConfirm = () => {
+        confirm({
+            title: `Do you want to return ${checkedList.length} book items?`,
+            icon: <InfoCircleTwoTone />,
+            content: checkedList.map((id) => <div key={id}>{id}</div>),
+            onOk() {
+                return handleAcceptReturn();
+            },
+            onCancel() {}
+        });
+    };
+    const handleAcceptReturn = async () => {
+        const listKeeps = lendDetail.lendingbooklists.filter((lend, ind) => {
+            return !checkedList.includes(lend.bookitem.BookItemID);
+        });
+        await sendConfirmReturn(
+            listKeeps.map((lend, ind) => {
+                return lend.bookitem.BookItemID;
+            }),
+            checkedList
+        );
     };
     const handleAcceptLending = async () => {
         const listReject = lendDetail.lendingbooklists.filter((lend, ind) => {
@@ -153,19 +189,31 @@ function LendingManage() {
                                         display: 'flex',
                                         justifyContent: 'space-between'
                                     }}>
-                                    <Button
-                                        onClick={handleAcceptLending}
-                                        type="primary"
-                                        style={{ width: '45%', backgroundColor: 'green' }}>
-                                        Accept {`(${checkedList.length})`}
-                                    </Button>
-                                    <Button
-                                        type="primary"
-                                        danger
-                                        style={{ width: '45%' }}
-                                        onClick={handleRejectLending}>
-                                        Reject
-                                    </Button>
+                                    {lendDetail.Status === 'pending' ? (
+                                        <>
+                                            <Button
+                                                onClick={handleAcceptLending}
+                                                type="primary"
+                                                style={{ width: '45%', backgroundColor: 'green' }}>
+                                                Accept {`(${checkedList.length})`}
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                danger
+                                                style={{ width: '45%' }}
+                                                onClick={handleRejectLending}>
+                                                Reject
+                                            </Button>
+                                        </>
+                                    ) : lendDetail.Status === 'borrow' ? (
+                                        <div style={{ width: '100%', textAlign: 'center' }}>
+                                            <Button onClick={showPromiseConfirm} type="primary">
+                                                Confirm Return Book {`(${checkedList.length})`}
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        ''
+                                    )}
                                 </div>
                             </Panel>
                         </Collapse>

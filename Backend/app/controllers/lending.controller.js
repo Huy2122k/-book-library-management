@@ -351,7 +351,7 @@ exports.confirmLending = async(req, res) => {
     }
 };
 
-// Return Book (User)
+// Return Book (admin)
 exports.returnLending = async(req, res) => {
     const lendingid = req.params.id;
     const t = await seq.transaction();
@@ -366,7 +366,7 @@ exports.returnLending = async(req, res) => {
         } else {
             status = "late";
         }
-        // If there is keep Book Item ID => return all book in lending list
+        // If there is not keep Book Item ID => return all book in lending list
         if (req.body.keepBookItemIDs.length === 0) {
             await LendingList.update({
                 ReturnDate: moment(),
@@ -415,7 +415,7 @@ exports.returnLending = async(req, res) => {
         }
         await t.commit();
         res.status(200).send({
-            message: "Creat Return Lending Success",
+            message: "Create Return Lending Success",
         });
     } catch (error) {
         console.log(error);
