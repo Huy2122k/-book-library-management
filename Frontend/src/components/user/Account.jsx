@@ -10,25 +10,13 @@ import { Avatar, Card, Col, Divider, Image, Row } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../auth/use-auth';
 import UserService from '../../services/user.service';
 import './style.css';
 import CommentTabs from './tabs/Comment';
+import IdentifiedAdminView from './tabs/IdentifiedAdminView';
 import LendingListInfo from './tabs/Lending/LendingListInfo';
 import RatingList from './tabs/RatingList';
-const tabList = [
-    {
-        key: 'comment',
-        tab: 'Comment'
-    },
-    {
-        key: 'rating',
-        tab: 'Rating'
-    },
-    {
-        key: 'lending',
-        tab: 'Book Lending'
-    }
-];
 
 const Account = () => {
     const params = useParams();
@@ -37,12 +25,31 @@ const Account = () => {
     const [commentInfo, setCommentInfo] = useState([]);
     const [ratingInfo, setRatingInfo] = useState([]);
     const [lendingInfo, setLendingInfo] = useState([]);
-
+    const { user } = useAuth();
     const [wishList, setWishList] = useState();
     const [loading, setLoading] = useState(false);
     const [tabKey, setTabKey] = useState(
         searchParams.get('tab') ? searchParams.get('tab') : 'comment'
     );
+    const tabList = [
+        {
+            key: 'comment',
+            tab: 'Comment'
+        },
+        {
+            key: 'rating',
+            tab: 'Rating'
+        },
+        {
+            key: 'lending',
+            tab: 'Book Lending'
+        },
+        (user && user.info.Role === 'ADMIN' ||
+            user.info.AccountID == params.id) && {
+                key: 'identity',
+                tab: 'View Identity'
+            }
+    ];
 
     const navigate = useNavigate();
 
@@ -56,6 +63,16 @@ const Account = () => {
         }
         if (tabValue === 'lending') {
             tab = <LendingListInfo lendingInfo={lendingInfo} />;
+        }
+        if (tabValue === 'identity') {
+            tab = (
+                <IdentifiedAdminView
+                    userInfo={currentUser}
+                    setUserVerified={(stat) =>
+                        setCurrentUser({ ...currentUser, IdentityStatus: stat })
+                    }
+                />
+            );
         }
         return (
             <div className="tabs-content" key={tabValue}>

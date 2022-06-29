@@ -115,6 +115,16 @@ const LendingItem = ({ lendDetail, ind }) => {
                             value={checkedList}
                             onChange={onChange}
                         />
+                        {params.id && user && user.info.Role === 'ADMIN' && (
+                            <Button
+                                type="primary"
+                                style={{ width: '100%', marginTop: '10px' }}
+                                onClick={() =>
+                                    navigate('/lending/' + lendDetail.LendingID, { replace: true })
+                                }>
+                                View Lending
+                            </Button>
+                        )}
                         {params.id && user && user.info.AccountID == params.id && (
                             <div
                                 style={{
