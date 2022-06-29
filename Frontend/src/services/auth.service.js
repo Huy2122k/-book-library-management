@@ -36,13 +36,16 @@ const clearLocalUser = () => {
         localStorage.removeItem('remember');
     }
 };
-
+const resetPassword = (email) => {
+    return axios_instance.put(API_URL + 'reset-password', { UserName: email });
+};
 const AuthService = {
     register,
     login,
     logout,
     getLocalUser,
-    setLocalUser
+    setLocalUser,
+    resetPassword
 };
 
 export default AuthService;

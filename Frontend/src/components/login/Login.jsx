@@ -1,9 +1,13 @@
-import { Button, Checkbox, Col, Form, Input, message, Row } from 'antd';
+import { Button, Checkbox, Col, Form, Input, message, Modal, Row } from 'antd';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/use-auth';
+import AuthService from '../../services/auth.service';
 import './style.css';
 const Login = () => {
     const auth = useAuth();
+    const [visible, setVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname ? location.state.from.pathname : '/home';
@@ -11,6 +15,27 @@ const Login = () => {
     const onFinish = (values) => {
         console.log('Success:', values);
         handleLogin(values);
+    };
+    const onFinishEmailForget = (values) => {
+        console.log('Success:', values);
+        sendResetEmail(values.email_reset);
+    };
+    const sendResetEmail = async (email_reset) => {
+        try {
+            setConfirmLoading(true);
+            const res = await AuthService.resetPassword(email_reset);
+            message.success(res.data.message);
+            setVisible(false);
+            setConfirmLoading(false);
+        } catch (error) {
+            message.error(error.response.data.message);
+            setVisible(false);
+            setConfirmLoading(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setVisible(false);
     };
     const handleLogin = async (form) => {
         const res = await auth.login(form);
@@ -79,7 +104,9 @@ const Login = () => {
                             <Checkbox>Remember me</Checkbox>
                         </Form.Item>
                         <Link to={'/register'}>Register?</Link>
-
+                        <Button type="link" onClick={() => setVisible(true)}>
+                            Forget Password
+                        </Button>
                         <Form.Item>
                             <Row className="submitDiv">
                                 <Button type="primary" htmlType="submit">
@@ -90,6 +117,41 @@ const Login = () => {
                     </Form>
                 </Col>
             </Row>
+            <Modal
+                title="Forget Password"
+                visible={visible}
+                onOk={handleCancel}
+                onCancel={handleCancel}
+                footer={null}>
+                <Form
+                    name="forget_form"
+                    layout="vertical"
+                    size="large"
+                    onFinish={onFinishEmailForget}
+                    onFinishFailed={onFinishFailed}
+                    autoComplete="off">
+                    <Form.Item
+                        name="email_reset"
+                        label="Input your Email:"
+                        rules={[
+                            {
+                                type: 'email',
+                                message: 'The input is not valid E-mail!'
+                            },
+                            {
+                                required: true,
+                                message: 'Please input your E-mail!'
+                            }
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button loading={confirmLoading} type="primary" htmlType="submit">
+                            Reset password
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };

@@ -219,6 +219,13 @@ function EditBook() {
                     <img alt="example" style={{ width: '100%' }} src={imageUrl} />
                 </Modal>
             </div>
+            <div style={{ textAlign: 'center' }}>
+                <Button
+                    type="default"
+                    onClick={() => navigate('/books/' + params.id, { replace: true })}>
+                    View Detail
+                </Button>
+            </div>
             <Form
                 // {...formItemLayout}
                 layout="vertical"
