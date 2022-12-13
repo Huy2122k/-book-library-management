@@ -1,0 +1,14 @@
+.center-div-with-space {
+    margin: 30px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.form-item-hehe {
+    width: 40%;
+}
+
+.custom-width-input-number {
+    width: 100%;
+}

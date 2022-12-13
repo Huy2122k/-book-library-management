@@ -225,6 +225,11 @@ function EditBook() {
                     onClick={() => navigate('/books/' + params.id, { replace: true })}>
                     View Detail
                 </Button>
+                <Button
+                    type="default"
+                    onClick={() => navigate('/ebook/new/' + params.id, { replace: true })}>
+                    Create Ebook
+                </Button>
             </div>
             <Form
                 // {...formItemLayout}

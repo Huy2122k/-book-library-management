@@ -17,6 +17,7 @@ import ProvideWishList from './components/contexts/WishListProvider';
 import AboutPage from './components/about/AboutPage';
 import CreateBook from './components/admin/book/CreateBook';
 import EditBook from './components/admin/book/EditBook';
+import EbookCreate from './components/admin/ebook/EbookCreate';
 import LendingManage from './components/admin/lending/LendingManage';
 import ListUser from './components/admin/user/ListUser';
 import BorrowList from './components/borrow/borrow-list';
@@ -51,6 +52,7 @@ const App = () => {
                                 <Route path="/edit-books/:id" element={<EditBook />} />
                                 <Route path="/lending/:id" element={<LendingManage />} />
                                 <Route path="/users-manage" element={<ListUser />} />
+                                <Route path="/ebook/new/:id" element={<EbookCreate />} />
                             </Route>
                             <Route element={<RequireAuth role={['USER', 'ADMIN']} />}>
                                 <Route path="/profile" element={<Profile />} />
