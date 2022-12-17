@@ -1,12 +1,13 @@
-import { Button, Col, message, Row, Space } from 'antd';
+import { Button, Col, Row, Space, message } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BookService from '../../../services/book-service';
-import { getEbookDetail } from '../../../services/ebook/ebook-create';
+import { addNewEbook, getEbookDetail } from '../../../services/ebook/ebook-create';
 import CreateBookOCR from './CreateBookOCR';
 import CreateBookPDF from './CreateBookPDF';
 import './style.css';
+
 const EbookCreate = () => {
     const navigate = useNavigate();
     const [createType, setCreateType] = useState();
@@ -27,6 +28,20 @@ const EbookCreate = () => {
                 return;
             }
             setEbookDetail(res.data);
+            setCreateType(res.data.type_ebook);
+        } catch (error) {
+            message.error('something went wrong!');
+        }
+    };
+    const createBookOCR = async () => {
+        try {
+            const res = await addNewEbook({
+                book_id: params.id,
+                type_ebook: 'ocr'
+                // status: 'chapter_splitting'
+            });
+            console.log(res.data);
+            setCreateType('ocr');
         } catch (error) {
             message.error('something went wrong!');
         }
@@ -97,10 +112,7 @@ const EbookCreate = () => {
                 <>
                     {!createType ? (
                         <div className="center-div-with-space ">
-                            <Button
-                                type="primary"
-                                size="large"
-                                onClick={() => setCreateType('ocr')}>
+                            <Button type="primary" size="large" onClick={createBookOCR}>
                                 Create ORC
                             </Button>
                             <Button
@@ -123,7 +135,13 @@ const EbookCreate = () => {
                 </>
             )}
             {ebookDetail && !ebookDetail['empty'] && (
-                <CreateBookPDF ebookDetail={ebookDetail} getEbookInfo={getEbookInfo} />
+                <>
+                    {createType == 'pdf' ? (
+                        <CreateBookPDF ebookDetail={ebookDetail} getEbookInfo={getEbookInfo} />
+                    ) : (
+                        <CreateBookOCR bookID={params.id} />
+                    )}
+                </>
             )}
         </div>
     );

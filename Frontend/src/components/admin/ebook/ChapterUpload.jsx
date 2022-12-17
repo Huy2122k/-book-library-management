@@ -64,7 +64,7 @@ const ChapterUpload = ({ chapterDetail }) => {
     return (
         <>
             <h3>
-                {chapterDetail['index']}. {chapterDetail['chapter_name']}
+                {chapterDetail['chapter_number']}. {chapterDetail['chapter_name']}
             </h3>
             <Upload
                 // beforeUpload={beforeUpload}

@@ -71,7 +71,7 @@ exports.findBookQuery = (request) => {
                     ${categoryFilterQuery}
                     ${filterByCategory ? " " : `group by 'book'.'BookID'`}
 
-                    order by 'book'.'BookID' asc , 'bookcategories'.'CategoryID' asc 
+                    -- order by 'book'.'BookID' asc , 'bookcategories'.'CategoryID' asc --
                     ) as 'bookFilter' 
                     LEFT OUTER JOIN 'bookcategory' AS 'bookcategories' ON 'bookFilter'.'BookID' = 'bookcategories'.'BookID'
                     LEFT OUTER JOIN 'category' AS 'bookcategories->category' ON 'bookcategories'.'CategoryID' = 'bookcategories->category'.'CategoryID'
@@ -117,7 +117,7 @@ exports.findBookQuery = (request) => {
                     ${categoryFilterQuery}
                     ${filterByCategory ? " " : `group by 'book'.'BookID'`}
 
-                    order by 'book'.'BookID' asc , 'bookcategories'.'CategoryID' asc 
+                    -- order by 'book'.'BookID' asc , 'bookcategories'.'CategoryID' asc --
                     ) as 'bookFilter' 
                     LEFT OUTER JOIN 'bookcategory' AS 'bookcategories' ON 'bookFilter'.'BookID' = 'bookcategories'.'BookID'
                     LEFT OUTER JOIN 'category' AS 'bookcategories->category' ON 'bookcategories'.'CategoryID' = 'bookcategories->category'.'CategoryID'

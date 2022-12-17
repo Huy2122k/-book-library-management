@@ -1,14 +1,14 @@
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row, message } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { addNewChapter } from '../../../services/ebook/ebook-create';
+import { addNewChapter, getChapters } from '../../../services/ebook/ebook-create';
 import ChapterUpload from './ChapterUpload';
-
+import './style.css';
 const CreateBookOCR = ({ ebookDetail, bookID }) => {
     const [urlUpload, setUrlUpload] = useState();
-    const [chapterList, setChapterList] = useState();
-    const [chapter, setChapter] = useState();
+    const [chapterList, setChapterList] = useState([]);
+    // const [chapter, setChapter] = useState();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formCreateChapter] = Form.useForm();
 
@@ -34,32 +34,54 @@ const CreateBookOCR = ({ ebookDetail, bookID }) => {
             onError({ err });
         }
     };
+    const fetchChapters = async (options) => {
+        if (!bookID) {
+            navigate('/notfound');
+            return;
+        }
+        try {
+            const res = await getChapters({ book_id: bookID });
+            console.log(res);
+            if (!res.data) {
+                return;
+            }
+            setChapterList(res.data);
+        } catch (error) {
+            message.error('something went wrong!');
+        }
+    };
     const onCreateChapter = async (values) => {
         try {
             console.log('Received values of form: ', values);
             const res = await addNewChapter({
                 book_id: bookID,
                 chapter_name: values['chapterName'],
-                index: values['index']
+                chapter_number: values['chapter_number']
             });
             console.log(res);
             const chapterDetail = res.data;
             console.log(chapterDetail._id.$oid);
             setIsModalOpen(false);
-            setChapter(chapterDetail);
+            // setChapter(chapterDetail);
+            fetchChapters();
         } catch (error) {
             message.error('something went wrong!');
         }
     };
-    useEffect(() => {}, []);
+    useEffect(() => {
+        fetchChapters();
+    }, []);
     return (
         <>
-            <Row gutter={[24, 40]}>
-                {chapter && (
-                    <Col xs={24}>
-                        <ChapterUpload chapterDetail={chapter} />
-                    </Col>
-                )}
+            <Row gutter={[24, 40]} style={{ textAlign: 'center' }}>
+                {chapterList &&
+                    chapterList.map((chapter, ind) => {
+                        return (
+                            <Col xs={24} key={chapter._id.$oid}>
+                                <ChapterUpload chapterDetail={chapter} />
+                            </Col>
+                        );
+                    })}
                 <Col xs={24}>
                     <Button
                         onClick={() => {
