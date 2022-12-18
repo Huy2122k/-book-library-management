@@ -77,8 +77,11 @@ const CreateBookOCR = ({ ebookDetail, bookID }) => {
                 {chapterList &&
                     chapterList.map((chapter, ind) => {
                         return (
-                            <Col xs={24} key={chapter._id.$oid}>
-                                <ChapterUpload chapterDetail={chapter} />
+                            <Col xs={24} key={chapter._id.$oid} className="dnd-up">
+                                <ChapterUpload
+                                    refreshChapter={fetchChapters}
+                                    chapterDetail={chapter}
+                                />
                             </Col>
                         );
                     })}

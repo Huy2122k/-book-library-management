@@ -12,3 +12,14 @@
 .custom-width-input-number {
     width: 100%;
 }
+
+.dnd-up .ant-upload-list-picture-card-container {
+    height: 100%;
+}
+
+.btn-group {
+    margin: 25px;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0px 222px;
+}
