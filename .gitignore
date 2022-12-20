@@ -101,3 +101,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Card Extractor
+Service_card_extractor/yolov4_card_detection/data/
+Service_card_extractor/yolov4_card_detection/checkpoints/
