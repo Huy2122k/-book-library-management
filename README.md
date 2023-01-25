@@ -10,6 +10,8 @@ Requirements:
 
 - NodeJS v16.13.0.
 - Mysql 8.0.23
+- Elasticsearch
+- Anaconda
 
 ### Config env:
 
@@ -27,6 +29,11 @@ Requirements:
    CLOUDINARY_SECRET= yourkeysecret**
   ```
 - exec dump_sql file in db/library_db.sql
+
+### Config elasticsearch
+Config elasticsearch for logging data
+### cd Backend\app\config
+Change host, port, username, password to your host, your port, your username, your password
 
 ### Server:
 
@@ -48,6 +55,10 @@ Run command:
 #### `npm install`
 
 #### `npm start`
+
+Run Anaconda server for extract id_card
+### See in Service_card_extractor\README.md
+### After start server. Update ID_CARD_BASE_URL = [your host] in Frontend\.env`
 
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
