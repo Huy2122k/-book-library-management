@@ -22,8 +22,8 @@ const updateAccountInfo = (id, body) => {
 const changePassword = (body) => {
     return axios_instance.put(API_AUTH + 'change-password', body);
 };
-const verifyIdentify = (imagesForm, num) => {
-    return axios_instance.post(API_URL + 'verifyIdentify?num=' + num, imagesForm);
+const verifyIdentify = (imagesForm, num, name, dob) => {
+    return axios_instance.post(API_URL + 'verifyIdentify?num=' + num + '&name=' + name + '&dob=' + dob, imagesForm);
 };
 const sendVerifyEmail = (email) => {
     return axios_instance.post(API_URL + 'sendVerifyEmail?email=' + email);

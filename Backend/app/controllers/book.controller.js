@@ -11,6 +11,7 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const { findBookQuery } = require("./query-raw/book-raw-query");
+const logging = require("../middleware/logging")
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
@@ -33,18 +34,20 @@ exports.create = (req, res) => {
     Book.create(book)
         .then((data) => {
             res.send(data);
+            handleLogInfor("create_book", {title: req.body.title})
         })
         .catch((err) => {
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the Tutorial.",
             });
+            handleLogError(err)
         });
 };
 
 // Retrieve all Tutorials from the database.
 exports.findAll = async(req, res) => {
     console.log(req.query);
-
+    handleLogInfor("find_all", {searchKey: req.query})
     try {
         const queryRaw = findBookQuery(req);
         const [results, metadata] = await seq.query(queryRaw.query);
@@ -56,6 +59,7 @@ exports.findAll = async(req, res) => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving tutorials.",
         });
+        handleLogError(err)
     }
 };
 exports.findTopAuthor = async(req, res) => {
@@ -69,10 +73,12 @@ exports.findTopAuthor = async(req, res) => {
     try {
         const [results, metadata] = await seq.query(query);
         res.send(results.map((val) => val.Author).filter((val) => val));
+        
     } catch (error) {
         res.status(500).send({
             message: error.message || "Some error occurred while retrieving Author.",
         });
+        handleLogError(err)
     }
 };
 exports.findAllCategories = async(req, res) => {
@@ -84,10 +90,12 @@ exports.findAllCategories = async(req, res) => {
             return accumulator;
         }, {});
         res.send(obj);
+        handleLogInfor("find_all_categories", {})
     } catch (error) {
         res.status(500).send({
             message: error.message || "Some error occurred while retrieving Category.",
         });
+        handleLogError(err)
     }
 };
 
@@ -109,11 +117,14 @@ exports.update = (req, res) => {
         Cannot update Tutorial with id = $ { id }.Maybe Tutorial was not found or req.body is empty!`,
                 });
             }
+
+            handleLogInfor("update_tutorial", {id: id})
         })
         .catch((err) => {
             res.status(500).send({
                 message: "Error updating Tutorial with id=" + id,
             });
+            handleLogError(err)
         });
 };
 
@@ -135,11 +146,14 @@ exports.delete = (req, res) => {
         Cannot delete Tutorial with id = $ { id }.Maybe Tutorial was not found!`,
                 });
             }
+
+            handleLogInfor("delete_tutorial", {id: id})
         })
         .catch((err) => {
             res.status(500).send({
                 message: "Could not delete Tutorial with id=" + id,
             });
+            handleLogError(err)
         });
 };
 
@@ -155,11 +169,14 @@ exports.deleteAll = (req, res) => {
         $ { nums }
         Tutorials were deleted successfully!`,
             });
+
+            handleLogInfor("delete_all_tutorial", {})
         })
         .catch((err) => {
             res.status(500).send({
                 message: err.message || "Some error occurred while removing all tutorials.",
             });
+            handleLogError(err)
         });
 };
 
@@ -168,11 +185,13 @@ exports.findAllPublished = (req, res) => {
     Book.findAll({ where: { published: true } })
         .then((data) => {
             res.send(data);
+            handleLogInfor("find_all_publish", {})
         })
         .catch((err) => {
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving tutorials.",
             });
+            handleLogError(err)
         });
 };
 
@@ -263,11 +282,13 @@ exports.getInfo = async(req, res) => {
             userRating: userRating,
             comment: comment,
         });
+        handleLogInfor("get_infor", {id: bookid})
     } catch (err) {
         console.log(err);
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving tutorials.",
         });
+        handleLogError(err)
     }
 };
 
@@ -295,11 +316,14 @@ exports.addRating = async(req, res) => {
             message: "Rate successfully.",
             rating: { rating: rating },
         });
+
+        handleLogInfor("add_rating", {id: bookid, rating: rating})
     } catch (error) {
         console.log(error);
         res.status(500).send({
             message: error.message || "Some error occurred while add rating",
         });
+        handleLogError(err)
     }
 };
 //add comment
@@ -319,10 +343,20 @@ exports.addComment = async(req, res) => {
             comment: result,
             message: "Comment successfully, waiting for admin approval",
         });
+        handleLogInfor("add_comment", {id: bookid, comment: comment})
     } catch (error) {
         console.log(error);
         res.status(500).send({
             message: error.message || "Some error occurred while add Comment",
         });
+        handleLogError(err)
     }
 };
+
+const handleLogError = (message) => {
+    logging.logError(message, "book");
+}
+
+const handleLogInfor = (action, data) => {
+    logging.logInfo(logging.index.logBook, action, data);
+}

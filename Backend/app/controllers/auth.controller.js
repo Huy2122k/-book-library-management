@@ -7,12 +7,15 @@ const sendToEmail = require("../ultis/mail");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const roles = require("../config/roles.config");
+const logging = require("../middleware/logging")
 
 exports.signup = (req, res) => {
     // Save User to Database
     Account.create({
             ...req.body,
             IdentityNum: undefined,
+            Birthday: undefined,
+            FullName: undefined,
             Password: bcrypt.hashSync(req.body.Password, 8),
             AccountID: uuidv4(),
             Status: "available",
@@ -27,10 +30,12 @@ exports.signup = (req, res) => {
                 }
             );
             res.status(200).send({ info: user, accessToken: token });
+            handleLogInfor("signup", { id: user.AccountID, role: user.Role })
         })
         .catch((err) => {
             console.log(err);
             res.status(500).send({ message: "something went wrong!" });
+            handleLogError(err)
         });
 };
 
@@ -65,9 +70,11 @@ exports.signin = (req, res) => {
                 }
             );
             res.status(200).send({ info: user, accessToken: token });
+            handleLogInfor("sigin", { id: user.AccountID, role: user.Role })
         })
         .catch((err) => {
             res.status(500).send({ message: err.message });
+            handleLogError(err)
         });
 };
 
@@ -100,8 +107,10 @@ exports.changePassword = async(req, res) => {
         user.Password = bcrypt.hashSync(req.body.NewPassword, 8);
         await user.save();
         res.status(200).send({ message: "Your Password has been updated!" });
+        handleLogInfor("change_password", { id: user.AccountID, role: user.Role })
     } catch (err) {
         res.status(500).send({ message: err.message });
+        handleLogError(err)
     }
 };
 
@@ -133,15 +142,26 @@ exports.resetPassword = async(req, res) => {
                     res.status(200).send({
                         message: "Your new password has been sent to your email!",
                     });
+                    handleLogInfor("reset_password", { id: user.AccountID, role: user.Role })
                     return;
                 } else {
                     console.log(error);
                     res.status(404).send({ message: "Can not send to your email!" });
+                    handleLogError(err)
                     return false;
                 }
             }
         );
     } catch (err) {
         res.status(500).send({ message: err.message });
+        handleLogError(err)
     }
 };
+
+const handleLogError = (message) => {
+    logging.logError(message, "auth");
+}
+
+const handleLogInfor = (action, data) => {
+    logging.logInfo(logging.index.logAuth, action, data);
+}

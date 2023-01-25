@@ -49,11 +49,6 @@ const ListUser = () => {
             dataIndex: 'UserName'
         },
         {
-            title: 'Birthday',
-            dataIndex: 'Birthday',
-            render: (date) => moment(date).format('YYYY-MM-DD')
-        },
-        {
             title: 'Address',
             dataIndex: 'Address'
         },
@@ -64,6 +59,15 @@ const ListUser = () => {
         {
             title: 'IdentityNum',
             dataIndex: 'IdentityNum'
+        },
+        {
+            title: 'FullName',
+            dataIndex: 'FullName'
+        },
+        {
+            title: 'Birthday',
+            dataIndex: 'Birthday',
+            render: (date) => moment(date).format('YYYY-MM-DD')
         },
         {
             title: 'Status',
@@ -215,6 +219,12 @@ const ListUser = () => {
                     <Row gutter={[20, 20]}>
                         <Col span={24}>
                             <h3>Identity number: {listUser[userIndexChoose].IdentityNum}</h3>
+                        </Col>
+                        <Col span={24}>
+                            <h3>Fullname: {listUser[userIndexChoose].FullName}</h3>
+                        </Col>
+                        <Col span={24}>
+                            <h3>Birthday: {moment(new Date(listUser[userIndexChoose].Birthday)).format('YYYY-MM-DD')}</h3>
                         </Col>
                         <Col span={12}>
                             <Image
