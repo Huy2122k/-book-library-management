@@ -31,6 +31,15 @@ Requirements:
 - exec dump_sql file in db/library_db.sql
 
 ### Config elasticsearch
+Install elasticsearch
+Create index:
+	"book_library_log_auth",
+    "book_library_log_user",
+    "book_library_log_book",
+    "book_library_log_lending",
+    "book_library_log_wishlist",
+	"book_library_log_error",
+	
 Config elasticsearch for logging data
 ### cd Backend\app\config
 Change host, port, username, password to your host, your port, your username, your password
