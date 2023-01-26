@@ -1,0 +1,52 @@
+.sentence-write {
+    position: absolute;
+    top: 50px;
+    border: none;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sentence-write .sentence-write-text-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.sentence-write .sentence-write-text-input textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    resize: none;
+}
+
+.sentence-write .sentence-write-color-input {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.sentence-write .sentence-write-submit {
+    align-self: center;
+}
+
+.sentence-write .sentence-write-submit button {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #5eb95b;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.sentence-write .sentence-write-submit button:hover {
+    background-color: black;
+}

@@ -1,0 +1,40 @@
+.sentence-info-box {
+    margin: 10px 0px;
+    padding: 5px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    /* display: grid; */
+    align-items: center;
+    grid-template-columns: 1fr 5fr 1fr;
+    gap: 5px;
+}
+
+.sentence-info-box .sentence-info-box-color {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.sentence-info-box .sentence-info-box-text {
+    height: 100px;
+    overflow: auto;
+}
+
+.sentence-info-box .sentence-info-box-text textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    resize: none;
+}
+
+.sentence-info-box .sentence-info-box-button div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sentence-info-box .sentence-info-box-button .drag {
+    cursor: all-scroll;
+}

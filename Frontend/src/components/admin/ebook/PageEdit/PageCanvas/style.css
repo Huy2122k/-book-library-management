@@ -1,0 +1,39 @@
+.page-canvas {
+    height: 100vh;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.page-canvas .config-button {
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid gray;
+    padding: 10px;
+}
+
+.page-canvas .config-button button {
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 20px;
+    background-color: #5eb95b;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.page-canvas .config-button button:hover {
+    background-color: black;
+}
+
+.page-canvas .canvas {
+    height: 95%;
+    border: 1px solid gray;
+    overflow: auto;
+    background-color: #e6e6e7;
+}

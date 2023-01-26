@@ -2,6 +2,7 @@ import {
     BookFilled,
     BookOutlined,
     FacebookFilled,
+    FilePdfOutlined,
     GooglePlusSquareFilled,
     HeartFilled,
     HeartOutlined,
@@ -17,7 +18,6 @@ import {
     Comment,
     Form,
     Input,
-    message,
     Progress,
     Rate,
     Result,
@@ -26,13 +26,15 @@ import {
     Space,
     Spin,
     Tag,
-    Typography
+    Typography,
+    message
 } from 'antd';
 import moment from 'moment';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../auth/use-auth';
 import BookService from '../../../services/book-service';
+import { getChapters } from '../../../services/ebook/ebook-create';
 import { useBorrowList } from '../../contexts/use-borrow';
 import { useWishList } from '../../contexts/use-wishlist';
 import CardItem from '../CardItem';
@@ -56,6 +58,7 @@ const BookDetail = () => {
     const [recommendBooks, setRecommendBooks] = useState();
     const [comment, setComment] = useState([]);
     const [userRated, setUserRated] = useState(null);
+    const [chapterList, setChapterList] = useState([]);
     const auth = useAuth();
     const user = auth.user;
     const [commentInput] = Form.useForm();
@@ -108,6 +111,22 @@ const BookDetail = () => {
             setFetching(false);
             setNotFound(true);
             message.error('Some things went wrong');
+        }
+    };
+    const fetchEbookChapters = async () => {
+        if (!params.id) {
+            navigate('/notfound');
+            return;
+        }
+        try {
+            const res = await getChapters({ book_id: params.id });
+            console.log(res);
+            if (!res.data) {
+                return;
+            }
+            setChapterList(res.data);
+        } catch (error) {
+            message.info('ebook not found!');
         }
     };
     const handleRating = async (value) => {
@@ -234,6 +253,7 @@ const BookDetail = () => {
 
     useEffect(() => {
         fetchBookData();
+        fetchEbookChapters();
     }, [params.id]);
     useEffect(() => {
         fetchSameCategory();
@@ -374,6 +394,19 @@ const BookDetail = () => {
                                                     )}
                                                 </div>
                                             )}
+                                            {chapterList.length > 0 && (
+                                                <Button
+                                                    type="danger"
+                                                    icon={<FilePdfOutlined />}
+                                                    onClick={() => {
+                                                        navigate(
+                                                            '/audio-books/' +
+                                                                chapterList[0]._id.$oid
+                                                        );
+                                                    }}>
+                                                    Read Ebook
+                                                </Button>
+                                            )}
                                             <div className="book-info-share">
                                                 <Space direction="horizontal" size={16}>
                                                     <FacebookFilled
@@ -474,8 +507,7 @@ const BookDetail = () => {
                                                         src={
                                                             com.account.ImageURL
                                                                 ? com.account.ImageURL
-                                                                : 'https://joeschmoe.io/api/v1/random?' +
-                                                                  com.AccountID
+                                                                : `https://avatars.dicebear.com/api/adventurer/${com.AccountID}.svg`
                                                         }
                                                         alt=""
                                                     />

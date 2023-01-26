@@ -5,7 +5,12 @@ import React, { useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios_instance from '../../../services/ebook/axios-ebook';
-import { addNewPage, runOCR, updatePage } from '../../../services/ebook/ebook-create';
+import {
+    addNewPage,
+    runOCR,
+    updatePage,
+    updateSortChapters
+} from '../../../services/ebook/ebook-create';
 import DragableUploadListItem from './DragUpload';
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -17,10 +22,13 @@ const getBase64 = (file) =>
 
 const fileListRender = (file, index) => {
     return {
-        uid: file.$oid,
+        uid: file._id.$oid,
         name: `page${index + 1}`,
         status: 'done',
-        url: file.presigned_img
+        url: file.presigned_img,
+        pdfLink: file.presigned_pdf,
+        audioLink: file.presigned_audio,
+        status: file.status
     };
 };
 const mapStatus = {
@@ -33,7 +41,9 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
+    const [previewPage, setPreviewPage] = useState(null);
     const [fileList, setFileList] = useState(chapterDetail.pages.map(fileListRender));
+    const [openConfirm, setOpenConfirm] = useState(false);
     const handleCancel = () => setPreviewOpen(false);
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -42,8 +52,25 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
         setPreviewImage(file.url || file.preview);
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+        setPreviewPage(file);
     };
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+    const handleChange = ({ fileList: newFileList }) => {
+        setFileList(newFileList);
+    };
+    const handleSorting = async (newFileList) => {
+        try {
+            const listPageId = newFileList.map((file) => {
+                return file.uid;
+            });
+            await updateSortChapters(chapterDetail._id.$oid, {
+                pages: listPageId
+            });
+            message.success("Chapter's sorting has been updated!");
+        } catch (err) {
+            console.log(err);
+            message.error("Chapter's sorting error!");
+        }
+    };
     const uploadButton = (
         <div>
             <PlusOutlined />
@@ -55,14 +82,10 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
             </div>
         </div>
     );
-    // const beforeUpload = (file) => {
-    //     const reader = new FileReader();
-    //     reader.readAsBinaryString(file);
-    //     reader.onloadend = function () {
-    //         const count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-    //         console.log('Number of Pages:', count);
-    //     };
-    // };
+    const handleDelete = (file) => {
+        setOpenConfirm(true);
+        return false;
+    };
     const uploadHandle = async (options) => {
         const { onSuccess, onError, file, onProgress } = options;
         const config = {
@@ -78,10 +101,10 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
             const urlPut = createdPage.data['presigned_url'];
             const res = await axios_instance.put(urlPut, file, config);
             const updated = await updatePage(createdPage.data['id'], { image_status: 'ready' });
-            onSuccess('Ok');
-            if (index === fileList.length) {
+            if (index === fileList.length - 1) {
                 refreshChapter();
             }
+            onSuccess('Ok');
         } catch (err) {
             console.log(err);
             const error = new Error('Some error');
@@ -102,16 +125,16 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
         }
     };
     const moveRow = useCallback(
-        (dragIndex, hoverIndex) => {
+        async (dragIndex, hoverIndex) => {
             const dragRow = fileList[dragIndex];
-            setFileList(
-                update(fileList, {
-                    $splice: [
-                        [dragIndex, 1],
-                        [hoverIndex, 0, dragRow]
-                    ]
-                })
-            );
+            const newFileList = update(fileList, {
+                $splice: [
+                    [dragIndex, 1],
+                    [hoverIndex, 0, dragRow]
+                ]
+            });
+            handleSorting(newFileList);
+            setFileList(newFileList);
         },
         [fileList]
     );
@@ -121,10 +144,20 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
                 {chapterDetail['chapter_number']}. {chapterDetail['chapter_name']}
             </h3>
             {chapterDetail.status && (
-                <div>
+                <div style={{ marginBottom: '12px' }}>
                     <Alert
                         type={mapStatus[chapterDetail.status.bounding_box_status]}
                         message={`Your ebook ocr is ${chapterDetail.status.bounding_box_status}`}
+                        banner
+                    />
+                </div>
+            )}
+
+            {chapterDetail.status && (
+                <div>
+                    <Alert
+                        type={mapStatus[chapterDetail.status.audio_status]}
+                        message={`Your ebook audio is ${chapterDetail.status.audio_status}`}
                         banner
                     />
                 </div>
@@ -149,6 +182,7 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
                     fileList={fileList}
                     onPreview={handlePreview}
                     onChange={handleChange}
+                    onRemove={handleDelete}
                     itemRender={(originNode, file, currFileList) => (
                         <DragableUploadListItem
                             originNode={originNode}
@@ -164,9 +198,32 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
                 <Button type="primary" onClick={startOCR}>
                     Start OCR
                 </Button>
+                {/* <Button type="primary" onClick={startOCR}>
+                    Save Sorting
+                </Button> */}
                 <Button type="danger">Delete Chapter</Button>
             </div>
             <Modal visible={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                {previewPage && chapterDetail.status.bounding_box_status === 'ready' && (
+                    <a href={previewPage.pdfLink} target="_blank" rel="noreferrer">
+                        Pdf link preview
+                    </a>
+                )}
+                <br />
+                {previewPage && chapterDetail.status.bounding_box_status === 'ready' && (
+                    <a
+                        href={`/ebook-edit/page/${previewPage.uid}`}
+                        target="_blank"
+                        rel="noreferrer">
+                        Edit PDF OCR
+                    </a>
+                )}
+                <br />
+                {previewPage && chapterDetail.status.audio_status === 'ready' && (
+                    <a href={previewPage.audioLink} target="_blank" rel="noreferrer">
+                        Audio link preview
+                    </a>
+                )}
                 <img
                     alt="example"
                     style={{
@@ -175,6 +232,14 @@ const ChapterUpload = ({ refreshChapter, chapterDetail }) => {
                     src={previewImage}
                 />
             </Modal>
+            <Modal
+                title="Are you sure to delete this page"
+                visible={openConfirm}
+                onOk={() => setOpenConfirm(false)}
+                onCancel={() => setOpenConfirm(false)}
+                okText="确认"
+                cancelText="取消"
+            />
         </>
     );
 };
