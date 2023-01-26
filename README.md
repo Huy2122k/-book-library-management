@@ -31,17 +31,23 @@ Requirements:
 - exec dump_sql file in db/library_db.sql
 
 ### Config elasticsearch
+
 Install elasticsearch
 Create index:
-	"book_library_log_auth",
-    "book_library_log_user",
-    "book_library_log_book",
-    "book_library_log_lending",
-    "book_library_log_wishlist",
-	"book_library_log_error",
-	
+"book_library_log_auth",
+"book_library_log_user",
+"book_library_log_book",
+"book_library_log_lending",
+"book_library_log_wishlist",
+"book_library_log_error",
 Config elasticsearch for logging data
+
+```
+docker-compose -f elasticsearch-compose.yml up -d
+```
+
 ### cd Backend\app\config
+
 Change host, port, username, password to your host, your port, your username, your password
 
 ### Server:
@@ -66,7 +72,9 @@ Run command:
 #### `npm start`
 
 Run Anaconda server for extract id_card
+
 ### See in Service_card_extractor\README.md
+
 ### After start server. Update ID_CARD_BASE_URL = [your host] in Frontend\.env`
 
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
@@ -74,6 +82,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 ## 2. Docker:
 
 - add .env file:
+
   ```
   MYSQLDB_USER=root
   MYSQLDB_ROOT_PASSWORD=****
@@ -97,6 +106,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
   CLOUDINARY_KEY=****
   CLOUDINARY_SECRET=****
   ```
+
 - to run in background: `docker-conpose up -d`
 - if any errors in groupby, please turn off full_group_by mode: `SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));`
 - command restore: `source /tmp/test/library_db.sql;`

@@ -121,8 +121,8 @@ const PageCanvas = (props) => {
     const rectangleToDraw = [...props.sentenceBounding_box, ...newRectangle];
 
     return (
-        <div className="page-canvas" key={props.editSentenceId}>
-            <div className="config-button">
+        <div className="page-canvas" key={props.editSentenceId} style={{ width: 595 }}>
+            <div className="config-button" style={{ width: 595 }}>
                 <button
                     title="Phóng to"
                     onClick={() => {
@@ -154,7 +154,12 @@ const PageCanvas = (props) => {
                     <BiSave />
                 </button>
             </div>
-            <div ref={canvasWidthRef} className="canvas" tabIndex={1} onKeyDown={handleKeyDown}>
+            <div
+                ref={canvasWidthRef}
+                className="canvas"
+                tabIndex={1}
+                onKeyDown={handleKeyDown}
+                style={{ width: 595, height: 842 }}>
                 <Stage
                     scaleX={stageScale}
                     scaleY={stageScale}
