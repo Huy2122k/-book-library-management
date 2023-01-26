@@ -1,0 +1,40 @@
+.sentence-info {
+    height: 100vh;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sentence-info .sentence-info-button {
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid gray;
+    padding: 10px;
+    position: relative;
+}
+
+.sentence-info .sentence-info-button button {
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 20px;
+    background-color: #428bca;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.sentence-info .sentence-info-button button:hover {
+    background-color: black;
+}
+
+.sentence-info .sentence-info-list {
+    height: 95%;
+    overflow: auto;
+    border: 1px solid gray;
+    padding: 5px;
+}

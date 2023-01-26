@@ -1,0 +1,57 @@
+.page-edit {
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.page-edit .page-edit-header {
+    align-self: center;
+}
+
+.page-edit .page-edit-header h1 {
+    margin: 0px;
+}
+
+.page-edit .page-edit-header hr {
+    width: 100%;
+}
+
+@media only screen and (max-width: 992px) {
+    .page-edit .page-edit-section {
+        display: grid;
+        gap: 10px;
+        grid-template-rows: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .page-edit .page-edit-section {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.page-edit .page-edit-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-edit .page-edit-submit button {
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #5eb95b;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.page-edit .page-edit-submit button:hover {
+    background-color: black;
+}

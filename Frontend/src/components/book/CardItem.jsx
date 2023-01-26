@@ -91,7 +91,9 @@ const CardItem = ({ book, loading, category } = props) => {
                     </Tooltip>
                 </p>
                 <div className="author-list" onClick={handleClickCategory(book.Author)}>
-                    <Avatar src={'https://joeschmoe.io/api/v1/random' + '?' + book.BookID} />
+                    <Avatar
+                        src={`https://avatars.dicebear.com/api/adventurer/${book.BookID}.svg`}
+                    />
                     <Tooltip placement="topLeft" title={book.Author} color={'black'}>
                         <Paragraph
                             className="author-name"

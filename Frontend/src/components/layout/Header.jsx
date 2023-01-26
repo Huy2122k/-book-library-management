@@ -83,6 +83,10 @@ const HeaderCustom = () => {
             key: 'books?dateSort=desc'
         },
         {
+            label: 'EBooks',
+            key: 'ebooks'
+        },
+        {
             label: 'About Us',
             key: 'about'
         }

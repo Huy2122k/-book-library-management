@@ -5,6 +5,9 @@
     "dependencies": {
         "@ant-design/icons": "^4.7.0",
         "@craco/craco": "^6.4.3",
+        "@react-pdf-viewer/core": "^3.10.0",
+        "@react-pdf-viewer/highlight": "^3.10.0",
+        "@react-pdf-viewer/toolbar": "^3.10.0",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^12.8.3",
@@ -13,16 +16,22 @@
         "bootstrap": "^4.6.0",
         "craco-less": "^1.20.0",
         "immutability-helper": "^3.1.1",
+        "qs": "^6.6.1",
+        "randomcolor": "^0.6.2",
         "rc-footer": "^0.6.6",
         "react": "^17.0.2",
         "react-device-detect": "^2.2.2",
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
         "react-dom": "^17.0.2",
+        "react-drag-listview": "^0.2.1",
+        "react-icons": "^4.7.1",
+        "react-konva": "^17.0.2-6",
         "react-qr-code": "^2.0.7",
         "react-router-dom": "^6.3.0",
         "react-scripts": "4.0.3",
         "react-validation": "^3.0.7",
+        "uuid": "^9.0.0",
         "validator": "^13.0.0"
     },
     "scripts": {
@@ -34,18 +43,11 @@
     "eslintConfig": {
         "extends": "react-app"
     },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+    ],
     "devDependencies": {
         "babel-eslint": "^10.1.0",
         "eslint": "^7.32.0",

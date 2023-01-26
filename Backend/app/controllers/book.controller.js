@@ -44,8 +44,20 @@ exports.create = (req, res) => {
 // Retrieve all Tutorials from the database.
 exports.findAll = async(req, res) => {
     console.log(req.query);
-
     try {
+        if (req.query.listId || req.query.listId === []) {
+            const books = await Book.findAll({
+                where: {
+                    BookID: req.query.listId,
+                },
+            });
+            res.send({ total: books.length, docs: books });
+            return;
+        }
+        if (!req.query.page || !req.query.pageSize) {
+            res.send({ total: 0, docs: [] });
+            return;
+        }
         const queryRaw = findBookQuery(req);
         const [results, metadata] = await seq.query(queryRaw.query);
         const [count, meta] = await seq.query(queryRaw.countQuery);
