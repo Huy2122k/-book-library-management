@@ -10,6 +10,7 @@ const LendingBookList = db.lendingBookList;
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const sendToEmail = require("../ultis/mail");
+const logging = require("../middleware/logging")
 
 exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
@@ -51,6 +52,7 @@ exports.verifyEmail = async(req, res) => {
         });
     } catch (error) {
         res.status(500).send({ message: "verify email error" });
+        handleLogError(err)
     }
 };
 // Send email verify
@@ -76,6 +78,7 @@ exports.sendVerifyEmail = async(req, res) => {
         );
     } catch (error) {
         res.status(500).send({ message: "Can not send to your email!" });
+        handleLogError(err)
     }
 };
 // Send Identity Card Info
@@ -106,6 +109,8 @@ exports.addIdentity = async(req, res) => {
             BacksideURL: req.files.back[0].path,
             FaceURL: req.files.face[0].path,
             IdentityStatus: "waiting",
+            Birthday: req.query.dob,
+            FullName: req.query.name
         }, { where: { AccountID: accountid } });
         if (result == 1) {
             res.send({
@@ -121,6 +126,7 @@ exports.addIdentity = async(req, res) => {
         res.status(500).send({
             message: error.message || "Some error occurred while retrieving tutorials.",
         });
+        handleLogError(err)
     }
 };
 
@@ -151,7 +157,8 @@ exports.getInfo = async(req, res) => {
             "FrontsideURL",
             "BacksideURL",
             "FaceURL",
-        ] : ["UserName", "Introduction", "Birthday", "Gender", "ImageURL"];
+            "FullName"
+        ] : ["UserName", "Introduction", "Birthday", "Gender", "ImageURL", "FullName"];
     try {
         const info = await Account.findOne({
             where: { AccountID: accountid },
@@ -239,6 +246,7 @@ exports.getInfo = async(req, res) => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving tutorials.",
         });
+        handleLogError(err)
     }
 };
 
@@ -252,7 +260,7 @@ exports.updateInfo = async(req, res) => {
                 "UserName",
                 "Introduction",
                 "Gender",
-                "Birthday",
+                // "Birthday",
                 "Address",
                 "Email",
                 "Phone",
@@ -263,7 +271,7 @@ exports.updateInfo = async(req, res) => {
             UserName: req.body.UserName,
             Introduction: req.body.Introduction,
             Gender: req.body.Gender,
-            Birthday: req.body.Birthday,
+            // Birthday: req.body.Birthday,
             Address: req.body.Address,
             Email: req.body.Email,
             Phone: req.body.Phone,
@@ -297,5 +305,14 @@ exports.updateInfo = async(req, res) => {
         res.status(500).send({
             message: error.message || "Some error occurred while retrieving tutorials.",
         });
+        handleLogError(err)
     }
 };
+
+const handleLogError = (message) => {
+    logging.logError(message, "user");
+}
+
+const handleLogInfor = (action, data) => {
+    logging.logInfo(logging.index.logUser, action, data);
+}

@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require("uuid");
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const sendToEmail = require("../ultis/mail");
+const logging = require("../middleware/logging")
 
 exports.getAmountLending = async(userId) => {
     try {
@@ -38,6 +39,7 @@ exports.getAmountLending = async(userId) => {
                 "Status",
             ],
         });
+        handleLogInfor("get_amount_lending", {id: userId})
         if (
             lendingList.length > 0 &&
             lendingList[0].dataValues.lendingbooklists.length > 0
@@ -48,6 +50,7 @@ exports.getAmountLending = async(userId) => {
         return 0;
     } catch (error) {
         console.log(error);
+        handleLogError(err)
         return null;
     }
 };
@@ -79,6 +82,7 @@ exports.sendReturnLateMail = async() => {
             ],
         });
         console.log(lendingList);
+        handleLogInfor("send_return_late_mail", {})
         lendingList.forEach(async(lending, ind) => {
             if (lending.lendingbooklists.length >= 5) {
                 console.log(lending.account.dataValues.Email);
@@ -100,6 +104,7 @@ exports.sendReturnLateMail = async() => {
     } catch (error) {
         console.log(error);
         console.log({ message: "Can not send to your email!" });
+        handleLogError(err)
     }
 };
 
@@ -109,11 +114,13 @@ exports.getAmountLendingByUser = async(req, res) => {
         res.send({
             count: amount,
         });
+        handleLogInfor("get_amount_lending_by_user", {id: req.userId})
     } catch (error) {
         console.log(error);
         res.status(500).send({
             message: "Cannot get amount lending",
         });
+        handleLogError(err)
     }
 };
 
@@ -184,12 +191,14 @@ exports.createLending = async(req, res) => {
         res.status(200).send({
             message: "Borrow Successfully, please wait for admin approval!",
         });
+        handleLogInfor("create_lending", {id: accountid})
     } catch (error) {
         console.log(error);
         res.status(500).send({
             message: error.message || "Some error occurred while lendingbook",
         });
         await t.rollback();
+        handleLogError(err)
     }
 };
 
@@ -232,6 +241,7 @@ exports.getLending = async(req, res) => {
         res.status(500).send({
             message: error.message || "Some error occurred lending",
         });
+        handleLogError(err)
     }
 };
 // Cancel Lending (for User)
@@ -249,6 +259,7 @@ exports.cancelLending = async(req, res) => {
             });
             return;
         }
+        handleLogInfor("cancel_lending", {lendingid: lendingid, userId: req.userId})
     } catch (error) {
         res.status(500).send({
             message: error.message || "Some error occurred while lendingbook",
@@ -272,6 +283,7 @@ exports.cancelLending = async(req, res) => {
             message: error.message || "Some error occurred while lendingbook",
         });
         await t.rollback();
+        handleLogError(err)
     }
 };
 
@@ -348,6 +360,7 @@ exports.confirmLending = async(req, res) => {
             message: error.message || "Some error occurred while lendingbook",
         });
         await t.rollback();
+        handleLogError(err)
     }
 };
 
@@ -423,5 +436,14 @@ exports.returnLending = async(req, res) => {
             message: error.message || "Some error occurred while create return lending",
         });
         await t.rollback();
+        handleLogError(err)
     }
 };
+
+const handleLogError = (message) => {
+    logging.logError(message, "lending");
+}
+
+const handleLogInfor = (action, data) => {
+    logging.logInfo(logging.index.logLending, action, data);
+}

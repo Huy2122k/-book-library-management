@@ -1,7 +1,14 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, Button, Col, Image, Input, message, Row, Upload } from 'antd';
-import { useState } from 'react';
+import { Alert, Button, Col, Image, Input, message, Row, Upload, DatePicker, Form } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import UserService from '../../../services/user.service';
+import axios_id_card from '../../../services/extract-idcard';
+import moment from 'moment';
+
+import { Calendar } from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+
 const getBase64 = (img, callback) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
@@ -21,6 +28,21 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
         back: undefined,
         face: undefined
     });
+    const [fullName, setFullName] = useState(userInfo.FullName);
+    const [birthDay, setBirthDay] = useState(userInfo.Birthday ? moment(userInfo.Birthday).format("YYYY-MM-DD") : null);
+    const [openDatePicker, setOpenDatePicker] = useState(false);
+
+    const refDate = useRef(null);
+    useEffect(()=>{
+        document.addEventListener("click", hideDatePicker, true);
+    })
+
+    const hideDatePicker = (e) => {
+        if(refDate.current && !refDate.current.contains(e.target)){
+            setOpenDatePicker(false);
+        }
+    }
+
     const uploadButton = (key) => (
         <div>
             {loading[key] ? <LoadingOutlined /> : <PlusOutlined />}
@@ -98,7 +120,81 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
             back: undefined,
             face: undefined
         });
+        setFullName(null);
+        setBirthDay(null);
     };
+
+    const extractInfor = async () =>{
+        if(listImageURL.front){
+            var base64string = "";
+            var img;
+            if(listImageURL.front.includes("http")){
+                var url = listImageURL.front;
+                await fetch(url)
+                .then(response => response.blob())
+                .then(blob => new Promise((resolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onloadend = () => resolve(reader.result)
+                    reader.onerror = reject
+                    reader.readAsDataURL(blob)
+                    img = reader;
+                }))
+
+                base64string = img.result;
+            }
+            else{
+                base64string = listImageURL.front;
+            }
+            if(base64string){
+                base64string = base64string.split("base64,")[1];
+                var body = {
+                    img: base64string
+                }
+                
+                body = JSON.stringify(body);
+                var newType = document.querySelector('input[name="typeIDCard"]:checked').value == "new";
+                var url = "/old/extract";
+                if(newType){
+                    url = "/new/extract";
+                }
+                setLoadingSubmit(true);
+                await axios_id_card.post(url, body)
+                .then(res => {
+                    bindingData(res.data);
+                    setLoadingSubmit(false);
+                })
+                .catch(res => {
+                    message.error('error!');
+                    setLoadingSubmit(false);
+                })
+                
+            }
+        }
+        else{
+            message.warning('You must upload front image first!');
+        }
+    }
+
+    const bindingData = (data) => {
+        var id = data.id.includes(":") ? data.id.trim().split(':')[1].trim() : data.id,
+            name = data.name.includes(":") ? data.name.trim().split(':')[1].trim() : data.name,
+            birth = formatDate(data.birth);
+
+        setIdentifyNumber(id)
+        setFullName(name);
+        setBirthDay(birth);
+        
+    }
+
+    const formatDate = (dateString) => {
+        var dd = dateString.substr(0,2),
+            mm = dateString.substr(3,2),
+            yyyy = dateString.substr(-4);
+        
+        var date = yyyy + "-" + mm + "-" + dd;
+        return date;
+    }
+
     const sendRequestVerify = async () => {
         if (userInfo.IdentityStatus === 'confirmed') {
             message.error('You are already confirmed');
@@ -108,8 +204,8 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
             message.error('Waiting admin confirmation');
             return;
         }
-        if (!identifyNumber || Object.values(listImageObj).includes(undefined)) {
-            message.error('Please input Identify Number and three verify photo');
+        if (!identifyNumber || !fullName || !birthDay || Object.values(listImageObj).includes(undefined)) {
+            message.error('Please input Identify Number, Fullname, Birthday and three verify photo');
             return;
         }
         let formData = new FormData();
@@ -118,7 +214,7 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
         formData.append('face', listImageObj.face);
         try {
             setLoadingSubmit(true);
-            const res = await UserService.verifyIdentify(formData, identifyNumber);
+            const res = await UserService.verifyIdentify(formData, identifyNumber, fullName, birthDay);
             message.success('Success! Waiting admin to verify');
             setUserStatus('waiting');
             setLoadingSubmit(false);
@@ -138,8 +234,68 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
                         onChange={(e) => {
                             setIdentifyNumber(e.target.value);
                         }}
-                        style={{ width: '100%' }}
+                        style={{ width: '50%' }}
                     />
+                </Col>
+                <Col span={24}>
+                    <p>Your fullname: </p>
+                    <Input
+                        value={fullName}
+                        onChange={(e) => {
+                            setFullName(e.target.value);
+                        }}
+                        style={{ width: '50%' }}
+                    />
+                </Col>
+                <Col span={24}>
+                    <Form>
+                        <Form.Item
+                            label="Your birth day"
+                            name="Birthday"
+                            rules={[
+                                {
+                                    required: false,
+                                    message: 'Please select birthday!'
+                                }
+                            ]}>
+                            <input 
+                                value={birthDay? birthDay : ""}
+                                readOnly
+                                style={{outline: 'none', borderRadius: '6px', border: '1px solid #babec5', height: '32px'}}
+                                onClick={() => setOpenDatePicker(openDatePicker => !openDatePicker)}
+                            />
+                            <div ref={refDate} style={{width: 0}}>
+                                {openDatePicker && 
+                                    <Calendar 
+                                        date={new Date(birthDay)}
+                                        style={{position: 'absolute', zIndex: "9999", backgroundColor: "#fff", border: "1px solid #babec5"}}
+                                        onChange={(dateString) => {
+                                            if(dateString){
+                                                setBirthDay(moment(new Date(dateString)).format("YYYY-MM-DD"));
+                                            }
+                                            else{
+                                                setBirthDay(null);
+                                            }
+                                        }}
+                                    />
+                                }
+                            </div>
+                            
+                            
+                            {/* <DatePicker
+                                value={birthDay !== "" ? moment(birthDay) : null}
+                                onChange={(dateString) => {
+                                    if(dateString){
+                                        setBirthDay(moment(new Date(dateString)).format("YYYY-MM-DD"));
+                                    }
+                                    else{
+                                        setBirthDay("");
+                                    }
+                                }}
+                            /> */}
+                        </Form.Item>
+                    </Form>
+                    
                 </Col>
                 {Object.keys(listImageObj).map((key, ind) => {
                     return (
@@ -173,6 +329,19 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
                         </Col>
                     );
                 })}
+                <div style={{display: 'flex', alignItem: 'center', flexDirection: 'column'}}>
+                    <strong>Choose type of Identify card</strong>
+                    
+                    <div style={{display: 'flex', alignItem: 'center'}}>
+                        <input type="radio" name='typeIDCard' value='new' checked style={{marginRight: "5px"}}/>
+                        <label>New Identify card</label>
+                    </div>
+                    <div style={{display: 'flex', alignItem: 'center'}}>
+                        <input type="radio" name='typeIDCard' value='old' style={{marginRight: "5px"}}/>
+                        <label>Old Identify card</label>
+                    </div>
+                    
+                </div>
                 <Col span={24} style={{ textAlign: 'center' }}>
                     <Button
                         loading={loadingSubmit}
@@ -181,6 +350,14 @@ const VerifyIdentify = ({ userInfo, setUserStatus }) => {
                         type="primary"
                         onClick={sendRequestVerify}>
                         Send Request
+                    </Button>
+                    <Button
+                        loading={loadingSubmit}
+                        style={{ marginRight: '10px' }}
+                        size="large"
+                        type="primary"
+                        onClick={extractInfor}>
+                        Information extraction
                     </Button>
                     <Button
                         loading={loadingSubmit}

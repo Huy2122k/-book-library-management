@@ -2,6 +2,8 @@ import { Alert, Button, Col, Image, message, Row } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../auth/use-auth';
 import AdminService from '../../../services/admin-service';
+import moment from 'moment';
+
 const ERROR_IMG = 'https://vnpi-hcm.vn/wp-content/uploads/2018/01/no-image-800x600.png';
 const IdentifiedAdminView = ({ userInfo, setUserVerified }) => {
     const { user } = useAuth();
@@ -54,6 +56,12 @@ const IdentifiedAdminView = ({ userInfo, setUserVerified }) => {
             <Col span={24}>{notice()}</Col>
             <Col span={24}>
                 <h3>Identity number: {userInfo.IdentityNum}</h3>
+            </Col>
+            <Col span={24}>
+                <h3>Fullname: {userInfo.FullName}</h3>
+            </Col>
+            <Col span={24}>
+                <h3>Birthday: {moment(new Date(userInfo.Birthday)).format("DD-MM-YYYY")}</h3>
             </Col>
             <Col span={12}>
                 <Image

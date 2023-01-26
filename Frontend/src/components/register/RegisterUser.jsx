@@ -132,7 +132,7 @@ const RegistrationForm = () => {
                             ]}>
                             <Input />
                         </Form.Item>
-                        <Form.Item
+                        {/* <Form.Item
                             label="Birth Day"
                             name="Birthday"
                             rules={[
@@ -142,7 +142,7 @@ const RegistrationForm = () => {
                                 }
                             ]}>
                             <DatePicker />
-                        </Form.Item>
+                        </Form.Item> */}
                         <Form.Item
                             name="Gender"
                             label="Gender"

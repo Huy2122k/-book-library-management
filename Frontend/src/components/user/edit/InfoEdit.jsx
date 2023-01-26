@@ -161,7 +161,7 @@ const InfoEdit = ({ user, onUpdateInfo }) => {
                     UserName: user.UserName,
                     Introduction: user.Introduction,
                     Gender: user.Gender,
-                    Birthday: moment(user.Birthday),
+                    // Birthday: moment(user.Birthday),
                     Address: user.Address,
                     Email: user.Email,
                     Phone: user.Phone
@@ -226,7 +226,7 @@ const InfoEdit = ({ user, onUpdateInfo }) => {
                     ]}>
                     <Input />
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                     label="Birth Day"
                     name="Birthday"
                     rules={[
@@ -236,7 +236,7 @@ const InfoEdit = ({ user, onUpdateInfo }) => {
                         }
                     ]}>
                     <DatePicker />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item
                     name="Gender"
                     label="Gender"

@@ -4,6 +4,7 @@ const Book = db.book;
 const Account = db.account;
 const Op = db.Sequelize.Op;
 const seq = db.sequelize;
+const logging = require("../middleware/logging")
 // Create and Save a new wishlist
 exports.create = (req, res) => {
     // Validate request
@@ -31,17 +32,20 @@ exports.create = (req, res) => {
             WishList.create(wishList)
                 .then((data) => {
                     res.status(200).send(data);
+                    handleLogInfor("add_wishlist", wishList)
                 })
                 .catch((err) => {
                     res.status(500).send({
                         message: err.message || "Some error occurred while add book to wishlist.",
                     });
+                    handleLogError(err)
                 });
         })
         .catch((error) => {
             res.status(500).send({
                 message: error.message || "Some error occurred while check wishlist exists.",
             });
+            handleLogError(err)
         });
 };
 
@@ -64,11 +68,13 @@ exports.findAllByUser = async(req, res) => {
             list: rows,
             verified: account.IdentityStatus === "confirmed",
         });
+        handleLogInfor("get_wishlist", {userId: req.params.id})
     } catch (err) {
         console.log(err);
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving wishlist.",
         });
+        handleLogError(err)
     }
 };
 // Delete a wishlist with the specified id in the request
@@ -93,10 +99,20 @@ exports.delete = (req, res) => {
                     Cannot delete wishlist.Maybe wishlist Book was not found!`,
                 });
             }
+            handleLogInfor("delete_wishlist", { BookID: req.params.id, AccountID: req.userId })
         })
         .catch((err) => {
             res.status(500).send({
                 message: "Could not delete wishlist ",
             });
+            handleLogError(err)
         });
 };
+
+const handleLogError = (message) => {
+    logging.logError(message, "wishlist");
+}
+
+const handleLogInfor = (action, data) => {
+    logging.logInfo(logging.index.logWishList, action, data);
+}
